@@ -598,9 +598,34 @@
 
     <!-- Prediction Markets Tab -->
     <div class="tab-content" id="prediction-markets">
-        <div class="coming-soon">
-            <h2>Prediction Markets</h2>
-            <p>Coming soon...</p>
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-pred-chart="volume">Volume</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-pred-chart="oi">Open Interest</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-pred-chart="fees">Fees</button>
+                    </div>
+                    <p class="chart-subtitle" id="predChartSubtitle">Daily trading volume by platform over the last 7 days</p>
+                </div>
+                <div class="time-selector" id="predTimeSelector">
+                    <button data-days="7" class="active">7D</button>
+                    <button data-days="14">14D</button>
+                    <button data-days="30">30D</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="predChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard" id="predDashboard">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading prediction market data...</p>
+            </div>
         </div>
     </div>
 
@@ -664,6 +689,15 @@
                 Promise.all([
                     updatePerpChart(7, 'volume'),
                     fetchPerpDashboardData()
+                ]);
+            }
+
+            // Trigger prediction markets chart initialization if switching to prediction-markets
+            if (tabId === 'prediction-markets' && !predChartInitialized) {
+                predChartInitialized = true;
+                Promise.all([
+                    updatePredChart(7, 'volume'),
+                    fetchPredDashboardData()
                 ]);
             }
         }
@@ -954,6 +988,63 @@
 
         let currentPerpChartDays = 7;
         let currentPerpChartType = 'volume'; // 'volume', 'oi', or 'fees'
+
+        // Prediction Markets configuration
+        const predictionMarkets = [
+            {
+                id: 'polymarket',
+                name: 'Polymarket',
+                volumeId: 'polymarket',
+                feesId: 'polymarket',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/polymarket.png',
+                chain: 'Polygon',
+                description: 'Leading decentralized prediction market on Polygon. Largest by volume with $100M+ daily trading.',
+                funding: '$70M Series B',
+                backers: 'Founders Fund, 1confirmation, Dragonfly'
+            },
+            {
+                id: 'kalshi',
+                name: 'Kalshi',
+                volumeId: 'kalshi',
+                feesId: null, // No fees data on DefiLlama
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/kalshi.png',
+                chain: 'Off-Chain (Regulated)',
+                description: 'CFTC-regulated prediction market. First legal US exchange for event contracts.',
+                funding: '$130M Series B',
+                backers: 'Sequoia, SV Angel, Charles Schwab'
+            },
+            {
+                id: 'myriad-markets',
+                name: 'Myriad Markets',
+                volumeId: 'myriad-markets',
+                feesId: 'myriad-markets',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/myriad-markets.png',
+                chain: 'Sui',
+                description: 'Prediction market on Sui blockchain. Focuses on news and event betting.',
+                funding: 'Seed Round',
+                backers: 'Mysten Labs ecosystem'
+            }
+        ];
+
+        const predChartColors = [
+            '#8B5CF6', // Purple (Polymarket)
+            '#3B82F6', // Blue (Kalshi)
+            '#10B981'  // Green (Myriad)
+        ];
+
+        let predChart = null;
+        let currentPredChartDays = 7;
+        let currentPredChartType = 'volume';
+        let predChartInitialized = false;
 
 
         async function fetchHistoricalFees(days = 7) {
@@ -1284,6 +1375,28 @@
                     this.classList.add('active');
                     const chartType = this.dataset.perpChart;
                     await updatePerpChart(currentPerpChartDays, chartType);
+                });
+            });
+
+            // Prediction Markets chart - time selector
+            const predTimeButtons = document.querySelectorAll('#predTimeSelector button');
+            predTimeButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    predTimeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const days = parseInt(this.dataset.days);
+                    await updatePredChart(days, currentPredChartType);
+                });
+            });
+
+            // Prediction Markets chart - tab switching
+            const predChartTabs = document.querySelectorAll('.chart-tab[data-pred-chart]');
+            predChartTabs.forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    predChartTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.predChart;
+                    await updatePredChart(currentPredChartDays, chartType);
                 });
             });
         });
@@ -1730,6 +1843,398 @@
 
         // Track perp chart initialization
         let perpChartInitialized = false;
+
+        // ===== PREDICTION MARKETS FUNCTIONS =====
+
+        // Fetch prediction market volume data
+        async function fetchPredVolume(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < predictionMarkets.length; i++) {
+                const market = predictionMarkets[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
+                        historicalData.push({
+                            name: market.name,
+                            data: filteredDays,
+                            color: predChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching volume for ${market.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Fetch prediction market open interest data
+        async function fetchPredOI(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < predictionMarkets.length; i++) {
+                const market = predictionMarkets[i];
+                try {
+                    // Try to get TVL/liquidity as proxy for open interest
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/protocol/${market.id}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Get TVL history
+                        const tvlData = data.tvl || [];
+                        const filteredDays = tvlData
+                            .filter(item => item.date >= startTimestamp && item.date <= todayTimestamp)
+                            .map(item => [item.date, item.totalLiquidityUSD]);
+
+                        if (filteredDays.length > 0) {
+                            historicalData.push({
+                                name: market.name,
+                                data: filteredDays,
+                                color: predChartColors[i]
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Error fetching OI for ${market.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Fetch prediction market fees data
+        async function fetchPredFees(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < predictionMarkets.length; i++) {
+                const market = predictionMarkets[i];
+                if (!market.feesId) continue; // Skip if no fees data
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${market.feesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
+                        historicalData.push({
+                            name: market.name,
+                            data: filteredDays,
+                            color: predChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching fees for ${market.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Render prediction market chart
+        function renderPredChart(historicalData) {
+            const ctx = document.getElementById('predChart').getContext('2d');
+
+            const allDates = new Set();
+            historicalData.forEach(market => {
+                market.data.forEach(([timestamp]) => {
+                    allDates.add(timestamp);
+                });
+            });
+
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            const datasetsWithValues = historicalData.map(market => {
+                const dataMap = new Map(market.data);
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values[values.length - 1] || 0;
+
+                return {
+                    label: market.name,
+                    data: values,
+                    backgroundColor: market.color,
+                    borderColor: market.color,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    latestValue: latestValue,
+                    hidden: false
+                };
+            });
+
+            datasetsWithValues.sort((a, b) => b.latestValue - a.latestValue);
+
+            if (predChart) {
+                predChart.destroy();
+            }
+
+            predChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: { size: 11, weight: '500' },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    return datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            strokeStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                meta.hidden = !meta.hidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return context.dataset.label + ': N/A';
+                                    if (value >= 1e9) return context.dataset.label + ': $' + (value / 1e9).toFixed(2) + 'B';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { color: '#999999', font: { size: 11 }, maxRotation: 0 }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: { color: '#f0f0f0', drawBorder: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    if (value >= 1e9) return '$' + (value / 1e9).toFixed(0) + 'B';
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update prediction market chart
+        async function updatePredChart(days = 7, chartType = currentPredChartType) {
+            currentPredChartDays = days;
+            currentPredChartType = chartType;
+
+            let historicalData;
+            if (chartType === 'oi') {
+                historicalData = await fetchPredOI(days);
+            } else if (chartType === 'fees') {
+                historicalData = await fetchPredFees(days);
+            } else {
+                historicalData = await fetchPredVolume(days);
+            }
+
+            if (historicalData.length > 0) {
+                renderPredChart(historicalData);
+            }
+
+            const subtitles = {
+                'volume': `Daily trading volume by platform over the last ${days} days`,
+                'oi': `Daily open interest (TVL) by platform over the last ${days} days`,
+                'fees': `Daily fees generated by platform over the last ${days} days`
+            };
+            document.getElementById('predChartSubtitle').textContent = subtitles[chartType];
+        }
+
+        // Create prediction market card
+        function createPredCard(market, volumeData, feesData) {
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${market.logo}" alt="${market.name}" onerror="this.style.display='none'">
+                        <div>
+                            <div class="name">${market.name}</div>
+                            <div class="symbol">${market.chain}</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <span class="price-change" style="background: rgba(139, 92, 246, 0.2); color: #8B5CF6;">Prediction Market</span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-container">
+                        <div class="metrics-section">
+                            <h3>Platform Info</h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Chain</div>
+                                    <div class="metric-value" style="font-size: 0.85rem;">${market.chain}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Token</div>
+                                    <div class="metric-value">${market.hasToken ? '$' + market.tokenSymbol : 'None'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Status</div>
+                                    <div class="metric-value" style="font-size: 0.85rem;">Live</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-section">
+                            <h3>Trading Stats <span class="source">DefiLlama</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Volume (24h)</div>
+                                    <div class="metric-value">${formatUSD(volumeData?.total24h)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Volume (30d)</div>
+                                    <div class="metric-value">${formatUSD(volumeData?.total30d)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Fees (24h)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total24h)}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-section">
+                            <h3>Funding & Backers</h3>
+                            <div class="metrics-grid" style="grid-template-columns: 1fr 2fr;">
+                                <div class="metric">
+                                    <div class="metric-label">Raised</div>
+                                    <div class="metric-value" style="font-size: 0.95rem;">${market.funding || 'N/A'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Backers</div>
+                                    <div class="metric-value" style="font-size: 0.7rem; line-height: 1.4; font-weight: 400;">${market.backers || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="revenue-share" style="border-color: rgba(139, 92, 246, 0.2); background: rgba(139, 92, 246, 0.05);">
+                            <h3 style="color: #8B5CF6;">About</h3>
+                            <p>${market.description}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch prediction market dashboard data
+        async function fetchPredDashboardData() {
+            const predDashboard = document.getElementById('predDashboard');
+
+            // Fetch volume and fees data
+            const volumeDataMap = {};
+            const feesDataMap = {};
+
+            for (const market of predictionMarkets) {
+                try {
+                    const volResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`));
+                    if (volResponse.ok) {
+                        const data = await volResponse.json();
+                        volumeDataMap[market.id] = {
+                            total24h: data.total24h,
+                            total30d: data.total30d
+                        };
+                    }
+                } catch (e) {
+                    console.error(`Error fetching volume for ${market.name}:`, e);
+                }
+
+                if (market.feesId) {
+                    try {
+                        const feesResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${market.feesId}`));
+                        if (feesResponse.ok) {
+                            const data = await feesResponse.json();
+                            feesDataMap[market.id] = {
+                                total24h: data.total24h,
+                                total30d: data.total30d
+                            };
+                        }
+                    } catch (e) {
+                        console.error(`Error fetching fees for ${market.name}:`, e);
+                    }
+                }
+            }
+
+            // Create cards
+            const cards = predictionMarkets.map(market => {
+                const volumeData = volumeDataMap[market.id] || null;
+                const feesData = feesDataMap[market.id] || null;
+                return createPredCard(market, volumeData, feesData);
+            }).join('');
+
+            predDashboard.innerHTML = cards;
+        }
 
         function formatUSD(num) {
             if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
