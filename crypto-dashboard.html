@@ -844,20 +844,56 @@
             }
         ];
 
-        // CORS proxy using allorigins (more reliable than codetabs)
-        function proxyUrl(url) {
+        // CORS proxies
+        function proxyUrlAllOrigins(url) {
             return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+        }
+
+        function proxyUrlCodeTabs(url) {
+            return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url);
         }
 
         // Check if we're running from file:// (local) or http(s):// (server)
         const isLocalFile = window.location.protocol === 'file:';
 
-        // Helper to fetch - always use proxy for local, direct for server
-        async function fetchWithProxy(url) {
+        // Show warning if running locally
+        if (isLocalFile) {
+            console.warn('Running from file:// - some features may be limited. For best experience, run a local server: python3 -m http.server 8000');
+        }
+
+        // Helper to fetch DefiLlama APIs
+        async function fetchDefiLlama(url) {
             if (isLocalFile) {
-                return fetch(proxyUrl(url));
+                return fetch(proxyUrlAllOrigins(url));
             }
             return fetch(url);
+        }
+
+        // Helper to fetch CoinGecko APIs
+        async function fetchCoinGecko(url) {
+            if (!isLocalFile) {
+                return fetch(url);
+            }
+            // For local, try allorigins first, then codetabs
+            try {
+                const response = await fetch(proxyUrlAllOrigins(url));
+                const text = await response.text();
+                if (text.startsWith('[') || text.startsWith('{')) {
+                    return new Response(text, { status: 200 });
+                }
+            } catch (e) { /* ignore */ }
+
+            // Fallback to codetabs
+            return fetch(proxyUrlCodeTabs(url));
+        }
+
+        // Legacy aliases
+        function proxyUrl(url) {
+            return proxyUrlAllOrigins(url);
+        }
+
+        async function fetchWithProxy(url) {
+            return fetchDefiLlama(url);
         }
 
         // Chart colors for each protocol - fully opaque, saturated colors
@@ -1799,7 +1835,7 @@
                 console.log('Fetching CoinGecko data for perp DEXs:', tokenIds);
                 const cgUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`;
                 try {
-                    const response = await fetchWithProxy(cgUrl);
+                    const response = await fetchCoinGecko(cgUrl);
                     console.log('CoinGecko perp response status:', response.status);
                     if (response.ok) {
                         const data = await response.json();
@@ -2358,7 +2394,7 @@
             console.log('Requesting IDs:', allIds);
 
             try {
-                const response = await fetchWithProxy(url);
+                const response = await fetchCoinGecko(url);
                 if (response.ok) {
                     const data = await response.json();
                     console.log('CoinGecko response count:', data.length);
@@ -2385,7 +2421,7 @@
                     try {
                         await new Promise(resolve => setTimeout(resolve, 500));
                         const singleUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&sparkline=false`;
-                        const singleResponse = await fetchWithProxy(singleUrl);
+                        const singleResponse = await fetchCoinGecko(singleUrl);
                         if (singleResponse.ok) {
                             const singleData = await singleResponse.json();
                             if (singleData.length > 0) {
