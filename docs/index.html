@@ -13,39 +13,59 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: #000000;
             min-height: 100vh;
             color: #fff;
             padding: 20px;
+            font-size: 18px;
+            line-height: 1.5;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 40px;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 20px 20px;
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #ffffff;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .header .sources {
-            color: #ffffff;
-            margin-top: 10px;
-            font-size: 0.75rem;
+            color: #8892b0;
+            font-size: 0.7rem;
         }
 
         .header .sources a {
-            color: #ffffff;
+            color: #8892b0;
             text-decoration: none;
         }
 
-        .last-updated {
+        .header .sources a:hover {
             color: #ffffff;
-            font-size: 0.7rem;
-            margin-top: 5px;
+        }
+
+        .last-updated {
+            color: #8892b0;
+            font-size: 0.65rem;
         }
 
         .twitter-link {
@@ -54,14 +74,77 @@
             gap: 6px;
             color: #ffffff;
             text-decoration: none;
-            font-size: 0.85rem;
-            margin-top: 8px;
+            font-size: 0.8rem;
             opacity: 0.8;
             transition: opacity 0.2s ease;
         }
 
         .twitter-link:hover {
             opacity: 1;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            padding: 0 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #8892b0;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s ease;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            color: #ffffff;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ffffff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .coming-soon {
+            text-align: center;
+            padding: 100px 20px;
+            color: #8892b0;
+        }
+
+        .coming-soon h2 {
+            font-size: 1.6rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .coming-soon p {
+            font-size: 1rem;
         }
 
         .dashboard {
@@ -149,7 +232,7 @@
         }
 
         .metrics-section h3 {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #ffffff;
@@ -160,7 +243,7 @@
         }
 
         .metrics-section h3 .source {
-            font-size: 0.65rem;
+            font-size: 0.85rem;
             color: #8892b0;
             font-weight: normal;
             text-transform: none;
@@ -181,14 +264,14 @@
 
         .metric-label {
             color: #8892b0;
-            font-size: 0.65rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 3px;
         }
 
         .metric-value {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
@@ -328,17 +411,42 @@
             margin-bottom: 15px;
         }
 
-        .chart-title-section h2 {
-            font-size: 1rem;
-            color: #1a1a1a;
-            font-weight: 600;
+        .chart-tabs {
+            display: flex;
+            gap: 0;
             margin-bottom: 4px;
         }
 
-        .chart-title-section .chart-subtitle {
-            font-size: 0.75rem;
+        .chart-tab {
+            font-size: 1.1rem;
+            color: #999;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            border: none;
+            transition: color 0.2s ease;
+        }
+
+        .chart-tab:hover {
             color: #666;
-            font-weight: 400;
+        }
+
+        .chart-tab.active {
+            color: #1a1a1a;
+        }
+
+        .chart-tab-divider {
+            color: #ccc;
+            font-size: 1.1rem;
+            font-weight: 300;
+            padding: 0 12px;
+        }
+
+        .chart-title-section .chart-subtitle {
+            font-size: 0.7rem;
+            color: #333;
+            font-weight: 500;
         }
 
         .chart-wrapper {
@@ -399,19 +507,39 @@
 </head>
 <body>
     <div class="header">
-        <h1>Aletheia Research</h1>
-        <a href="https://x.com/0xaletheia369" target="_blank" class="twitter-link">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            @0xaletheia369
-        </a>
-        <p class="sources">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko</a> & <a href="https://defillama.com" target="_blank">DefiLlama</a></p>
-        <p class="last-updated" id="lastUpdated"></p>
+        <div class="header-left">
+            <h1>Aletheia Research</h1>
+            <a href="https://x.com/0xaletheia369" target="_blank" class="twitter-link">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                @0xaletheia369
+            </a>
+        </div>
+        <div class="header-right">
+            <p class="sources">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko</a> & <a href="https://defillama.com" target="_blank">DefiLlama</a></p>
+            <p class="last-updated" id="lastUpdated"></p>
+        </div>
     </div>
 
-    <div class="chart-container">
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab="protocol-revenue">Protocol Revenue</button>
+        <button class="tab-btn" data-tab="perpetual-dexs">Perpetual DEXs</button>
+        <button class="tab-btn" data-tab="prediction-markets">Prediction Markets</button>
+        <button class="tab-btn" data-tab="rwas">RWAs</button>
+        <button class="tab-btn" data-tab="etfs">ETFs</button>
+        <button class="tab-btn" data-tab="sentiment">Sentiment</button>
+        <button class="tab-btn" data-tab="price">Price</button>
+    </div>
+
+    <!-- Protocol Revenue Tab -->
+    <div class="tab-content active" id="protocol-revenue">
+        <div class="chart-container">
         <div class="chart-header">
             <div class="chart-title-section">
-                <h2>Protocol Fees: 24h Fees by Protocol</h2>
+                <div class="chart-tabs">
+                    <button class="chart-tab active" data-chart="fees">Protocol Fees</button>
+                    <span class="chart-tab-divider">|</span>
+                    <button class="chart-tab" data-chart="holders">Holders Revenue</button>
+                </div>
                 <p class="chart-subtitle" id="chartSubtitle">Daily fees generated by each protocol over the last 7 days</p>
             </div>
             <div class="time-selector">
@@ -432,9 +560,98 @@
         </div>
     </div>
 
-    <button class="refresh-btn" id="refreshBtn" onclick="fetchData()">Refresh Data</button>
+        <button class="refresh-btn" id="refreshBtn" onclick="fetchData()">Refresh Data</button>
+    </div>
+
+    <!-- Perpetual DEXs Tab -->
+    <div class="tab-content" id="perpetual-dexs">
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-perp-chart="volume">Volume</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-perp-chart="oi">Open Interest</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-perp-chart="fees">Fees</button>
+                    </div>
+                    <p class="chart-subtitle" id="perpChartSubtitle">Daily trading volume by protocol over the last 7 days</p>
+                </div>
+                <div class="time-selector" id="perpTimeSelector">
+                    <button data-days="7" class="active">7D</button>
+                    <button data-days="14">14D</button>
+                    <button data-days="30">30D</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="perpChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard" id="perpDashboard">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading perp DEX data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Markets Tab -->
+    <div class="tab-content" id="prediction-markets">
+        <div class="coming-soon">
+            <h2>Prediction Markets</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <!-- RWAs Tab -->
+    <div class="tab-content" id="rwas">
+        <div class="coming-soon">
+            <h2>RWAs</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <!-- ETFs Tab -->
+    <div class="tab-content" id="etfs">
+        <div class="coming-soon">
+            <h2>ETFs</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <!-- Sentiment Tab -->
+    <div class="tab-content" id="sentiment">
+        <div class="coming-soon">
+            <h2>Sentiment</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <!-- Price Tab -->
+    <div class="tab-content" id="price">
+        <div class="coming-soon">
+            <h2>Price</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
 
     <script>
+        // Tab navigation
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active tab button
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Show corresponding content
+                const tabId = btn.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
         // Protocol configuration with revenue sharing info
         const protocols = [
             {
@@ -443,7 +660,7 @@
                 defillamaFeesId: 'hyperliquid',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Buyback & Burn: 97% of trading fees are used to buy back HYPE tokens via the Assistance Fund. Bought tokens are permanently burned, reducing supply and creating price pressure. Daily buybacks routinely exceed $5-7M.'
+                    mechanism: 'Buyback & Burn: 97% of trading fees buy back HYPE via Assistance Fund (~$1.5M/day). Dec 2025: governance approved burning 37.5M HYPE ($912M, ~13% of supply) from the fund. Over $1B cumulative buybacks. Next unlock Feb 2026.'
                 }
             },
             {
@@ -452,7 +669,7 @@
                 defillamaFeesId: 'aerodrome',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Vote-Escrow Model: Lock AERO for 1-4 years to get veAERO. 100% of trading fees are distributed weekly to veAERO holders based on their voted pools. Longer locks = more voting power and rewards. Includes anti-dilution rebasing.'
+                    mechanism: 'Vote-Escrow Model: Lock AERO (1-4 years) for veAERO. 100% of trading fees distributed weekly to veAERO voters. Merging with Velodrome into "Aero" Q2 2026 (94.5% to AERO holders). New Momentum Fund executes market-aware buybacks during downturns.'
                 }
             },
             {
@@ -461,7 +678,7 @@
                 defillamaFeesId: 'aave',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Buyback + Anti-GHO: $1M/week AAVE buyback program started April 2025. Stakers also earn Anti-GHO tokens (80% to stkAAVE, 20% to stkBPT) which offset GHO debt 1:1 or convert to stkGHO. Safety Module staking earns rewards but accepts slashing risk.'
+                    mechanism: 'Aavenomics: $1M/week AAVE buybacks ($4M program). Anti-GHO tokens (~$6M/year) distributed to stakers (80% stkAAVE, 20% stkBPT) to offset GHO debt 1:1. New Umbrella safety module eliminates slashing risk for stkBPT. 320K AAVE ($65M) returned from closed LEND migration.'
                 }
             },
             {
@@ -470,7 +687,7 @@
                 defillamaFeesId: 'uniswap',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Fee Switch + Burn: UNIfication proposal activated late 2025. Protocol fees (0.05% on v2, 1/4-1/6 of LP fees on v3) flow to TokenJar. UNI holders can burn tokens to withdraw equivalent value from the jar. 100M UNI retroactive treasury burn executed.'
+                    mechanism: 'Fee Switch + Burn: UNIfication passed Dec 2025 (99.9% approval). Protocol fees flow to TokenJar; UNI holders burn tokens to withdraw equivalent value. 100M UNI ($596M) treasury burn executed. ~$26M annualized protocol revenue at current rates.'
                 }
             },
             {
@@ -479,7 +696,7 @@
                 defillamaFeesId: 'pump',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Revenue Share: 25% of protocol revenue planned to be shared with PUMP token holders. Additionally, 50% of PumpSwap trading fees go to token creators (0.05% per trade). Platform charges 1% transaction fee on swaps.'
+                    mechanism: 'Buyback & Burn: 100% of daily platform revenue (~$1M/day) goes to PUMP token buybacks. Over $230M bought back to date, reducing circulating supply by ~17%. Most aggressive buyback in crypto. Fee restructure planned Q1 2026 (0.05-0.95%). Major 41% token unlock July 2026.'
                 }
             },
             {
@@ -488,7 +705,7 @@
                 defillamaFeesId: 'jito',
                 revenueShare: {
                     status: 'inactive',
-                    mechanism: 'Limited Revenue Share: JTO is primarily a governance token. JTO stakers receive 0.15% of MEV tips via TipRouter. Main value accrual is through JitoSOL (liquid staking token) which earns base staking + MEV yields (1-3% extra). No direct protocol revenue share to JTO.'
+                    mechanism: 'DAO Treasury Accrual: JIP-24 redirects 100% of Block Engine & BAM fees to DAO (~$15M/year). JTO stakers get 0.15% MEV tips via TipRouter. JitoSOL earns staking + MEV yields. BAM testing shows $25M+ quarterly potential. Named SKR Token Guardian Jan 2026.'
                 }
             },
             {
@@ -497,7 +714,7 @@
                 defillamaFeesId: 'raydium',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Buyback + Staking: 12% of ALL trading fees go to RAY buybacks (~$190M cumulative, 25% of supply). Staking RAY earns ~4.5% APR from protocol fees. Buybacks create constant buy pressure and reduce circulating supply over time.'
+                    mechanism: 'Buyback & Burn + Staking: 12% of ALL trading fees fund RAY buybacks (~$196M cumulative, 26.4% of supply burned). Staking RAY earns ~4.5% APR. LaunchLab drove $12.8M revenue in Q3 2025 (+220% QoQ). ~$57.6M annualized buyback pace.'
                 }
             },
             {
@@ -506,7 +723,7 @@
                 defillamaFeesId: 'morpho',
                 revenueShare: {
                     status: 'none',
-                    mechanism: 'No Revenue Share: Morpho currently charges no protocol fees (fee switch is OFF). MORPHO is purely a governance token for voting on protocol changes, treasury allocation, and potential future fee activation. No staking rewards or buybacks.'
+                    mechanism: 'No Revenue Share Yet: Fee switch exists (max 25% of borrower interest) but remains OFF. Policy: 100% of any future revenue reinvested in growth. Morpho Labs now subsidiary of non-profit Morpho Association. V2 launching 2026. Grew to 1.4M users, $13B deposits.'
                 }
             },
             {
@@ -515,7 +732,7 @@
                 defillamaFeesId: 'meteora',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Fee Revenue Share: MET stakers earn protocol revenue from trading fees (~$3.9M daily fees, 26% of Solana DEX volume). Unique "Liquidity Distributor" airdrop gives recipients LP positions that earn fees while gradually selling. 48% supply unlocked at TGE with 6-year team vesting.'
+                    mechanism: 'Staking + Buybacks: MET stakers earn protocol fees and governance rights. Q4 2025: $10M USDC buyback (2.3% of supply) from $12M quarterly revenue. ~$150M annualized revenue. 48% circulating at TGE, team 18% vests over 6 years. DLMM v2 and DAMM v2 updates live.'
                 }
             },
             {
@@ -524,7 +741,7 @@
                 defillamaFeesId: 'jupiter',
                 revenueShare: {
                     status: 'inactive',
-                    mechanism: 'Buyback (Under Review): 50% of protocol fees go to JUP buybacks, locked for 3 years. Spent ~$70M in 2025 but price dropped 89% due to 150% supply increase from unlocks. Program effectiveness questioned; may pivot to staking rewards (~25% APY) or protocol asset model instead.'
+                    mechanism: 'Buyback Under Review: $70M spent on buybacks in 2025, but price dropped 89% due to 150% supply increase. Founder proposed ending buybacks, redirecting to user incentives. ASR staking: 50M JUP + 75% launchpad fees quarterly. 53M JUP unlocking monthly through June 2026.'
                 }
             },
             {
@@ -533,7 +750,7 @@
                 defillamaFeesId: 'ethena',
                 revenueShare: {
                     status: 'active',
-                    mechanism: 'Fee Switch + sUSDe Yield: Fee switch approved late 2025 directs protocol revenue to sENA stakers (expected 5-15% of revenue). sUSDe holders earn ~6-19% APY from ETH staking + perpetual funding rates. $890M in ENA buybacks committed in 2025.'
+                    mechanism: 'Fee Switch + Buybacks: Fee switch approved, activating Q1 2026 (5-15% of revenue to sENA stakers, 4.5-34% APY). $890M in ENA buybacks committed 2025. sUSDe yields 6-19% APY. $14.5B TVL, $666M fees, 811K users across 24 networks.'
                 }
             },
             {
@@ -542,7 +759,7 @@
                 defillamaFeesId: 'wormhole',
                 revenueShare: {
                     status: 'inactive',
-                    mechanism: 'W 2.0 Strategic Reserve: On-chain and off-chain protocol revenue flows to Wormhole Reserve. Stakers earn 4% base yield (from existing supply, not inflation) + boosted rewards for Portal users. Note: Yields are emissions-based, not direct revenue rights. 10B max supply capped.'
+                    mechanism: 'W 2.0 Strategic Reserve: On-chain + off-chain protocol revenue flows to Wormhole Reserve. Target 4% base staking yield (no inflation, 10B max supply). Portal users earn boosted yields. Fee switches and monetization planned for 2026. Bi-weekly unlocks since Oct 2025.'
                 }
             }
         ];
@@ -552,23 +769,24 @@
             return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url);
         }
 
-        // Chart colors for each protocol (matching Blockworks style)
+        // Chart colors for each protocol - fully opaque, saturated colors
         const chartColors = [
-            '#FF9500', // Orange (like BTC)
-            '#627EEA', // Blue (like ETH)
-            '#9945FF', // Purple (like SOL)
-            '#F0B90B', // Yellow (like BNB)
-            '#00D395', // Green (like HYPE)
-            '#14F195', // Light green (like SUI)
-            '#00BFFF', // Cyan (like INJ)
-            '#FF69B4', // Pink (like BONK)
-            '#4169E1', // Royal blue (like IP)
-            '#FF6347', // Tomato
-            '#20B2AA', // Light sea green
-            '#DDA0DD'  // Plum
+            '#E07800', // Deep Orange
+            '#4A6DD9', // Strong Blue
+            '#7B2FD9', // Deep Purple
+            '#D9A000', // Gold
+            '#00B37D', // Emerald Green
+            '#00C76A', // Bright Green
+            '#0099CC', // Deep Cyan
+            '#E04A8A', // Deep Pink
+            '#3355CC', // Royal Blue
+            '#E04030', // Strong Red
+            '#158A7A', // Teal
+            '#B060B0'  // Deep Plum
         ];
 
         let feesChart = null;
+        let perpChart = null;
 
         // Display name overrides for protocols where DefiLlama returns different names
         const displayNameOverrides = {
@@ -578,6 +796,111 @@
 
         // Protocols to show by default in the chart (others will be hidden but clickable in legend)
         const defaultVisibleProtocols = ['Hyperliquid', 'Pump.fun', 'Aave', 'Uniswap', 'Meteora'];
+
+        // Perpetual DEX configuration with token and airdrop info
+        const perpDexs = [
+            {
+                id: 'hyperliquid',
+                name: 'Hyperliquid',
+                volumeId: 'hyperliquid',
+                oiId: 'hyperliquid',
+                feesId: 'hyperliquid',
+                coingeckoId: 'hyperliquid',
+                hasToken: true,
+                tokenSymbol: 'HYPE',
+                logo: 'https://assets.coingecko.com/coins/images/50885/small/hyperliquid.jpeg',
+                chain: 'Hyperliquid L1',
+                funding: 'Self-funded',
+                backers: 'No VC funding - 100% community-owned, bootstrapped by team',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Season 2 Active: Genesis airdrop (Nov 2024) distributed 310M HYPE to 94K users (~$1.2B value). 38.8% of supply reserved for future rewards. Earn by trading, holding strict-list tokens (HYPE, PURR, HFUN), staking via LSTs, and providing HyperEVM liquidity.'
+                }
+            },
+            {
+                id: 'lighter',
+                name: 'Lighter',
+                volumeId: 'lighter',
+                oiId: 'lighter',
+                feesId: 'lighter',
+                coingeckoId: 'lighter',
+                hasToken: true,
+                tokenSymbol: 'LIT',
+                logo: 'https://assets.coingecko.com/coins/images/53617/small/lighter.jpg',
+                chain: 'Ethereum L2',
+                funding: '$68M',
+                backers: 'Founders Fund, Ribbit Capital, Haun Ventures',
+                airdrop: {
+                    status: 'completed',
+                    mechanism: 'TGE Complete (Dec 2025): 25% of supply airdropped to Season 1 & 2 point farmers. 12.5M points converted to LIT. Zero fees for most traders, 5ms finality. Team tokens locked 1yr + 3yr vest.'
+                }
+            },
+            {
+                id: 'ostium',
+                name: 'Ostium',
+                volumeId: 'ostium',
+                oiId: 'ostium',
+                feesId: 'ostium',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/ostium.png',
+                chain: 'Arbitrum',
+                funding: '$27.8M total',
+                backers: 'General Catalyst, Jump Crypto, Coinbase Ventures, Wintermute, GSR, Balaji Srinivasan, SIG, LocalGlobe',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Season 2 Active: Points program launched March 2025. 10M points retroactive + 500K weekly. Trade RWAs (S&P500, Gold, Forex) with up to 200x leverage. Earn via trading volume, referrals, and liquidity provision. No token announced yet.'
+                }
+            },
+            {
+                id: 'variational',
+                name: 'Variational',
+                volumeId: 'variational',
+                oiId: 'variational',
+                feesId: 'variational',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: 'VAR',
+                logo: 'https://icons.llama.fi/variational.png',
+                chain: 'Arbitrum',
+                funding: '$11.8M',
+                backers: 'Bain Capital Crypto, Coinbase Ventures, Dragonfly, Peak XV, Mirana, Hack VC',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Omni Points Live: 50% of VAR allocated to community. 150K points weekly until Q3 2026. 30%+ revenue for buyback & burn. Zero fees, loss refunds available. US/Canada restricted.'
+                }
+            },
+            {
+                id: 'nado',
+                name: 'Nado',
+                volumeId: 'nado',
+                oiId: 'nado',
+                feesId: 'nado',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: 'INK',
+                logo: 'https://icons.llama.fi/nado.png',
+                chain: 'Ink (Kraken L2)',
+                funding: 'Kraken-backed',
+                backers: 'Kraken (internal project by former Kraken engineers)',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Private Alpha: Built by Kraken team on Ink L2. Points convert 100% to $INK at TGE. Unified margin for spot + perps, up to 20x leverage. Apply via waitlist - prioritizes experienced traders. Fees: 1.5bp taker, -0.8bp maker rebate.'
+                }
+            }
+        ];
+
+        const perpChartColors = [
+            '#00D395', // Green (Hyperliquid)
+            '#627EEA', // Blue (Lighter)
+            '#FF9500', // Orange (Ostium)
+            '#9945FF', // Purple (Variational)
+            '#FF69B4'  // Pink (Nado)
+        ];
+
+        let currentPerpChartDays = 7;
+        let currentPerpChartType = 'volume'; // 'volume', 'oi', or 'fees'
 
 
         async function fetchHistoricalFees(days = 7) {
@@ -623,6 +946,16 @@
             return historicalData;
         }
 
+        // Bar style: Sharp corners, fully opaque
+        function getBarStyle(color) {
+            return {
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 0,
+                borderRadius: 0,
+            };
+        }
+
         function renderChart(historicalData) {
             const ctx = document.getElementById('feesChart').getContext('2d');
 
@@ -647,14 +980,12 @@
                 const values = sortedDates.map(date => dataMap.get(date) || null);
                 const latestValue = values[values.length - 1] || 0;
                 const isVisible = defaultVisibleProtocols.includes(protocol.name);
+                const barStyle = getBarStyle(protocol.color, ctx);
 
                 return {
                     label: protocol.name,
                     data: values,
-                    backgroundColor: protocol.color,
-                    borderColor: protocol.color,
-                    borderWidth: 1,
-                    borderRadius: 4,
+                    ...barStyle,
                     latestValue: latestValue,
                     hidden: !isVisible  // Hide protocols not in default list
                 };
@@ -794,29 +1125,560 @@
         }
 
         let currentChartDays = 7;
+        let currentChartType = 'fees'; // 'fees' or 'holders'
 
-        async function updateChart(days = 7) {
+        // Fetch historical holders revenue data
+        async function fetchHistoricalHoldersRevenue(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < protocols.length; i++) {
+                const protocol = protocols[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${protocol.defillamaFeesId}?dataType=dailyHoldersRevenue`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+
+                        // Add today's data if available
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
+
+                        const displayName = displayNameOverrides[protocol.defillamaFeesId] || data.name || protocol.defillamaFeesId;
+
+                        historicalData.push({
+                            name: displayName,
+                            data: filteredDays,
+                            color: chartColors[i % chartColors.length]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching holders revenue for ${protocol.defillamaFeesId}:`, e);
+                }
+            }
+
+            return historicalData;
+        }
+
+        async function updateChart(days = 7, chartType = currentChartType) {
             currentChartDays = days;
-            const historicalData = await fetchHistoricalFees(days);
+            currentChartType = chartType;
+
+            let historicalData;
+            if (chartType === 'holders') {
+                historicalData = await fetchHistoricalHoldersRevenue(days);
+            } else {
+                historicalData = await fetchHistoricalFees(days);
+            }
+
             if (historicalData.length > 0) {
                 renderChart(historicalData);
             }
+
             // Update subtitle
-            document.getElementById('chartSubtitle').textContent =
-                `Daily fees generated by each protocol over the last ${days} days`;
+            const subtitleText = chartType === 'holders'
+                ? `Daily revenue to token holders (buybacks, distributions) over the last ${days} days`
+                : `Daily fees generated by each protocol over the last ${days} days`;
+            document.getElementById('chartSubtitle').textContent = subtitleText;
         }
 
-        // Time selector functionality
+        // Time selector and chart tab functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const timeButtons = document.querySelectorAll('.time-selector button');
+            // Protocol Revenue chart - time selector
+            const timeButtons = document.querySelectorAll('#protocol-revenue .time-selector button');
             timeButtons.forEach(btn => {
                 btn.addEventListener('click', async function() {
                     timeButtons.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     const days = parseInt(this.dataset.days);
-                    await updateChart(days);
+                    await updateChart(days, currentChartType);
                 });
             });
+
+            // Protocol Revenue chart - tab switching
+            const chartTabs = document.querySelectorAll('.chart-tab[data-chart]');
+            chartTabs.forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    chartTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.chart;
+                    await updateChart(currentChartDays, chartType);
+                });
+            });
+
+            // Perpetual DEXs chart - time selector
+            const perpTimeButtons = document.querySelectorAll('#perpTimeSelector button');
+            perpTimeButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    perpTimeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const days = parseInt(this.dataset.days);
+                    await updatePerpChart(days, currentPerpChartType);
+                });
+            });
+
+            // Perpetual DEXs chart - tab switching
+            const perpChartTabs = document.querySelectorAll('.chart-tab[data-perp-chart]');
+            perpChartTabs.forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    perpChartTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.perpChart;
+                    await updatePerpChart(currentPerpChartDays, chartType);
+                });
+            });
+        });
+
+        // Fetch perpetual DEX volume data
+        async function fetchPerpVolume(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < perpDexs.length; i++) {
+                const dex = perpDexs[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/derivatives/${dex.volumeId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
+                        historicalData.push({
+                            name: dex.name,
+                            data: filteredDays,
+                            color: perpChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching volume for ${dex.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Fetch perpetual DEX open interest data
+        async function fetchPerpOI(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < perpDexs.length; i++) {
+                const dex = perpDexs[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/open-interest/${dex.oiId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
+                        historicalData.push({
+                            name: dex.name,
+                            data: filteredDays,
+                            color: perpChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching OI for ${dex.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Fetch perpetual DEX fees data
+        async function fetchPerpFees(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < perpDexs.length; i++) {
+                const dex = perpDexs[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${dex.feesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
+                        historicalData.push({
+                            name: dex.name,
+                            data: filteredDays,
+                            color: perpChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching fees for ${dex.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Render perpetual DEX chart
+        function renderPerpChart(historicalData) {
+            const ctx = document.getElementById('perpChart').getContext('2d');
+
+            const allDates = new Set();
+            historicalData.forEach(protocol => {
+                protocol.data.forEach(([timestamp]) => {
+                    allDates.add(timestamp);
+                });
+            });
+
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            // All 5 perp DEXs visible by default
+            const datasetsWithValues = historicalData.map(protocol => {
+                const dataMap = new Map(protocol.data);
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values[values.length - 1] || 0;
+
+                return {
+                    label: protocol.name,
+                    data: values,
+                    backgroundColor: protocol.color,
+                    borderColor: protocol.color,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    latestValue: latestValue,
+                    hidden: false
+                };
+            });
+
+            datasetsWithValues.sort((a, b) => b.latestValue - a.latestValue);
+
+            if (perpChart) {
+                perpChart.destroy();
+            }
+
+            perpChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: { size: 11, weight: '500' },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    return datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            strokeStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                meta.hidden = !meta.hidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return context.dataset.label + ': N/A';
+                                    if (value >= 1e9) return context.dataset.label + ': $' + (value / 1e9).toFixed(2) + 'B';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { color: '#999999', font: { size: 11 }, maxRotation: 0 }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: { color: '#f0f0f0', drawBorder: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    if (value >= 1e9) return '$' + (value / 1e9).toFixed(0) + 'B';
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update perpetual DEX chart
+        async function updatePerpChart(days = 7, chartType = currentPerpChartType) {
+            currentPerpChartDays = days;
+            currentPerpChartType = chartType;
+
+            let historicalData;
+            if (chartType === 'oi') {
+                historicalData = await fetchPerpOI(days);
+            } else if (chartType === 'fees') {
+                historicalData = await fetchPerpFees(days);
+            } else {
+                historicalData = await fetchPerpVolume(days);
+            }
+
+            if (historicalData.length > 0) {
+                renderPerpChart(historicalData);
+            }
+
+            const subtitles = {
+                'volume': `Daily trading volume by protocol over the last ${days} days`,
+                'oi': `Daily open interest by protocol over the last ${days} days`,
+                'fees': `Daily fees generated by protocol over the last ${days} days`
+            };
+            document.getElementById('perpChartSubtitle').textContent = subtitles[chartType];
+        }
+
+        // Create perp DEX card
+        function createPerpCard(dex, coinData, feesData) {
+            const hasToken = dex.hasToken;
+            const priceChangeClass = (coinData?.price_change_percentage_24h || 0) >= 0 ? 'positive' : 'negative';
+            const priceChangeSign = (coinData?.price_change_percentage_24h || 0) >= 0 ? '+' : '';
+
+            const airdropStatusLabel = dex.airdrop.status === 'active' ? 'Active' :
+                                       dex.airdrop.status === 'completed' ? 'Completed' : 'None';
+
+            const tokenSection = hasToken ? `
+                <div class="price-section" style="margin-left: auto;">
+                    <span class="price">${formatPrice(coinData?.current_price)}</span>
+                    ${coinData?.price_change_percentage_24h !== undefined ? `
+                        <span class="price-change ${priceChangeClass}">
+                            ${priceChangeSign}${coinData.price_change_percentage_24h?.toFixed(2)}%
+                        </span>
+                    ` : ''}
+                </div>
+            ` : `
+                <div style="margin-left: auto;">
+                    <span class="price-change" style="background: rgba(255, 193, 7, 0.2); color: #ffc107;">No Token Yet</span>
+                </div>
+            `;
+
+            const marketDataSection = hasToken ? `
+                <div class="metrics-section">
+                    <h3>Market Data <span class="source">CoinGecko</span></h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Market Cap</div>
+                            <div class="metric-value">${formatUSD(coinData?.market_cap)}</div>
+                            <div class="metric-subtext">Rank #${coinData?.market_cap_rank || 'N/A'}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">24h Volume</div>
+                            <div class="metric-value">${formatUSD(coinData?.total_volume)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">FDV</div>
+                            <div class="metric-value">${formatUSD(coinData?.fully_diluted_valuation)}</div>
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="metrics-section">
+                    <h3>Platform Info</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Chain</div>
+                            <div class="metric-value" style="font-size: 0.85rem;">${dex.chain}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Token</div>
+                            <div class="metric-value">${dex.tokenSymbol ? '$' + dex.tokenSymbol : 'TBA'}</div>
+                            <div class="metric-subtext">Upcoming</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Status</div>
+                            <div class="metric-value" style="font-size: 0.85rem;">Pre-TGE</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${dex.logo}" alt="${dex.name}" onerror="this.style.display='none'">
+                        <div>
+                            <div class="name">${dex.name}</div>
+                            <div class="symbol">${hasToken ? dex.tokenSymbol : dex.chain}</div>
+                        </div>
+                        ${tokenSection}
+                    </div>
+
+                    <div class="metrics-container">
+                        ${marketDataSection}
+
+                        <div class="metrics-section">
+                            <h3>Trading Stats <span class="source">DefiLlama</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Fees (24h)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total24h)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Fees (30d)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total30d)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">P/F Ratio</div>
+                                    <div class="metric-value">${(coinData?.market_cap && feesData?.total24h) ? (coinData.market_cap / (feesData.total24h * 365)).toFixed(1) + 'x' : '<span class="na">N/A</span>'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-section">
+                            <h3>Funding & Backers</h3>
+                            <div class="metrics-grid" style="grid-template-columns: 1fr 2fr;">
+                                <div class="metric">
+                                    <div class="metric-label">Raised</div>
+                                    <div class="metric-value" style="font-size: 0.95rem;">${dex.funding || 'N/A'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Backers</div>
+                                    <div class="metric-value" style="font-size: 0.7rem; line-height: 1.4; font-weight: 400;">${dex.backers || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="revenue-share" style="border-color: ${dex.airdrop.status === 'active' ? 'rgba(100, 255, 218, 0.2)' : dex.airdrop.status === 'completed' ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 71, 87, 0.2)'}; background: ${dex.airdrop.status === 'active' ? 'rgba(100, 255, 218, 0.05)' : dex.airdrop.status === 'completed' ? 'rgba(0, 255, 136, 0.05)' : 'rgba(255, 71, 87, 0.05)'};">
+                            <h3 style="color: ${dex.airdrop.status === 'active' ? '#64ffda' : dex.airdrop.status === 'completed' ? '#00ff88' : '#ff4757'};">Airdrop / Points Program</h3>
+                            <span class="status ${dex.airdrop.status}">${airdropStatusLabel}</span>
+                            <p>${dex.airdrop.mechanism}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch perp DEX dashboard data
+        async function fetchPerpDashboardData() {
+            const perpDashboard = document.getElementById('perpDashboard');
+
+            // Fetch CoinGecko data for tokens that exist
+            const tokenIds = perpDexs.filter(d => d.coingeckoId).map(d => d.coingeckoId).join(',');
+            let coinDataMap = {};
+
+            if (tokenIds) {
+                try {
+                    const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        data.forEach(coin => {
+                            coinDataMap[coin.id] = coin;
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error fetching CoinGecko data for perp DEXs:', e);
+                }
+            }
+
+            // Fetch fees data from DefiLlama for each DEX
+            const feesDataMap = {};
+            for (const dex of perpDexs) {
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${dex.feesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        feesDataMap[dex.id] = {
+                            total24h: data.total24h,
+                            total48hto24h: data.total48hto24h,
+                            total7d: data.total7d,
+                            total30d: data.total30d
+                        };
+                    }
+                } catch (e) {
+                    console.error(`Error fetching fees for ${dex.name}:`, e);
+                }
+            }
+
+            // Create cards
+            const cards = perpDexs.map(dex => {
+                const coinData = coinDataMap[dex.coingeckoId] || null;
+                const feesData = feesDataMap[dex.id] || null;
+                return createPerpCard(dex, coinData, feesData);
+            }).join('');
+
+            perpDashboard.innerHTML = cards;
+        }
+
+        // Initialize perp chart and dashboard when tab is clicked
+        let perpChartInitialized = false;
+        document.querySelector('[data-tab="perpetual-dexs"]').addEventListener('click', async function() {
+            if (!perpChartInitialized) {
+                perpChartInitialized = true;
+                await Promise.all([
+                    updatePerpChart(7, 'volume'),
+                    fetchPerpDashboardData()
+                ]);
+            }
         });
 
         function formatUSD(num) {
