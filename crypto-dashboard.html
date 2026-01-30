@@ -844,15 +844,15 @@
             }
         ];
 
-        // CORS proxy - needed for both DefiLlama and CoinGecko when opening file locally
+        // CORS proxy using allorigins (more reliable than codetabs)
         function proxyUrl(url) {
-            return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url);
+            return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
         }
 
         // Check if we're running from file:// (local) or http(s):// (server)
         const isLocalFile = window.location.protocol === 'file:';
 
-        // Helper to fetch with optional proxy (use proxy for local file, direct for server)
+        // Helper to fetch - always use proxy for local, direct for server
         async function fetchWithProxy(url) {
             if (isLocalFile) {
                 return fetch(proxyUrl(url));
