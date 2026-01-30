@@ -1038,6 +1038,7 @@
                 id: 'polymarket',
                 name: 'Polymarket',
                 volumeId: 'polymarket',
+                oiId: 'polymarket',
                 feesId: 'polymarket',
                 coingeckoId: null,
                 hasToken: false,
@@ -1052,6 +1053,7 @@
                 id: 'kalshi',
                 name: 'Kalshi',
                 volumeId: 'kalshi',
+                oiId: 'kalshi',
                 feesId: null, // No fees data on DefiLlama
                 coingeckoId: null,
                 hasToken: false,
@@ -1066,6 +1068,7 @@
                 id: 'myriad-markets',
                 name: 'Myriad Markets',
                 volumeId: 'myriad-markets',
+                oiId: 'myriad-markets',
                 feesId: 'myriad-markets',
                 coingeckoId: null,
                 hasToken: false,
@@ -1927,17 +1930,17 @@
 
             for (let i = 0; i < predictionMarkets.length; i++) {
                 const market = predictionMarkets[i];
+                if (!market.oiId) continue; // Skip if no OI endpoint
                 try {
-                    // Try to get TVL/liquidity as proxy for open interest
-                    const response = await fetch(proxyUrl(`https://api.llama.fi/protocol/${market.id}`));
+                    // Use the open-interest endpoint (works for Kalshi)
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/open-interest/${market.oiId}`));
                     if (response.ok) {
                         const data = await response.json();
-                        // Get TVL history
-                        const tvlData = data.tvl || [];
-                        const filteredDays = tvlData
-                            .filter(item => item.date >= startTimestamp && item.date <= todayTimestamp)
-                            .map(item => [item.date, item.totalLiquidityUSD]);
-
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
                         if (filteredDays.length > 0) {
                             historicalData.push({
                                 name: market.name,
