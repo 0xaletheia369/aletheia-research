@@ -887,9 +887,12 @@
             return fetch(proxyUrlCodeTabs(url));
         }
 
-        // Legacy aliases
+        // Legacy aliases - proxyUrl only uses proxy when running from file://
         function proxyUrl(url) {
-            return proxyUrlAllOrigins(url);
+            if (isLocalFile) {
+                return proxyUrlAllOrigins(url);
+            }
+            return url; // Direct URL when on server (GitHub Pages, etc.)
         }
 
         async function fetchWithProxy(url) {
