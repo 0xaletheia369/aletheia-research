@@ -1670,8 +1670,17 @@
 
             if (tokenIds) {
                 console.log('Fetching CoinGecko data for perp DEXs:', tokenIds);
+                const cgUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`;
                 try {
-                    const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`);
+                    // Try direct call first (works when served from web server)
+                    let response = await fetch(cgUrl);
+
+                    // If CORS blocked (file:// origin), use proxy
+                    if (!response.ok && response.type === 'opaque') {
+                        console.log('Using proxy for CoinGecko...');
+                        response = await fetch(proxyUrl(cgUrl));
+                    }
+
                     console.log('CoinGecko perp response status:', response.status);
                     if (response.ok) {
                         const data = await response.json();
@@ -1679,21 +1688,24 @@
                         data.forEach(coin => {
                             coinDataMap[coin.id] = coin;
                         });
-                    } else if (response.status === 429) {
-                        console.warn('CoinGecko rate limited, waiting 30s and retrying...');
-                        await new Promise(resolve => setTimeout(resolve, 30000));
-                        const retryResponse = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`);
-                        if (retryResponse.ok) {
-                            const data = await retryResponse.json();
+                    } else {
+                        console.error('CoinGecko perp response not OK:', response.status);
+                    }
+                } catch (e) {
+                    // CORS error - try with proxy
+                    console.log('Direct CoinGecko failed, trying proxy...', e.message);
+                    try {
+                        const response = await fetch(proxyUrl(cgUrl));
+                        if (response.ok) {
+                            const data = await response.json();
+                            console.log('CoinGecko perp data received via proxy:', data.length, 'coins');
                             data.forEach(coin => {
                                 coinDataMap[coin.id] = coin;
                             });
                         }
-                    } else {
-                        console.error('CoinGecko perp response not OK:', response.status, await response.text());
+                    } catch (e2) {
+                        console.error('Error fetching CoinGecko data for perp DEXs (even with proxy):', e2);
                     }
-                } catch (e) {
-                    console.error('Error fetching CoinGecko data for perp DEXs:', e);
                 }
             }
 
@@ -1842,7 +1854,6 @@
         }
 
         // Fetch all CoinGecko data in a single batched request with fallback
-        // CoinGecko has proper CORS headers so we call directly (no proxy needed)
         async function fetchAllCoinGeckoData() {
             const allIds = protocols.map(p => p.coingeckoId).join(',');
             const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${allIds}&sparkline=false`;
@@ -1852,13 +1863,11 @@
             console.log('Requesting IDs:', allIds);
 
             try {
-                const response = await fetch(url);  // Direct call - CoinGecko allows CORS
+                // Try direct call first
+                let response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json();
                     console.log('CoinGecko response count:', data.length);
-                    console.log('Returned coin IDs:', data.map(c => c.id));
-
-                    // Create a map for quick lookup
                     data.forEach(coin => {
                         coinMap[coin.id] = coin;
                     });
@@ -1866,7 +1875,20 @@
                     console.error('CoinGecko response not OK:', response.status, response.statusText);
                 }
             } catch (e) {
-                console.error('Error fetching CoinGecko data:', e);
+                // CORS error - try with proxy
+                console.log('Direct CoinGecko failed, trying proxy...', e.message);
+                try {
+                    const response = await fetch(proxyUrl(url));
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('CoinGecko response count (via proxy):', data.length);
+                        data.forEach(coin => {
+                            coinMap[coin.id] = coin;
+                        });
+                    }
+                } catch (e2) {
+                    console.error('Error fetching CoinGecko data (even with proxy):', e2);
+                }
             }
 
             // Check which protocols are missing and try fetching them individually
@@ -1877,12 +1899,12 @@
             if (missingIds.length > 0) {
                 console.warn('Missing CoinGecko data for:', missingIds);
 
-                // Try fetching missing coins individually with longer delay
+                // Try fetching missing coins individually with proxy
                 for (const id of missingIds) {
                     try {
-                        await new Promise(resolve => setTimeout(resolve, 500)); // Longer delay to avoid rate limit
+                        await new Promise(resolve => setTimeout(resolve, 500));
                         const singleUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&sparkline=false`;
-                        const singleResponse = await fetch(singleUrl);  // Direct call
+                        const singleResponse = await fetch(proxyUrl(singleUrl));
                         if (singleResponse.ok) {
                             const singleData = await singleResponse.json();
                             if (singleData.length > 0) {
