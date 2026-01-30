@@ -547,9 +547,9 @@
             }
         ];
 
-        // CORS proxy - always use it for browser compatibility
+        // CORS proxy - only needed for DefiLlama (CoinGecko has proper CORS headers)
         function proxyUrl(url) {
-            return 'https://corsproxy.io/?' + encodeURIComponent(url);
+            return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url);
         }
 
         // Chart colors for each protocol (matching Blockworks style)
@@ -932,6 +932,7 @@
         }
 
         // Fetch all CoinGecko data in a single batched request with fallback
+        // CoinGecko has proper CORS headers so we call directly (no proxy needed)
         async function fetchAllCoinGeckoData() {
             const allIds = protocols.map(p => p.coingeckoId).join(',');
             const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${allIds}&sparkline=false`;
@@ -941,7 +942,7 @@
             console.log('Requesting IDs:', allIds);
 
             try {
-                const response = await fetch(proxyUrl(url));
+                const response = await fetch(url);  // Direct call - CoinGecko allows CORS
                 if (response.ok) {
                     const data = await response.json();
                     console.log('CoinGecko response count:', data.length);
@@ -966,12 +967,12 @@
             if (missingIds.length > 0) {
                 console.warn('Missing CoinGecko data for:', missingIds);
 
-                // Try fetching missing coins individually with small delay
+                // Try fetching missing coins individually with longer delay
                 for (const id of missingIds) {
                     try {
-                        await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to avoid rate limit
+                        await new Promise(resolve => setTimeout(resolve, 500)); // Longer delay to avoid rate limit
                         const singleUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&sparkline=false`;
-                        const singleResponse = await fetch(proxyUrl(singleUrl));
+                        const singleResponse = await fetch(singleUrl);  // Direct call
                         if (singleResponse.ok) {
                             const singleData = await singleResponse.json();
                             if (singleData.length > 0) {
@@ -1060,11 +1061,11 @@
                     protocols.map(protocol => fetchProtocolData(protocol, coinDataMap))
                 );
 
-                // Check if we got any data
-                const hasData = results.some(r => r.coinData || r.protocolData || r.feesData);
+                // Check if we got any data (at least fees data from DefiLlama)
+                const hasData = results.some(r => r.feesData);
 
                 if (!hasData) {
-                    throw new Error('No data received');
+                    throw new Error('No data received from APIs. Please try refreshing in a few seconds.');
                 }
 
                 // Sort results: first by revenue share status (active > inactive > none), then by 24h fees
