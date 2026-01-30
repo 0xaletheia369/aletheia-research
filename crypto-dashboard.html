@@ -2233,49 +2233,57 @@
         // Fetch prediction market dashboard data
         async function fetchPredDashboardData() {
             const predDashboard = document.getElementById('predDashboard');
+            console.log('Fetching prediction market dashboard data...');
 
             // Fetch volume and fees data
             const volumeDataMap = {};
             const feesDataMap = {};
 
-            for (const market of predictionMarkets) {
-                try {
-                    const volResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`));
-                    if (volResponse.ok) {
-                        const data = await volResponse.json();
-                        volumeDataMap[market.id] = {
-                            total24h: data.total24h,
-                            total30d: data.total30d
-                        };
-                    }
-                } catch (e) {
-                    console.error(`Error fetching volume for ${market.name}:`, e);
-                }
-
-                if (market.feesId) {
+            try {
+                for (const market of predictionMarkets) {
                     try {
-                        const feesResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${market.feesId}`));
-                        if (feesResponse.ok) {
-                            const data = await feesResponse.json();
-                            feesDataMap[market.id] = {
+                        const volResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`));
+                        if (volResponse.ok) {
+                            const data = await volResponse.json();
+                            volumeDataMap[market.id] = {
                                 total24h: data.total24h,
                                 total30d: data.total30d
                             };
+                            console.log(`Got volume for ${market.name}:`, data.total24h);
                         }
                     } catch (e) {
-                        console.error(`Error fetching fees for ${market.name}:`, e);
+                        console.error(`Error fetching volume for ${market.name}:`, e);
+                    }
+
+                    if (market.feesId) {
+                        try {
+                            const feesResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${market.feesId}`));
+                            if (feesResponse.ok) {
+                                const data = await feesResponse.json();
+                                feesDataMap[market.id] = {
+                                    total24h: data.total24h,
+                                    total30d: data.total30d
+                                };
+                            }
+                        } catch (e) {
+                            console.error(`Error fetching fees for ${market.name}:`, e);
+                        }
                     }
                 }
+
+                // Create cards
+                const cards = predictionMarkets.map(market => {
+                    const volumeData = volumeDataMap[market.id] || null;
+                    const feesData = feesDataMap[market.id] || null;
+                    return createPredCard(market, volumeData, feesData);
+                }).join('');
+
+                predDashboard.innerHTML = cards;
+                console.log('Prediction market dashboard updated');
+            } catch (e) {
+                console.error('Error in fetchPredDashboardData:', e);
+                predDashboard.innerHTML = '<div class="error">Error loading prediction market data. Check console for details.</div>';
             }
-
-            // Create cards
-            const cards = predictionMarkets.map(market => {
-                const volumeData = volumeDataMap[market.id] || null;
-                const feesData = feesDataMap[market.id] || null;
-                return createPredCard(market, volumeData, feesData);
-            }).join('');
-
-            predDashboard.innerHTML = cards;
         }
 
         function formatUSD(num) {
