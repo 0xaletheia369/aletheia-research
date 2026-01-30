@@ -662,9 +662,12 @@
     </div>
 
     <script>
-        // Early declarations for chart initialization flags
+        // Early declarations for chart initialization flags and state
         let perpChartInitialized = false;
         let predChartInitialized = false;
+        let currentPredChartDays = 7;
+        let currentPredChartType = 'volume';
+        let predChart = null;
 
         // Tab navigation with URL hash persistence
         function switchToTab(tabId) {
@@ -1068,7 +1071,7 @@
                 id: 'myriad-markets',
                 name: 'Myriad Markets',
                 volumeId: 'myriad-markets',
-                oiId: 'myriad-markets',
+                oiId: null, // No OI data available
                 feesId: 'myriad-markets',
                 coingeckoId: null,
                 hasToken: false,
@@ -1086,11 +1089,6 @@
             '#3B82F6', // Blue (Kalshi)
             '#10B981'  // Green (Myriad)
         ];
-
-        let predChart = null;
-        let currentPredChartDays = 7;
-        let currentPredChartType = 'volume';
-
 
         async function fetchHistoricalFees(days = 7) {
             const historicalData = [];
