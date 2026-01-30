@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aletheia Research</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #ffffff;
+        }
+
+        .header .sources {
+            color: #ffffff;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+
+        .header .sources a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .last-updated {
+            color: #ffffff;
+            font-size: 0.7rem;
+            margin-top: 5px;
+        }
+
+        .twitter-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .twitter-link:hover {
+            opacity: 1;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .card-header .name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .card-header .symbol {
+            color: #8892b0;
+            font-size: 0.8rem;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .price {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .price-change {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .price-change.positive {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .price-change.negative {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .metrics-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metrics-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .metrics-section h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metrics-section h3 .source {
+            font-size: 0.65rem;
+            color: #8892b0;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .metric {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+        }
+
+        .metric-label {
+            color: #8892b0;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .metric-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .metric-value.positive {
+            color: #00ff88;
+        }
+
+        .metric-value.negative {
+            color: #ff4757;
+        }
+
+        .metric-subtext {
+            font-size: 0.6rem;
+            color: #8892b0;
+            margin-top: 2px;
+        }
+
+        .revenue-share {
+            background: rgba(100, 255, 218, 0.05);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .revenue-share h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64ffda;
+            margin-bottom: 10px;
+        }
+
+        .revenue-share .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .revenue-share .status.active {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .revenue-share .status.inactive {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .revenue-share .status.none {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .revenue-share p {
+            font-size: 0.75rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #8892b0;
+            grid-column: 1 / -1;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-msg {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: #ff4757;
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
+
+        .refresh-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #8892b0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .na {
+            color: #555;
+        }
+
+        .chart-container {
+            max-width: 1600px;
+            margin: 0 auto 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .chart-title-section h2 {
+            font-size: 1rem;
+            color: #1a1a1a;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .chart-title-section .chart-subtitle {
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 400;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+        }
+
+        .time-selector {
+            display: flex;
+            gap: 0;
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 3px;
+        }
+
+        .time-selector button {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            border-radius: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .time-selector button:hover {
+            color: #333;
+        }
+
+        .time-selector button.active {
+            background: #ffffff;
+            color: #1a1a1a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .price {
+                font-size: 1.4rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Aletheia Research</h1>
+        <a href="https://x.com/0xaletheia369" target="_blank" class="twitter-link">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            @0xaletheia369
+        </a>
+        <p class="sources">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko</a> & <a href="https://defillama.com" target="_blank">DefiLlama</a></p>
+        <p class="last-updated" id="lastUpdated"></p>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-header">
+            <div class="chart-title-section">
+                <h2>Protocol Fees: 24h Fees by Protocol</h2>
+                <p class="chart-subtitle" id="chartSubtitle">Daily fees generated by each protocol over the last 7 days</p>
+            </div>
+            <div class="time-selector">
+                <button data-days="7" class="active">7D</button>
+                <button data-days="14">14D</button>
+                <button data-days="30">30D</button>
+            </div>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="feesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading data...</p>
+        </div>
+    </div>
+
+    <button class="refresh-btn" id="refreshBtn" onclick="fetchData()">Refresh Data</button>
+
+    <script>
+        // Protocol configuration with revenue sharing info
+        const protocols = [
+            {
+                coingeckoId: 'hyperliquid',
+                defillamaId: 'hyperliquid',
+                defillamaFeesId: 'hyperliquid',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Buyback & Burn: 97% of trading fees are used to buy back HYPE tokens via the Assistance Fund. Bought tokens are permanently burned, reducing supply and creating price pressure. Daily buybacks routinely exceed $5-7M.'
+                }
+            },
+            {
+                coingeckoId: 'aerodrome-finance',
+                defillamaId: 'aerodrome',
+                defillamaFeesId: 'aerodrome',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Vote-Escrow Model: Lock AERO for 1-4 years to get veAERO. 100% of trading fees are distributed weekly to veAERO holders based on their voted pools. Longer locks = more voting power and rewards. Includes anti-dilution rebasing.'
+                }
+            },
+            {
+                coingeckoId: 'aave',
+                defillamaId: 'aave',
+                defillamaFeesId: 'aave',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Buyback + Anti-GHO: $1M/week AAVE buyback program started April 2025. Stakers also earn Anti-GHO tokens (80% to stkAAVE, 20% to stkBPT) which offset GHO debt 1:1 or convert to stkGHO. Safety Module staking earns rewards but accepts slashing risk.'
+                }
+            },
+            {
+                coingeckoId: 'uniswap',
+                defillamaId: 'uniswap',
+                defillamaFeesId: 'uniswap',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Fee Switch + Burn: UNIfication proposal activated late 2025. Protocol fees (0.05% on v2, 1/4-1/6 of LP fees on v3) flow to TokenJar. UNI holders can burn tokens to withdraw equivalent value from the jar. 100M UNI retroactive treasury burn executed.'
+                }
+            },
+            {
+                coingeckoId: 'pump-fun',
+                defillamaId: 'pump',
+                defillamaFeesId: 'pump',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Revenue Share: 25% of protocol revenue planned to be shared with PUMP token holders. Additionally, 50% of PumpSwap trading fees go to token creators (0.05% per trade). Platform charges 1% transaction fee on swaps.'
+                }
+            },
+            {
+                coingeckoId: 'jito-governance-token',
+                defillamaId: 'jito',
+                defillamaFeesId: 'jito',
+                revenueShare: {
+                    status: 'inactive',
+                    mechanism: 'Limited Revenue Share: JTO is primarily a governance token. JTO stakers receive 0.15% of MEV tips via TipRouter. Main value accrual is through JitoSOL (liquid staking token) which earns base staking + MEV yields (1-3% extra). No direct protocol revenue share to JTO.'
+                }
+            },
+            {
+                coingeckoId: 'raydium',
+                defillamaId: 'raydium',
+                defillamaFeesId: 'raydium',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Buyback + Staking: 12% of ALL trading fees go to RAY buybacks (~$190M cumulative, 25% of supply). Staking RAY earns ~4.5% APR from protocol fees. Buybacks create constant buy pressure and reduce circulating supply over time.'
+                }
+            },
+            {
+                coingeckoId: 'morpho',
+                defillamaId: 'morpho',
+                defillamaFeesId: 'morpho',
+                revenueShare: {
+                    status: 'none',
+                    mechanism: 'No Revenue Share: Morpho currently charges no protocol fees (fee switch is OFF). MORPHO is purely a governance token for voting on protocol changes, treasury allocation, and potential future fee activation. No staking rewards or buybacks.'
+                }
+            },
+            {
+                coingeckoId: 'meteora',
+                defillamaId: 'meteora',
+                defillamaFeesId: 'meteora',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Fee Revenue Share: MET stakers earn protocol revenue from trading fees (~$3.9M daily fees, 26% of Solana DEX volume). Unique "Liquidity Distributor" airdrop gives recipients LP positions that earn fees while gradually selling. 48% supply unlocked at TGE with 6-year team vesting.'
+                }
+            },
+            {
+                coingeckoId: 'jupiter-exchange-solana',
+                defillamaId: 'jupiter',
+                defillamaFeesId: 'jupiter',
+                revenueShare: {
+                    status: 'inactive',
+                    mechanism: 'Buyback (Under Review): 50% of protocol fees go to JUP buybacks, locked for 3 years. Spent ~$70M in 2025 but price dropped 89% due to 150% supply increase from unlocks. Program effectiveness questioned; may pivot to staking rewards (~25% APY) or protocol asset model instead.'
+                }
+            },
+            {
+                coingeckoId: 'ethena',
+                defillamaId: 'ethena',
+                defillamaFeesId: 'ethena',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Fee Switch + sUSDe Yield: Fee switch approved late 2025 directs protocol revenue to sENA stakers (expected 5-15% of revenue). sUSDe holders earn ~6-19% APY from ETH staking + perpetual funding rates. $890M in ENA buybacks committed in 2025.'
+                }
+            },
+            {
+                coingeckoId: 'wormhole',
+                defillamaId: 'wormhole',
+                defillamaFeesId: 'wormhole',
+                revenueShare: {
+                    status: 'inactive',
+                    mechanism: 'W 2.0 Strategic Reserve: On-chain and off-chain protocol revenue flows to Wormhole Reserve. Stakers earn 4% base yield (from existing supply, not inflation) + boosted rewards for Portal users. Note: Yields are emissions-based, not direct revenue rights. 10B max supply capped.'
+                }
+            }
+        ];
+
+        // CORS proxy - always use it for browser compatibility
+        function proxyUrl(url) {
+            return 'https://corsproxy.io/?' + encodeURIComponent(url);
+        }
+
+        // Chart colors for each protocol (matching Blockworks style)
+        const chartColors = [
+            '#FF9500', // Orange (like BTC)
+            '#627EEA', // Blue (like ETH)
+            '#9945FF', // Purple (like SOL)
+            '#F0B90B', // Yellow (like BNB)
+            '#00D395', // Green (like HYPE)
+            '#14F195', // Light green (like SUI)
+            '#00BFFF', // Cyan (like INJ)
+            '#FF69B4', // Pink (like BONK)
+            '#4169E1', // Royal blue (like IP)
+            '#FF6347', // Tomato
+            '#20B2AA', // Light sea green
+            '#DDA0DD'  // Plum
+        ];
+
+        let feesChart = null;
+
+        // Display name overrides for protocols where DefiLlama returns different names
+        const displayNameOverrides = {
+            'wormhole': 'Wormhole',
+            'pump': 'Pump.fun'
+        };
+
+        // Protocols to show by default in the chart (others will be hidden but clickable in legend)
+        const defaultVisibleProtocols = ['Hyperliquid', 'Pump.fun', 'Aave', 'Uniswap', 'Meteora'];
+
+
+        async function fetchHistoricalFees(days = 7) {
+            const historicalData = [];
+            // Get today's timestamp at midnight UTC
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+
+            // Calculate the start timestamp (7 days ago at midnight UTC)
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < protocols.length; i++) {
+                const protocol = protocols[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${protocol.defillamaFeesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+
+                        // Filter to only include data within our date range (excluding today)
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
+
+                        // Always use total24h for today's data (more accurate than historical which may be partial)
+                        if (data.total24h) {
+                            filteredDays.push([todayTimestamp, data.total24h]);
+                        }
+
+                        // Use override name if available, otherwise use API name
+                        const displayName = displayNameOverrides[protocol.defillamaFeesId] || data.name || protocol.defillamaFeesId;
+
+                        historicalData.push({
+                            name: displayName,
+                            data: filteredDays,
+                            color: chartColors[i % chartColors.length]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching historical fees for ${protocol.defillamaFeesId}:`, e);
+                }
+            }
+
+            return historicalData;
+        }
+
+        function renderChart(historicalData) {
+            const ctx = document.getElementById('feesChart').getContext('2d');
+
+            // Get all unique dates from all protocols
+            const allDates = new Set();
+            historicalData.forEach(protocol => {
+                protocol.data.forEach(([timestamp]) => {
+                    allDates.add(timestamp);
+                });
+            });
+
+            // Sort dates and format labels
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            // Create datasets - sorted by latest value for legend order
+            const datasetsWithValues = historicalData.map(protocol => {
+                const dataMap = new Map(protocol.data);
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values[values.length - 1] || 0;
+                const isVisible = defaultVisibleProtocols.includes(protocol.name);
+
+                return {
+                    label: protocol.name,
+                    data: values,
+                    backgroundColor: protocol.color,
+                    borderColor: protocol.color,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    latestValue: latestValue,
+                    hidden: !isVisible  // Hide protocols not in default list
+                };
+            });
+
+            // Sort: visible protocols first (by value), then hidden protocols (by value)
+            datasetsWithValues.sort((a, b) => {
+                if (a.hidden !== b.hidden) {
+                    return a.hidden ? 1 : -1;  // Visible first
+                }
+                return b.latestValue - a.latestValue;  // Then by value
+            });
+
+            // Destroy existing chart if it exists
+            if (feesChart) {
+                feesChart.destroy();
+            }
+
+            feesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                // Custom styling: dim hidden items instead of striking through
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    return datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            strokeStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,  // Never show as "hidden" style (no strikethrough)
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                // Toggle visibility
+                                meta.hidden = !meta.hidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return context.dataset.label + ': N/A';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#999999',
+                                font: {
+                                    size: 11
+                                },
+                                maxRotation: 0
+                            }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: {
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#999999',
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        let currentChartDays = 7;
+
+        async function updateChart(days = 7) {
+            currentChartDays = days;
+            const historicalData = await fetchHistoricalFees(days);
+            if (historicalData.length > 0) {
+                renderChart(historicalData);
+            }
+            // Update subtitle
+            document.getElementById('chartSubtitle').textContent =
+                `Daily fees generated by each protocol over the last ${days} days`;
+        }
+
+        // Time selector functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const timeButtons = document.querySelectorAll('.time-selector button');
+            timeButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    timeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const days = parseInt(this.dataset.days);
+                    await updateChart(days);
+                });
+            });
+        });
+
+        function formatUSD(num) {
+            if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
+            num = Number(num);
+            if (num >= 1e9) return '$' + (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return '$' + (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return '$' + (num / 1e3).toFixed(2) + 'K';
+            return '$' + num.toFixed(2);
+        }
+
+        function formatPrice(price) {
+            if (price === null || price === undefined || isNaN(price)) return '<span class="na">N/A</span>';
+            price = Number(price);
+            if (price >= 1) return '$' + price.toFixed(2);
+            if (price >= 0.01) return '$' + price.toFixed(4);
+            return '$' + price.toFixed(6);
+        }
+
+        function formatSupply(num) {
+            if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
+            num = Number(num);
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return num.toFixed(0);
+        }
+
+        function formatPercent(num) {
+            if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
+            num = Number(num);
+            const sign = num >= 0 ? '+' : '';
+            const colorClass = num >= 0 ? 'positive' : 'negative';
+            return `<span class="${colorClass}">${sign}${num.toFixed(2)}%</span>`;
+        }
+
+        function createCard(coinData, protocolData, feesData, revenueShare) {
+            const priceChangeClass = (coinData?.price_change_percentage_24h || 0) >= 0 ? 'positive' : 'negative';
+            const priceChangeSign = (coinData?.price_change_percentage_24h || 0) >= 0 ? '+' : '';
+
+            let feesChange = null;
+            if (feesData?.total24h && feesData?.total48hto24h) {
+                feesChange = ((feesData.total24h - feesData.total48hto24h) / feesData.total48hto24h) * 100;
+            }
+
+            const statusLabel = revenueShare.status === 'active' ? 'Active' :
+                               revenueShare.status === 'inactive' ? 'Limited' : 'None';
+
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${coinData?.image || ''}" alt="${coinData?.name || 'Protocol'}">
+                        <div>
+                            <div class="name">${coinData?.name || protocolData?.name || 'Unknown'}</div>
+                            <div class="symbol">${(coinData?.symbol || '').toUpperCase()}</div>
+                        </div>
+                        <div class="price-section" style="margin-left: auto;">
+                            <span class="price">${formatPrice(coinData?.current_price)}</span>
+                            ${coinData?.price_change_percentage_24h !== undefined ? `
+                                <span class="price-change ${priceChangeClass}">
+                                    ${priceChangeSign}${coinData.price_change_percentage_24h?.toFixed(2)}%
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="metrics-container">
+                        <div class="metrics-section">
+                            <h3>Market Data <span class="source">CoinGecko</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Market Cap</div>
+                                    <div class="metric-value">${formatUSD(coinData?.market_cap)}</div>
+                                    <div class="metric-subtext">Rank #${coinData?.market_cap_rank || 'N/A'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">24h Volume</div>
+                                    <div class="metric-value">${formatUSD(coinData?.total_volume)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">FDV</div>
+                                    <div class="metric-value">${formatUSD(coinData?.fully_diluted_valuation)}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-section">
+                            <h3>Fees & Revenue <span class="source">DefiLlama</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Fees (24h)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total24h)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Fees (30d)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total30d)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">P/F Ratio</div>
+                                    <div class="metric-value">${(coinData?.market_cap && feesData?.total24h) ? (coinData.market_cap / (feesData.total24h * 365)).toFixed(1) + 'x' : '<span class="na">N/A</span>'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="revenue-share">
+                            <h3>Token Value Accrual</h3>
+                            <span class="status ${revenueShare.status}">${statusLabel}</span>
+                            <p>${revenueShare.mechanism}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch all CoinGecko data in a single batched request with fallback
+        async function fetchAllCoinGeckoData() {
+            const allIds = protocols.map(p => p.coingeckoId).join(',');
+            const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${allIds}&sparkline=false`;
+            const coinMap = {};
+
+            console.log('CoinGecko request URL:', url);
+            console.log('Requesting IDs:', allIds);
+
+            try {
+                const response = await fetch(proxyUrl(url));
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('CoinGecko response count:', data.length);
+                    console.log('Returned coin IDs:', data.map(c => c.id));
+
+                    // Create a map for quick lookup
+                    data.forEach(coin => {
+                        coinMap[coin.id] = coin;
+                    });
+                } else {
+                    console.error('CoinGecko response not OK:', response.status, response.statusText);
+                }
+            } catch (e) {
+                console.error('Error fetching CoinGecko data:', e);
+            }
+
+            // Check which protocols are missing and try fetching them individually
+            const missingIds = protocols
+                .filter(p => !coinMap[p.coingeckoId])
+                .map(p => p.coingeckoId);
+
+            if (missingIds.length > 0) {
+                console.warn('Missing CoinGecko data for:', missingIds);
+
+                // Try fetching missing coins individually with small delay
+                for (const id of missingIds) {
+                    try {
+                        await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to avoid rate limit
+                        const singleUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&sparkline=false`;
+                        const singleResponse = await fetch(proxyUrl(singleUrl));
+                        if (singleResponse.ok) {
+                            const singleData = await singleResponse.json();
+                            if (singleData.length > 0) {
+                                coinMap[singleData[0].id] = singleData[0];
+                                console.log(`Successfully fetched missing coin: ${id}`);
+                            }
+                        }
+                    } catch (e) {
+                        console.error(`Failed to fetch individual coin ${id}:`, e);
+                    }
+                }
+            }
+
+            return coinMap;
+        }
+
+        async function fetchProtocolData(protocol, coinDataMap) {
+            const results = {
+                coinData: coinDataMap[protocol.coingeckoId] || null,
+                protocolData: null,
+                feesData: null,
+                revenueShare: protocol.revenueShare
+            };
+
+            const urls = {
+                protocol: `https://api.llama.fi/protocol/${protocol.defillamaId}`,
+                fees: `https://api.llama.fi/summary/fees/${protocol.defillamaFeesId}`
+            };
+
+            const [protocolResponse, feesResponse] = await Promise.allSettled([
+                fetch(proxyUrl(urls.protocol)),
+                fetch(proxyUrl(urls.fees))
+            ]);
+
+            if (protocolResponse.status === 'fulfilled' && protocolResponse.value.ok) {
+                const data = await protocolResponse.value.json();
+                results.protocolData = {
+                    name: data.name,
+                    tvl: data.tvl,
+                    change_1d: data.change_1d,
+                    change_7d: data.change_7d,
+                    change_1m: data.change_1m,
+                    mcapTvl: data.mcapTvl,
+                    category: data.category,
+                    chains: data.chains,
+                    listedAt: data.listedAt,
+                    staking: data.staking,
+                    pool2: data.pool2
+                };
+            }
+
+            if (feesResponse.status === 'fulfilled' && feesResponse.value.ok) {
+                const data = await feesResponse.value.json();
+                results.feesData = {
+                    total24h: data.total24h,
+                    total48hto24h: data.total48hto24h,
+                    total7d: data.total7d,
+                    total30d: data.total30d,
+                    totalAllTime: data.totalAllTime
+                };
+            }
+
+            return results;
+        }
+
+        async function fetchData() {
+            const dashboard = document.getElementById('dashboard');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const lastUpdated = document.getElementById('lastUpdated');
+
+            refreshBtn.disabled = true;
+            refreshBtn.textContent = 'Loading...';
+
+            dashboard.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Fetching data from CoinGecko & DefiLlama...</p>
+                </div>
+            `;
+
+            try {
+                // Fetch all CoinGecko data in one request
+                const coinDataMap = await fetchAllCoinGeckoData();
+
+                const results = await Promise.all(
+                    protocols.map(protocol => fetchProtocolData(protocol, coinDataMap))
+                );
+
+                // Check if we got any data
+                const hasData = results.some(r => r.coinData || r.protocolData || r.feesData);
+
+                if (!hasData) {
+                    throw new Error('No data received');
+                }
+
+                // Sort results: first by revenue share status (active > inactive > none), then by 24h fees
+                results.sort((a, b) => {
+                    // Status priority: active = 0, inactive = 1, none = 2
+                    const statusOrder = { active: 0, inactive: 1, none: 2 };
+                    const statusA = statusOrder[a.revenueShare.status] ?? 2;
+                    const statusB = statusOrder[b.revenueShare.status] ?? 2;
+
+                    if (statusA !== statusB) {
+                        return statusA - statusB;
+                    }
+
+                    // Within same status, sort by 24h fees (highest first)
+                    const feesA = a.feesData?.total24h || 0;
+                    const feesB = b.feesData?.total24h || 0;
+                    return feesB - feesA;
+                });
+
+                const cards = results.map(result =>
+                    createCard(result.coinData, result.protocolData, result.feesData, result.revenueShare)
+                ).join('');
+
+                dashboard.innerHTML = cards;
+                lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+                // Update the chart
+                await updateChart();
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                dashboard.innerHTML = `
+                    <div class="error-msg">
+                        <p><strong>Error loading data</strong></p>
+                        <p>Error: ${error.message}</p>
+                        <p style="margin-top: 10px;">Check browser console (F12) for details.</p>
+                    </div>
+                `;
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = 'Refresh Data';
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, 120000);
+    </script>
+</body>
+</html>

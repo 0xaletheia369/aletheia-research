@@ -1669,13 +1669,28 @@
             let coinDataMap = {};
 
             if (tokenIds) {
+                console.log('Fetching CoinGecko data for perp DEXs:', tokenIds);
                 try {
                     const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`);
+                    console.log('CoinGecko perp response status:', response.status);
                     if (response.ok) {
                         const data = await response.json();
+                        console.log('CoinGecko perp data received:', data.length, 'coins');
                         data.forEach(coin => {
                             coinDataMap[coin.id] = coin;
                         });
+                    } else if (response.status === 429) {
+                        console.warn('CoinGecko rate limited, waiting 30s and retrying...');
+                        await new Promise(resolve => setTimeout(resolve, 30000));
+                        const retryResponse = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`);
+                        if (retryResponse.ok) {
+                            const data = await retryResponse.json();
+                            data.forEach(coin => {
+                                coinDataMap[coin.id] = coin;
+                            });
+                        }
+                    } else {
+                        console.error('CoinGecko perp response not OK:', response.status, await response.text());
                     }
                 } catch (e) {
                     console.error('Error fetching CoinGecko data for perp DEXs:', e);
