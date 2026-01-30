@@ -662,6 +662,10 @@
     </div>
 
     <script>
+        // Early declarations for chart initialization flags
+        let perpChartInitialized = false;
+        let predChartInitialized = false;
+
         // Tab navigation with URL hash persistence
         function switchToTab(tabId) {
             // Update active tab button
@@ -1044,7 +1048,6 @@
         let predChart = null;
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
-        let predChartInitialized = false;
 
 
         async function fetchHistoricalFees(days = 7) {
@@ -1840,9 +1843,6 @@
 
             perpDashboard.innerHTML = cards;
         }
-
-        // Track perp chart initialization
-        let perpChartInitialized = false;
 
         // ===== PREDICTION MARKETS FUNCTIONS =====
 
