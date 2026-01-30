@@ -806,9 +806,20 @@
             }
         ];
 
-        // CORS proxy - only needed for DefiLlama (CoinGecko has proper CORS headers)
+        // CORS proxy - needed for both DefiLlama and CoinGecko when opening file locally
         function proxyUrl(url) {
-            return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url);
+            return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url);
+        }
+
+        // Check if we're running from file:// (local) or http(s):// (server)
+        const isLocalFile = window.location.protocol === 'file:';
+
+        // Helper to fetch with optional proxy (use proxy for local file, direct for server)
+        async function fetchWithProxy(url) {
+            if (isLocalFile) {
+                return fetch(proxyUrl(url));
+            }
+            return fetch(url);
         }
 
         // Chart colors for each protocol - fully opaque, saturated colors
@@ -1672,15 +1683,7 @@
                 console.log('Fetching CoinGecko data for perp DEXs:', tokenIds);
                 const cgUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`;
                 try {
-                    // Try direct call first (works when served from web server)
-                    let response = await fetch(cgUrl);
-
-                    // If CORS blocked (file:// origin), use proxy
-                    if (!response.ok && response.type === 'opaque') {
-                        console.log('Using proxy for CoinGecko...');
-                        response = await fetch(proxyUrl(cgUrl));
-                    }
-
+                    const response = await fetchWithProxy(cgUrl);
                     console.log('CoinGecko perp response status:', response.status);
                     if (response.ok) {
                         const data = await response.json();
@@ -1692,20 +1695,7 @@
                         console.error('CoinGecko perp response not OK:', response.status);
                     }
                 } catch (e) {
-                    // CORS error - try with proxy
-                    console.log('Direct CoinGecko failed, trying proxy...', e.message);
-                    try {
-                        const response = await fetch(proxyUrl(cgUrl));
-                        if (response.ok) {
-                            const data = await response.json();
-                            console.log('CoinGecko perp data received via proxy:', data.length, 'coins');
-                            data.forEach(coin => {
-                                coinDataMap[coin.id] = coin;
-                            });
-                        }
-                    } catch (e2) {
-                        console.error('Error fetching CoinGecko data for perp DEXs (even with proxy):', e2);
-                    }
+                    console.error('Error fetching CoinGecko data for perp DEXs:', e);
                 }
             }
 
@@ -1853,7 +1843,7 @@
             `;
         }
 
-        // Fetch all CoinGecko data in a single batched request with fallback
+        // Fetch all CoinGecko data in a single batched request
         async function fetchAllCoinGeckoData() {
             const allIds = protocols.map(p => p.coingeckoId).join(',');
             const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${allIds}&sparkline=false`;
@@ -1863,8 +1853,7 @@
             console.log('Requesting IDs:', allIds);
 
             try {
-                // Try direct call first
-                let response = await fetch(url);
+                const response = await fetchWithProxy(url);
                 if (response.ok) {
                     const data = await response.json();
                     console.log('CoinGecko response count:', data.length);
@@ -1875,20 +1864,7 @@
                     console.error('CoinGecko response not OK:', response.status, response.statusText);
                 }
             } catch (e) {
-                // CORS error - try with proxy
-                console.log('Direct CoinGecko failed, trying proxy...', e.message);
-                try {
-                    const response = await fetch(proxyUrl(url));
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('CoinGecko response count (via proxy):', data.length);
-                        data.forEach(coin => {
-                            coinMap[coin.id] = coin;
-                        });
-                    }
-                } catch (e2) {
-                    console.error('Error fetching CoinGecko data (even with proxy):', e2);
-                }
+                console.error('Error fetching CoinGecko data:', e);
             }
 
             // Check which protocols are missing and try fetching them individually
@@ -1899,12 +1875,12 @@
             if (missingIds.length > 0) {
                 console.warn('Missing CoinGecko data for:', missingIds);
 
-                // Try fetching missing coins individually with proxy
+                // Try fetching missing coins individually
                 for (const id of missingIds) {
                     try {
                         await new Promise(resolve => setTimeout(resolve, 500));
                         const singleUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&sparkline=false`;
-                        const singleResponse = await fetch(proxyUrl(singleUrl));
+                        const singleResponse = await fetchWithProxy(singleUrl);
                         if (singleResponse.ok) {
                             const singleData = await singleResponse.json();
                             if (singleData.length > 0) {
