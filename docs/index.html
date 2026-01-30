@@ -669,6 +669,61 @@
         let currentPredChartType = 'volume';
         let predChart = null;
 
+        // Prediction Markets configuration (declared early for tab switching)
+        const predictionMarkets = [
+            {
+                id: 'polymarket',
+                name: 'Polymarket',
+                volumeId: 'polymarket',
+                oiId: 'polymarket',
+                feesId: 'polymarket',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/polymarket.png',
+                chain: 'Polygon',
+                description: 'Leading decentralized prediction market on Polygon. Largest by volume with $100M+ daily trading.',
+                funding: '$70M Series B',
+                backers: 'Founders Fund, 1confirmation, Dragonfly'
+            },
+            {
+                id: 'kalshi',
+                name: 'Kalshi',
+                volumeId: 'kalshi',
+                oiId: 'kalshi',
+                feesId: null,
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/kalshi.png',
+                chain: 'Off-Chain (Regulated)',
+                description: 'CFTC-regulated prediction market. First legal US exchange for event contracts.',
+                funding: '$130M Series B',
+                backers: 'Sequoia, SV Angel, Charles Schwab'
+            },
+            {
+                id: 'myriad-markets',
+                name: 'Myriad Markets',
+                volumeId: 'myriad-markets',
+                oiId: null,
+                feesId: 'myriad-markets',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/myriad-markets.png',
+                chain: 'Sui',
+                description: 'Prediction market on Sui blockchain. Focuses on news and event betting.',
+                funding: 'Seed Round',
+                backers: 'Mysten Labs ecosystem'
+            }
+        ];
+
+        const predChartColors = [
+            '#8B5CF6', // Purple (Polymarket)
+            '#3B82F6', // Blue (Kalshi)
+            '#10B981'  // Green (Myriad)
+        ];
+
         // Tab navigation with URL hash persistence
         function switchToTab(tabId) {
             // Update active tab button
@@ -1034,61 +1089,6 @@
 
         let currentPerpChartDays = 7;
         let currentPerpChartType = 'volume'; // 'volume', 'oi', or 'fees'
-
-        // Prediction Markets configuration
-        const predictionMarkets = [
-            {
-                id: 'polymarket',
-                name: 'Polymarket',
-                volumeId: 'polymarket',
-                oiId: 'polymarket',
-                feesId: 'polymarket',
-                coingeckoId: null,
-                hasToken: false,
-                tokenSymbol: null,
-                logo: 'https://icons.llama.fi/polymarket.png',
-                chain: 'Polygon',
-                description: 'Leading decentralized prediction market on Polygon. Largest by volume with $100M+ daily trading.',
-                funding: '$70M Series B',
-                backers: 'Founders Fund, 1confirmation, Dragonfly'
-            },
-            {
-                id: 'kalshi',
-                name: 'Kalshi',
-                volumeId: 'kalshi',
-                oiId: 'kalshi',
-                feesId: null, // No fees data on DefiLlama
-                coingeckoId: null,
-                hasToken: false,
-                tokenSymbol: null,
-                logo: 'https://icons.llama.fi/kalshi.png',
-                chain: 'Off-Chain (Regulated)',
-                description: 'CFTC-regulated prediction market. First legal US exchange for event contracts.',
-                funding: '$130M Series B',
-                backers: 'Sequoia, SV Angel, Charles Schwab'
-            },
-            {
-                id: 'myriad-markets',
-                name: 'Myriad Markets',
-                volumeId: 'myriad-markets',
-                oiId: null, // No OI data available
-                feesId: 'myriad-markets',
-                coingeckoId: null,
-                hasToken: false,
-                tokenSymbol: null,
-                logo: 'https://icons.llama.fi/myriad-markets.png',
-                chain: 'Sui',
-                description: 'Prediction market on Sui blockchain. Focuses on news and event betting.',
-                funding: 'Seed Round',
-                backers: 'Mysten Labs ecosystem'
-            }
-        ];
-
-        const predChartColors = [
-            '#8B5CF6', // Purple (Polymarket)
-            '#3B82F6', // Blue (Kalshi)
-            '#10B981'  // Green (Myriad)
-        ];
 
         async function fetchHistoricalFees(days = 7) {
             const historicalData = [];
