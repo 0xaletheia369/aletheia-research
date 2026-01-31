@@ -503,12 +503,117 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* Home page styles */
+        .home-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .home-hero {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .home-hero h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .home-tagline {
+            font-size: 1.2rem;
+            color: #8892b0;
+            font-weight: 400;
+        }
+
+        .home-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .home-nav-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home-nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .home-nav-card .home-nav-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .home-nav-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .home-nav-card p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .home-nav-card.coming-soon-card {
+            opacity: 0.7;
+        }
+
+        .home-nav-card.coming-soon-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(139, 92, 246, 0.15);
+            color: #8B5CF6;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .logo-link:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .home-nav-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .home-nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .home-hero h2 {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-left">
-            <h1>Aletheia Research</h1>
+            <h1 class="logo-link" onclick="switchToTab('home')" style="cursor: pointer;">Aletheia Research</h1>
             <a href="https://x.com/0xaletheia369" target="_blank" class="twitter-link">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 @0xaletheia369
@@ -521,7 +626,7 @@
     </div>
 
     <div class="tab-nav">
-        <button class="tab-btn active" data-tab="protocol-revenue">Protocol Revenue</button>
+        <button class="tab-btn" data-tab="protocol-revenue">Protocol Revenue</button>
         <button class="tab-btn" data-tab="perpetual-dexs">Perpetual DEXs</button>
         <button class="tab-btn" data-tab="prediction-markets">Prediction Markets</button>
         <button class="tab-btn" data-tab="rwas">RWAs</button>
@@ -530,8 +635,53 @@
         <button class="tab-btn" data-tab="price">Price</button>
     </div>
 
+    <!-- Home Tab -->
+    <div class="tab-content active" id="home">
+        <div class="home-container">
+            <div class="home-hero">
+                <h2>Welcome to Aletheia Research</h2>
+                <p class="home-tagline">Real-time crypto analytics and protocol insights</p>
+            </div>
+            <div class="home-nav-grid">
+                <div class="home-nav-card" onclick="switchToTab('protocol-revenue')">
+                    <div class="home-nav-icon">📊</div>
+                    <h3>Protocol Revenue</h3>
+                    <p>Track fees, revenue share, and token value accrual across top DeFi protocols</p>
+                </div>
+                <div class="home-nav-card" onclick="switchToTab('perpetual-dexs')">
+                    <div class="home-nav-icon">📈</div>
+                    <h3>Perpetual DEXs</h3>
+                    <p>Monitor volume, open interest, and fees on leading perpetual exchanges</p>
+                </div>
+                <div class="home-nav-card" onclick="switchToTab('prediction-markets')">
+                    <div class="home-nav-icon">🎯</div>
+                    <h3>Prediction Markets</h3>
+                    <p>Explore Polymarket, Kalshi, and Myriad Markets data</p>
+                </div>
+                <div class="home-nav-card coming-soon-card" onclick="switchToTab('rwas')">
+                    <div class="home-nav-icon">🏛️</div>
+                    <h3>RWAs</h3>
+                    <p>Real World Assets tokenization - Coming soon</p>
+                    <span class="coming-soon-badge">Soon</span>
+                </div>
+                <div class="home-nav-card coming-soon-card" onclick="switchToTab('etfs')">
+                    <div class="home-nav-icon">💰</div>
+                    <h3>ETFs</h3>
+                    <p>Crypto ETF flows and analytics - Coming soon</p>
+                    <span class="coming-soon-badge">Soon</span>
+                </div>
+                <div class="home-nav-card coming-soon-card" onclick="switchToTab('sentiment')">
+                    <div class="home-nav-icon">🧠</div>
+                    <h3>Sentiment</h3>
+                    <p>Market sentiment analysis - Coming soon</p>
+                    <span class="coming-soon-badge">Soon</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Protocol Revenue Tab -->
-    <div class="tab-content active" id="protocol-revenue">
+    <div class="tab-content" id="protocol-revenue">
         <div class="chart-container">
         <div class="chart-header">
             <div class="chart-title-section">
@@ -745,8 +895,12 @@
                 tabContent.classList.add('active');
             }
 
-            // Update URL hash (without triggering scroll)
-            history.replaceState(null, null, '#' + tabId);
+            // Update URL hash (without triggering scroll) - clear hash for home
+            if (tabId === 'home') {
+                history.replaceState(null, null, window.location.pathname);
+            } else {
+                history.replaceState(null, null, '#' + tabId);
+            }
 
             // Trigger perp chart initialization if switching to perpetual-dexs
             if (tabId === 'perpetual-dexs' && !perpChartInitialized) {
@@ -779,7 +933,7 @@
         function initTabFromHash() {
             const hash = window.location.hash.slice(1); // Remove the # symbol
             if (hash) {
-                const validTabs = ['protocol-revenue', 'perpetual-dexs', 'prediction-markets', 'rwas', 'etfs', 'sentiment', 'price'];
+                const validTabs = ['home', 'protocol-revenue', 'perpetual-dexs', 'prediction-markets', 'rwas', 'etfs', 'sentiment', 'price'];
                 if (validTabs.includes(hash)) {
                     switchToTab(hash);
                 }
