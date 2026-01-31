@@ -552,21 +552,22 @@
             return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url);
         }
 
-        // Chart colors for each protocol (matching Blockworks style)
-        const chartColors = [
-            '#FF9500', // Orange (like BTC)
-            '#627EEA', // Blue (like ETH)
-            '#9945FF', // Purple (like SOL)
-            '#F0B90B', // Yellow (like BNB)
-            '#00D395', // Green (like HYPE)
-            '#14F195', // Light green (like SUI)
-            '#00BFFF', // Cyan (like INJ)
-            '#FF69B4', // Pink (like BONK)
-            '#4169E1', // Royal blue (like IP)
-            '#FF6347', // Tomato
-            '#20B2AA', // Light sea green
-            '#DDA0DD'  // Plum
+        // Financial Times color palette
+        const ftColors = [
+            '#0A7B83', // Teal
+            '#9A1750', // Crimson
+            '#E8702A', // Orange
+            '#2E5FA1', // Blue
+            '#5E4B8B', // Purple
+            '#2D8E4F', // Green
+            '#D4A03C', // Gold
+            '#1E3A5F', // Navy
+            '#8B4513', // Brown
+            '#708090'  // Slate
         ];
+
+        // Use FT colors for all charts
+        const chartColors = ftColors;
 
         let feesChart = null;
 
