@@ -1888,6 +1888,7 @@
 
         // Fetch prediction market volume data
         async function fetchPredVolume(days = 7) {
+            console.log('fetchPredVolume called with days:', days);
             const historicalData = [];
             const today = new Date();
             today.setUTCHours(0, 0, 0, 0);
@@ -1897,14 +1898,19 @@
             for (let i = 0; i < predictionMarkets.length; i++) {
                 const market = predictionMarkets[i];
                 try {
-                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`));
+                    const url = proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`);
+                    console.log(`Fetching volume for ${market.name} from:`, url);
+                    const response = await fetch(url);
+                    console.log(`Response for ${market.name}:`, response.status, response.ok);
                     if (response.ok) {
                         const data = await response.json();
                         const chartData = data.totalDataChart || [];
+                        console.log(`${market.name} totalDataChart length:`, chartData.length);
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts < todayTimestamp);
                         if (data.total24h) {
                             filteredDays.push([todayTimestamp, data.total24h]);
                         }
+                        console.log(`${market.name} filtered data points:`, filteredDays.length);
                         historicalData.push({
                             name: market.name,
                             data: filteredDays,
@@ -1915,6 +1921,7 @@
                     console.error(`Error fetching volume for ${market.name}:`, e);
                 }
             }
+            console.log('fetchPredVolume returning:', historicalData.length, 'markets');
             return historicalData;
         }
 
@@ -1989,7 +1996,9 @@
 
         // Render prediction market chart
         function renderPredChart(historicalData) {
+            console.log('renderPredChart called with', historicalData.length, 'markets');
             const ctx = document.getElementById('predChart').getContext('2d');
+            console.log('Canvas context obtained:', !!ctx);
 
             const allDates = new Set();
             historicalData.forEach(market => {
@@ -2125,6 +2134,7 @@
                     }
                 }
             });
+            console.log('Prediction chart created successfully');
         }
 
         // Update prediction market chart
