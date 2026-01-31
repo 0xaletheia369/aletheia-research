@@ -536,36 +536,37 @@
         }
 
         .home-nav-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 30px;
+            background: #F9F6F1;
+            border-radius: 4px;
+            padding: 24px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
         }
 
         .home-nav-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .home-nav-card .home-nav-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            background: #F5F1EA;
         }
 
         .home-nav-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
+            font-size: 1.2rem;
+            font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .home-nav-card p {
             font-size: 0.9rem;
             color: #666;
             line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .home-nav-card .view-data-link {
+            color: #0A7B83;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         .home-nav-card.coming-soon-card {
@@ -578,15 +579,9 @@
         }
 
         .coming-soon-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(139, 92, 246, 0.15);
-            color: #8B5CF6;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 12px;
+            color: #999;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         .logo-link:hover {
@@ -810,10 +805,6 @@
                 padding: 18px;
             }
 
-            .home-nav-card .home-nav-icon {
-                font-size: 2rem;
-            }
-
             .home-nav-card h3 {
                 font-size: 1.15rem;
             }
@@ -835,12 +826,10 @@
             <h1 class="logo-link" onclick="switchToTab('home')" style="cursor: pointer;">Aletheia Research</h1>
             <a href="https://x.com/0xaletheia369" target="_blank" class="twitter-link">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                @0xaletheia369
             </a>
         </div>
         <div class="header-right">
             <p class="sources">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko</a> & <a href="https://defillama.com" target="_blank">DefiLlama</a></p>
-            <p class="last-updated" id="lastUpdated"></p>
         </div>
     </div>
 
@@ -863,36 +852,34 @@
             </div>
             <div class="home-nav-grid">
                 <div class="home-nav-card" onclick="switchToTab('protocol-revenue')">
-                    <div class="home-nav-icon">📊</div>
                     <h3>Protocol Revenue</h3>
                     <p>Track fees, revenue share, and token value accrual across top DeFi protocols</p>
+                    <span class="view-data-link">View data &rarr;</span>
                 </div>
                 <div class="home-nav-card" onclick="switchToTab('perpetual-dexs')">
-                    <div class="home-nav-icon">📈</div>
                     <h3>Perpetual DEXs</h3>
                     <p>Monitor volume, open interest, and fees on leading perpetual exchanges</p>
+                    <span class="view-data-link">View data &rarr;</span>
                 </div>
                 <div class="home-nav-card" onclick="switchToTab('prediction-markets')">
-                    <div class="home-nav-icon">🎯</div>
                     <h3>Prediction Markets</h3>
                     <p>Explore Polymarket, Kalshi, and Myriad Markets data</p>
+                    <span class="view-data-link">View data &rarr;</span>
                 </div>
                 <div class="home-nav-card" onclick="switchToTab('rwas')">
-                    <div class="home-nav-icon">🏛️</div>
                     <h3>RWAs</h3>
                     <p>Real World Assets - Track TVL across tokenized treasuries, gold, and more</p>
+                    <span class="view-data-link">View data &rarr;</span>
                 </div>
                 <div class="home-nav-card coming-soon-card" onclick="switchToTab('etfs')">
-                    <div class="home-nav-icon">💰</div>
                     <h3>ETFs</h3>
-                    <p>Crypto ETF flows and analytics - Coming soon</p>
-                    <span class="coming-soon-badge">Soon</span>
+                    <p>Crypto ETF flows and analytics</p>
+                    <span class="coming-soon-badge">Coming soon</span>
                 </div>
                 <div class="home-nav-card coming-soon-card" onclick="switchToTab('sentiment')">
-                    <div class="home-nav-icon">🧠</div>
                     <h3>Sentiment</h3>
-                    <p>Market sentiment analysis - Coming soon</p>
-                    <span class="coming-soon-badge">Soon</span>
+                    <p>Market sentiment analysis</p>
+                    <span class="coming-soon-badge">Coming soon</span>
                 </div>
             </div>
         </div>
