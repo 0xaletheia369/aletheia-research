@@ -891,10 +891,25 @@
             }
         ];
 
+        // Global Financial Times style color palette for all charts
+        // No similar colors adjacent for visual distinction
+        const ftColors = [
+            '#0A7B83', // Teal
+            '#9A1750', // Crimson
+            '#E8702A', // Orange
+            '#2E5FA1', // Blue
+            '#5E4B8B', // Purple
+            '#2D8E4F', // Green
+            '#D4A03C', // Gold
+            '#1E3A5F', // Navy
+            '#8B4513', // Brown
+            '#708090'  // Slate
+        ];
+
         const predChartColors = [
-            '#3B82F6', // Blue (Polymarket)
-            '#10B981', // Green (Kalshi)
-            '#8B5CF6'  // Purple (Myriad)
+            ftColors[0], // Teal (Polymarket)
+            ftColors[1], // Crimson (Kalshi)
+            ftColors[2]  // Orange (Myriad)
         ];
 
         // Tab navigation with URL hash persistence
@@ -1149,21 +1164,8 @@
             return fetchDefiLlama(url);
         }
 
-        // Chart colors for each protocol - fully opaque, saturated colors
-        const chartColors = [
-            '#E07800', // Deep Orange
-            '#4A6DD9', // Strong Blue
-            '#7B2FD9', // Deep Purple
-            '#D9A000', // Gold
-            '#00B37D', // Emerald Green
-            '#00C76A', // Bright Green
-            '#0099CC', // Deep Cyan
-            '#E04A8A', // Deep Pink
-            '#3355CC', // Royal Blue
-            '#E04030', // Strong Red
-            '#158A7A', // Teal
-            '#B060B0'  // Deep Plum
-        ];
+        // Chart colors for each protocol - using FT palette
+        const chartColors = ftColors;
 
         let feesChart = null;
         let perpChart = null;
@@ -1272,11 +1274,11 @@
         ];
 
         const perpChartColors = [
-            '#00D395', // Green (Hyperliquid)
-            '#627EEA', // Blue (Lighter)
-            '#FF9500', // Orange (Ostium)
-            '#9945FF', // Purple (Variational)
-            '#FF69B4'  // Pink (Nado)
+            ftColors[0], // Teal (Hyperliquid)
+            ftColors[1], // Crimson
+            ftColors[2], // Orange (Ostium)
+            ftColors[3], // Blue
+            ftColors[4]  // Purple (Nado)
         ];
 
         let currentPerpChartDays = 7;
@@ -2348,19 +2350,8 @@
 
         // ========== RWA CHART FUNCTIONS ==========
 
-        // Colors for top 10 RWA protocols (no similar colors adjacent)
-        const rwaColors = [
-            '#000000', // Black
-            '#EF4444', // Red
-            '#14B8A6', // Teal
-            '#F97316', // Orange
-            '#8B5CF6', // Purple
-            '#22C55E', // Green
-            '#EC4899', // Pink
-            '#3B82F6', // Blue
-            '#EAB308', // Yellow
-            '#78350F'  // Brown
-        ];
+        // Colors for top 10 RWA protocols - using FT palette
+        const rwaColors = ftColors;
 
         // Default visible RWA protocols (top 5 by index)
         const defaultVisibleRwaCount = 5;
@@ -2703,19 +2694,8 @@
 
         // ========== STABLECOIN FUNCTIONS ==========
 
-        // Colors for top 10 stablecoins (no similar colors adjacent)
-        const stablecoinColors = [
-            '#000000', // Black
-            '#EF4444', // Red
-            '#14B8A6', // Teal
-            '#F97316', // Orange
-            '#8B5CF6', // Purple
-            '#22C55E', // Green
-            '#EC4899', // Pink
-            '#3B82F6', // Blue
-            '#EAB308', // Yellow
-            '#78350F'  // Brown
-        ];
+        // Colors for top 10 stablecoins (FT palette)
+        const stablecoinColors = ftColors;
 
         // Default visible stablecoins (top 5 by index)
         const defaultVisibleStablecoinCount = 5;
