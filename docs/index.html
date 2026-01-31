@@ -799,25 +799,6 @@
                 <canvas id="rwaChart"></canvas>
             </div>
         </div>
-
-        <div class="rwa-summary" style="max-width: 1600px; margin: 0 auto 30px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
-            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
-                <div class="metric-label">Total RWA TVL</div>
-                <div class="metric-value" id="rwaTotalTvl">Loading...</div>
-            </div>
-            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
-                <div class="metric-label">7D Change</div>
-                <div class="metric-value" id="rwa7dChange">Loading...</div>
-            </div>
-            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
-                <div class="metric-label">30D Change</div>
-                <div class="metric-value" id="rwa30dChange">Loading...</div>
-            </div>
-            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
-                <div class="metric-label">Protocols Tracked</div>
-                <div class="metric-value" id="rwaProtocolCount">10</div>
-            </div>
-        </div>
     </div>
 
     <!-- ETFs Tab -->
@@ -2687,45 +2668,6 @@
 
                 if (historicalData.length > 0) {
                     renderRwaChart(historicalData);
-
-                    // Update summary stats - use allProtocols for accurate total
-                    const allRwaProtocols = await fetchAllRwaProtocols();
-                    const totalTvl = allRwaProtocols.reduce((sum, p) => sum + (p.tvl || 0), 0);
-                    document.getElementById('rwaTotalTvl').textContent = '$' + (totalTvl / 1e9).toFixed(2) + 'B';
-
-                    // Update protocol count
-                    document.getElementById('rwaProtocolCount').textContent = allRwaProtocols.length;
-
-                    // Calculate 7d and 30d changes from the data
-                    const now = Math.floor(Date.now() / 1000);
-                    const sevenDaysAgo = now - (7 * 24 * 60 * 60);
-                    const thirtyDaysAgo = now - (30 * 24 * 60 * 60);
-
-                    let tvl7dAgo = 0;
-                    let tvl30dAgo = 0;
-
-                    historicalData.forEach(protocol => {
-                        const data = protocol.data;
-                        // Find closest value to 7 days ago
-                        const val7d = data.find(([ts]) => ts <= sevenDaysAgo);
-                        if (val7d) tvl7dAgo += val7d[1];
-                        // Find closest value to 30 days ago
-                        const val30d = data.find(([ts]) => ts <= thirtyDaysAgo);
-                        if (val30d) tvl30dAgo += val30d[1];
-                    });
-
-                    const change7d = tvl7dAgo > 0 ? ((totalTvl - tvl7dAgo) / tvl7dAgo * 100) : 0;
-                    const change30d = tvl30dAgo > 0 ? ((totalTvl - tvl30dAgo) / tvl30dAgo * 100) : 0;
-
-                    const change7dEl = document.getElementById('rwa7dChange');
-                    const change30dEl = document.getElementById('rwa30dChange');
-
-                    change7dEl.textContent = (change7d >= 0 ? '+' : '') + change7d.toFixed(1) + '%';
-                    change7dEl.className = 'metric-value ' + (change7d >= 0 ? 'positive' : 'negative');
-
-                    change30dEl.textContent = (change30d >= 0 ? '+' : '') + change30d.toFixed(1) + '%';
-                    change30dEl.className = 'metric-value ' + (change30d >= 0 ? 'positive' : 'negative');
-
                 } else {
                     console.warn('No RWA chart data received');
                 }
