@@ -1385,12 +1385,9 @@
             return fetch(url);
         }
 
-        // Helper to fetch CoinGecko APIs
+        // Helper to fetch CoinGecko APIs (always use proxy due to CORS)
         async function fetchCoinGecko(url) {
-            if (!isLocalFile) {
-                return fetch(url);
-            }
-            // For local, try allorigins first, then codetabs
+            // Try allorigins first, then codetabs
             try {
                 const response = await fetch(proxyUrlAllOrigins(url));
                 const text = await response.text();
@@ -3119,7 +3116,8 @@
             try {
                 // Fetch CoinGecko data for all RWA tokens
                 const ids = rwaTokens.map(t => t.coingeckoId).join(',');
-                const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=false`);
+                const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=false`;
+                const response = await fetchCoinGecko(url);
 
                 if (!response.ok) throw new Error('Failed to fetch RWA token data');
 
