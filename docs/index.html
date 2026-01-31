@@ -608,6 +608,225 @@
                 font-size: 1.8rem;
             }
         }
+
+        /* Mobile Responsiveness - 640px breakpoint (large phones/small tablets) */
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 15px 15px 20px 15px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .header-right {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .time-selector {
+                align-self: center;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .home-container {
+                padding: 25px 15px;
+            }
+
+            .home-hero {
+                margin-bottom: 30px;
+            }
+
+            .home-nav-card {
+                padding: 20px;
+            }
+        }
+
+        /* Mobile Responsiveness - 768px breakpoint */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+                padding: 15px;
+            }
+
+            .tab-nav {
+                flex-wrap: wrap;
+                padding: 0 10px;
+                gap: 5px;
+            }
+
+            .tab-btn {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                min-height: 44px;
+            }
+
+            .chart-wrapper {
+                height: 280px;
+            }
+
+            .card {
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            .refresh-btn {
+                min-height: 44px;
+                padding: 12px 25px;
+            }
+        }
+
+        /* Mobile Responsiveness - 480px breakpoint (primary mobile) */
+        @media (max-width: 480px) {
+            body {
+                font-size: 15px;
+                padding: 10px;
+            }
+
+            .header {
+                padding: 10px 10px 15px 10px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .tab-nav {
+                padding: 0 5px;
+                margin-bottom: 20px;
+            }
+
+            .tab-btn {
+                flex: 1 1 calc(50% - 5px);
+                text-align: center;
+                padding: 10px 8px;
+                font-size: 0.85rem;
+                min-height: 44px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-wrapper {
+                height: 220px;
+            }
+
+            .chart-container {
+                padding: 15px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+
+            .chart-tabs {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .chart-tab {
+                font-size: 0.95rem;
+            }
+
+            .chart-tab-divider {
+                display: none;
+            }
+
+            .time-selector {
+                width: 100%;
+            }
+
+            .time-selector button {
+                flex: 1;
+                min-height: 44px;
+                font-size: 0.8rem;
+            }
+
+            .card {
+                padding: 12px;
+                border-radius: 8px;
+            }
+
+            .card-header {
+                margin-bottom: 12px;
+                padding-bottom: 12px;
+            }
+
+            .card-header img {
+                width: 32px;
+                height: 32px;
+            }
+
+            .card-header .name {
+                font-size: 1.1rem;
+            }
+
+            .price {
+                font-size: 1.3rem;
+            }
+
+            .metrics-section {
+                padding: 12px;
+            }
+
+            .metric {
+                padding: 12px 10px;
+            }
+
+            .coming-soon {
+                padding: 60px 15px;
+            }
+
+            .coming-soon h2 {
+                font-size: 1.3rem;
+            }
+
+            .home-hero h2 {
+                font-size: 1.5rem;
+            }
+
+            .home-tagline {
+                font-size: 1rem;
+            }
+
+            .home-nav-card {
+                padding: 18px;
+            }
+
+            .home-nav-card .home-nav-icon {
+                font-size: 2rem;
+            }
+
+            .home-nav-card h3 {
+                font-size: 1.15rem;
+            }
+
+            .home-nav-card p {
+                font-size: 0.85rem;
+            }
+
+            .refresh-btn {
+                width: 100%;
+                margin: 20px auto 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -784,9 +1003,7 @@
             <div class="chart-header">
                 <div class="chart-title-section">
                     <div class="chart-tabs">
-                        <button class="chart-tab active" data-rwa-chart="tvl">Total Value Locked</button>
-                        <span class="chart-tab-divider">|</span>
-                        <button class="chart-tab" data-rwa-chart="stablecoins">Stablecoins</button>
+                        <span class="chart-tab active">Total Value Locked</span>
                     </div>
                     <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked by RWA protocol over the last year</p>
                 </div>
@@ -835,7 +1052,6 @@
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
         let currentRwaChartDays = 365;
-        let currentRwaChartType = 'tvl';
         let predChart = null;
         let rwaChart = null;
 
@@ -891,10 +1107,24 @@
             }
         ];
 
+        // Financial Times color palette
+        const ftColors = [
+            '#0A7B83', // Teal
+            '#9A1750', // Crimson
+            '#E8702A', // Orange
+            '#2E5FA1', // Blue
+            '#5E4B8B', // Purple
+            '#2D8E4F', // Green
+            '#D4A03C', // Gold
+            '#1E3A5F', // Navy
+            '#8B4513', // Brown
+            '#708090'  // Slate
+        ];
+
         const predChartColors = [
-            '#3B82F6', // Blue (Polymarket)
-            '#10B981', // Green (Kalshi)
-            '#8B5CF6'  // Purple (Myriad)
+            ftColors[0], // Teal (Polymarket)
+            ftColors[1], // Crimson (Kalshi)
+            ftColors[2]  // Orange (Myriad)
         ];
 
         // Tab navigation with URL hash persistence
@@ -1149,21 +1379,8 @@
             return fetchDefiLlama(url);
         }
 
-        // Chart colors for each protocol - fully opaque, saturated colors
-        const chartColors = [
-            '#E07800', // Deep Orange
-            '#4A6DD9', // Strong Blue
-            '#7B2FD9', // Deep Purple
-            '#D9A000', // Gold
-            '#00B37D', // Emerald Green
-            '#00C76A', // Bright Green
-            '#0099CC', // Deep Cyan
-            '#E04A8A', // Deep Pink
-            '#3355CC', // Royal Blue
-            '#E04030', // Strong Red
-            '#158A7A', // Teal
-            '#B060B0'  // Deep Plum
-        ];
+        // Use FT colors for all charts
+        const chartColors = ftColors;
 
         let feesChart = null;
         let perpChart = null;
@@ -1272,11 +1489,11 @@
         ];
 
         const perpChartColors = [
-            '#00D395', // Green (Hyperliquid)
-            '#627EEA', // Blue (Lighter)
-            '#FF9500', // Orange (Ostium)
-            '#9945FF', // Purple (Variational)
-            '#FF69B4'  // Pink (Nado)
+            ftColors[0], // Teal (Hyperliquid)
+            ftColors[1], // Crimson
+            ftColors[2], // Orange (Ostium)
+            ftColors[3], // Blue
+            ftColors[4]  // Purple (Nado)
         ];
 
         let currentPerpChartDays = 7;
@@ -2348,19 +2565,8 @@
 
         // ========== RWA CHART FUNCTIONS ==========
 
-        // Colors for top 10 RWA protocols (no similar colors adjacent)
-        const rwaColors = [
-            '#000000', // Black
-            '#EF4444', // Red
-            '#14B8A6', // Teal
-            '#F97316', // Orange
-            '#8B5CF6', // Purple
-            '#22C55E', // Green
-            '#EC4899', // Pink
-            '#3B82F6', // Blue
-            '#EAB308', // Yellow
-            '#78350F'  // Brown
-        ];
+        // Use FT colors for RWA chart
+        const rwaColors = ftColors;
 
         // Default visible RWA protocols (top 5 by index)
         const defaultVisibleRwaCount = 5;
@@ -2670,150 +2876,28 @@
         }
 
         // Update RWA chart
-        async function updateRwaChart(days = 365, chartType = currentRwaChartType) {
+        async function updateRwaChart(days = 30) {
             currentRwaChartDays = days;
-            currentRwaChartType = chartType;
 
             try {
-                let historicalData;
-                if (chartType === 'stablecoins') {
-                    historicalData = await fetchStablecoinTvl(days);
-                    console.log('Stablecoin chart data:', historicalData.length, 'protocols');
-                } else {
-                    historicalData = await fetchRwaTvl(days);
-                    console.log('RWA chart data:', historicalData.length, 'protocols');
-                }
+                const historicalData = await fetchRwaTvl(days);
+                console.log('RWA chart data:', historicalData.length, 'protocols');
 
                 if (historicalData.length > 0) {
                     renderRwaChart(historicalData);
                 } else {
-                    console.warn('No chart data received');
+                    console.warn('No RWA chart data received');
                 }
             } catch (e) {
                 console.error('Error in updateRwaChart:', e);
             }
 
             const timeLabel = days === 365 ? 'year' : `${days} days`;
-            const subtitles = {
-                'tvl': `Total value locked by RWA protocol over the last ${timeLabel}`,
-                'stablecoins': `Total stablecoin market cap over the last ${timeLabel}`
-            };
-            document.getElementById('rwaChartSubtitle').textContent = subtitles[chartType];
+            document.getElementById('rwaChartSubtitle').textContent =
+                `Total value locked by RWA protocol over the last ${timeLabel}`;
         }
 
-        // ========== STABLECOIN FUNCTIONS ==========
-
-        // Colors for top 10 stablecoins (no similar colors adjacent)
-        const stablecoinColors = [
-            '#000000', // Black
-            '#EF4444', // Red
-            '#14B8A6', // Teal
-            '#F97316', // Orange
-            '#8B5CF6', // Purple
-            '#22C55E', // Green
-            '#EC4899', // Pink
-            '#3B82F6', // Blue
-            '#EAB308', // Yellow
-            '#78350F'  // Brown
-        ];
-
-        // Default visible stablecoins (top 5 by index)
-        const defaultVisibleStablecoinCount = 5;
-
-        // Fetch ALL stablecoin protocols from DefiLlama
-        async function fetchAllStablecoinProtocols() {
-            try {
-                const response = await fetch(proxyUrl('https://stablecoins.llama.fi/stablecoins?includePrices=true'));
-                if (response.ok) {
-                    const data = await response.json();
-                    return (data.peggedAssets || []).map(p => ({
-                        name: p.name,
-                        symbol: p.symbol,
-                        id: p.id,
-                        mcap: p.circulating?.peggedUSD || 0
-                    }));
-                }
-            } catch (e) {
-                console.error('Error fetching stablecoin list:', e);
-            }
-            return [];
-        }
-
-        // Fetch stablecoin historical data
-        async function fetchStablecoinTvl(days = 365) {
-            const now = Math.floor(Date.now() / 1000);
-            const startTime = now - (days * 24 * 60 * 60);
-
-            // Get all stablecoins
-            const allStablecoins = await fetchAllStablecoinProtocols();
-            allStablecoins.sort((a, b) => (b.mcap || 0) - (a.mcap || 0));
-
-            console.log(`Found ${allStablecoins.length} stablecoins`);
-
-            const results = [];
-            const othersData = new Map();
-
-            // Fetch historical data for each stablecoin
-            for (let i = 0; i < Math.min(allStablecoins.length, 50); i++) {
-                const stablecoin = allStablecoins[i];
-                try {
-                    const url = `https://stablecoins.llama.fi/stablecoincharts/all?stablecoin=${stablecoin.id}`;
-                    const response = await fetch(proxyUrl(url));
-                    if (response.ok) {
-                        const data = await response.json();
-
-                        const filteredData = data
-                            .filter(d => d.date >= startTime)
-                            .map(d => [d.date, d.totalCirculating?.peggedUSD || 0]);
-
-                        if (filteredData.length > 0) {
-                            const currentMcap = stablecoin.mcap || 0;
-
-                            if (i < 10) {
-                                results.push({
-                                    name: stablecoin.name,
-                                    color: stablecoinColors[i],
-                                    data: filteredData,
-                                    currentTvl: currentMcap,
-                                    isTop10: true
-                                });
-                            } else {
-                                filteredData.forEach(([timestamp, value]) => {
-                                    const existing = othersData.get(timestamp) || 0;
-                                    othersData.set(timestamp, existing + value);
-                                });
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.error(`Error fetching stablecoin data for ${stablecoin.name}:`, e);
-                }
-            }
-
-            // Add "Other" as combined dataset
-            if (othersData.size > 0) {
-                const othersArray = Array.from(othersData.entries()).sort((a, b) => a[0] - b[0]);
-                const othersMcap = othersArray.length > 0 ? othersArray[othersArray.length - 1][1] : 0;
-                results.unshift({
-                    name: 'Other',
-                    color: '#9CA3AF',
-                    data: othersArray,
-                    currentTvl: othersMcap,
-                    isTop10: false,
-                    isOthers: true
-                });
-            }
-
-            // Sort top 10 by mcap, keep "Other" at position 0
-            const otherDataset = results.find(r => r.isOthers);
-            const top10 = results.filter(r => !r.isOthers).sort((a, b) => (b.currentTvl || 0) - (a.currentTvl || 0));
-
-            return otherDataset ? [otherDataset, ...top10] : top10;
-        }
-
-        // ========== END STABLECOIN FUNCTIONS ==========
-
-        // RWA/Stablecoin time selector and chart type event listeners
+        // RWA time selector event listeners
         document.addEventListener('DOMContentLoaded', function() {
             const rwaTimeSelector = document.getElementById('rwaTimeSelector');
             if (rwaTimeSelector) {
@@ -2822,20 +2906,10 @@
                         rwaTimeSelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
                         const days = parseInt(this.dataset.days);
-                        await updateRwaChart(days, currentRwaChartType);
+                        await updateRwaChart(days);
                     });
                 });
             }
-
-            // Chart type tabs (TVL vs Stablecoins)
-            document.querySelectorAll('[data-rwa-chart]').forEach(tab => {
-                tab.addEventListener('click', async function() {
-                    document.querySelectorAll('[data-rwa-chart]').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    const chartType = this.dataset.rwaChart;
-                    await updateRwaChart(currentRwaChartDays, chartType);
-                });
-            });
         });
 
         // ========== END RWA CHART FUNCTIONS ==========
