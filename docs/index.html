@@ -1,0 +1,3300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aletheia Research</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 20px 20px;
+            margin-bottom: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header .sources {
+            color: #8892b0;
+            font-size: 0.7rem;
+        }
+
+        .header .sources a {
+            color: #8892b0;
+            text-decoration: none;
+        }
+
+        .header .sources a:hover {
+            color: #ffffff;
+        }
+
+        .last-updated {
+            color: #8892b0;
+            font-size: 0.65rem;
+        }
+
+        .twitter-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .twitter-link:hover {
+            opacity: 1;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            padding: 0 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #8892b0;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s ease;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            color: #ffffff;
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ffffff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .coming-soon {
+            text-align: center;
+            padding: 100px 20px;
+            color: #8892b0;
+        }
+
+        .coming-soon h2 {
+            font-size: 1.6rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .coming-soon p {
+            font-size: 1rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .card-header .name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .card-header .symbol {
+            color: #8892b0;
+            font-size: 0.8rem;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .price {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .price-change {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .price-change.positive {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .price-change.negative {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .metrics-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metrics-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .metrics-section h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metrics-section h3 .source {
+            font-size: 0.85rem;
+            color: #8892b0;
+            font-weight: normal;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .metric {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+        }
+
+        .metric-label {
+            color: #8892b0;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .metric-value {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .metric-value.positive {
+            color: #00ff88;
+        }
+
+        .metric-value.negative {
+            color: #ff4757;
+        }
+
+        .metric-subtext {
+            font-size: 0.6rem;
+            color: #8892b0;
+            margin-top: 2px;
+        }
+
+        .revenue-share {
+            background: rgba(100, 255, 218, 0.05);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .revenue-share h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64ffda;
+            margin-bottom: 10px;
+        }
+
+        .revenue-share .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .revenue-share .status.active {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .revenue-share .status.inactive {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .revenue-share .status.none {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+
+        .revenue-share p {
+            font-size: 0.75rem;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #8892b0;
+            grid-column: 1 / -1;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-msg {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: #ff4757;
+            font-size: 0.9rem;
+            grid-column: 1 / -1;
+        }
+
+        .refresh-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #8892b0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .na {
+            color: #555;
+        }
+
+        .chart-container {
+            max-width: 1600px;
+            margin: 0 auto 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 4px;
+        }
+
+        .chart-tab {
+            font-size: 1.1rem;
+            color: #999;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+            border: none;
+            transition: color 0.2s ease;
+        }
+
+        .chart-tab:hover {
+            color: #666;
+        }
+
+        .chart-tab.active {
+            color: #1a1a1a;
+        }
+
+        .chart-tab-divider {
+            color: #ccc;
+            font-size: 1.1rem;
+            font-weight: 300;
+            padding: 0 12px;
+        }
+
+        .chart-title-section .chart-subtitle {
+            font-size: 0.7rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+        }
+
+        .time-selector {
+            display: flex;
+            gap: 0;
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 3px;
+        }
+
+        .time-selector button {
+            background: transparent;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            border-radius: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .time-selector button:hover {
+            color: #333;
+        }
+
+        .time-selector button.active {
+            background: #ffffff;
+            color: #1a1a1a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .price {
+                font-size: 1.4rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Home page styles */
+        .home-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .home-hero {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .home-hero h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .home-tagline {
+            font-size: 1.2rem;
+            color: #8892b0;
+            font-weight: 400;
+        }
+
+        .home-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .home-nav-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home-nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .home-nav-card .home-nav-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .home-nav-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .home-nav-card p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .home-nav-card.coming-soon-card {
+            opacity: 0.7;
+        }
+
+        .home-nav-card.coming-soon-card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .coming-soon-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(139, 92, 246, 0.15);
+            color: #8B5CF6;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .logo-link:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .home-nav-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .home-nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .home-hero h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h1 class="logo-link" onclick="switchToTab('home')" style="cursor: pointer;">Aletheia Research</h1>
+            <a href="https://x.com/0xaletheia369" target="_blank" class="twitter-link">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                @0xaletheia369
+            </a>
+        </div>
+        <div class="header-right">
+            <p class="sources">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko</a> & <a href="https://defillama.com" target="_blank">DefiLlama</a></p>
+            <p class="last-updated" id="lastUpdated"></p>
+        </div>
+    </div>
+
+    <div class="tab-nav">
+        <button class="tab-btn" data-tab="protocol-revenue">Protocol Revenue</button>
+        <button class="tab-btn" data-tab="perpetual-dexs">Perpetual DEXs</button>
+        <button class="tab-btn" data-tab="prediction-markets">Prediction Markets</button>
+        <button class="tab-btn" data-tab="rwas">RWAs</button>
+        <button class="tab-btn" data-tab="etfs">ETFs</button>
+        <button class="tab-btn" data-tab="sentiment">Sentiment</button>
+        <button class="tab-btn" data-tab="price">Price</button>
+    </div>
+
+    <!-- Home Tab -->
+    <div class="tab-content active" id="home">
+        <div class="home-container">
+            <div class="home-hero">
+                <h2>Welcome to Aletheia Research</h2>
+                <p class="home-tagline">Real-time crypto analytics and protocol insights</p>
+            </div>
+            <div class="home-nav-grid">
+                <div class="home-nav-card" onclick="switchToTab('protocol-revenue')">
+                    <div class="home-nav-icon">📊</div>
+                    <h3>Protocol Revenue</h3>
+                    <p>Track fees, revenue share, and token value accrual across top DeFi protocols</p>
+                </div>
+                <div class="home-nav-card" onclick="switchToTab('perpetual-dexs')">
+                    <div class="home-nav-icon">📈</div>
+                    <h3>Perpetual DEXs</h3>
+                    <p>Monitor volume, open interest, and fees on leading perpetual exchanges</p>
+                </div>
+                <div class="home-nav-card" onclick="switchToTab('prediction-markets')">
+                    <div class="home-nav-icon">🎯</div>
+                    <h3>Prediction Markets</h3>
+                    <p>Explore Polymarket, Kalshi, and Myriad Markets data</p>
+                </div>
+                <div class="home-nav-card" onclick="switchToTab('rwas')">
+                    <div class="home-nav-icon">🏛️</div>
+                    <h3>RWAs</h3>
+                    <p>Real World Assets - Track TVL across tokenized treasuries, gold, and more</p>
+                </div>
+                <div class="home-nav-card coming-soon-card" onclick="switchToTab('etfs')">
+                    <div class="home-nav-icon">💰</div>
+                    <h3>ETFs</h3>
+                    <p>Crypto ETF flows and analytics - Coming soon</p>
+                    <span class="coming-soon-badge">Soon</span>
+                </div>
+                <div class="home-nav-card coming-soon-card" onclick="switchToTab('sentiment')">
+                    <div class="home-nav-icon">🧠</div>
+                    <h3>Sentiment</h3>
+                    <p>Market sentiment analysis - Coming soon</p>
+                    <span class="coming-soon-badge">Soon</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Protocol Revenue Tab -->
+    <div class="tab-content" id="protocol-revenue">
+        <div class="chart-container">
+        <div class="chart-header">
+            <div class="chart-title-section">
+                <div class="chart-tabs">
+                    <button class="chart-tab active" data-chart="fees">Protocol Fees</button>
+                    <span class="chart-tab-divider">|</span>
+                    <button class="chart-tab" data-chart="holders">Holders Revenue</button>
+                </div>
+                <p class="chart-subtitle" id="chartSubtitle">Daily fees generated by each protocol over the last 7 days</p>
+            </div>
+            <div class="time-selector">
+                <button data-days="7" class="active">7D</button>
+                <button data-days="14">14D</button>
+                <button data-days="30">30D</button>
+            </div>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="feesChart"></canvas>
+        </div>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading data...</p>
+        </div>
+    </div>
+
+        <button class="refresh-btn" id="refreshBtn" onclick="fetchData()">Refresh Data</button>
+    </div>
+
+    <!-- Perpetual DEXs Tab -->
+    <div class="tab-content" id="perpetual-dexs">
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-perp-chart="volume">Volume</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-perp-chart="oi">Open Interest</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-perp-chart="fees">Fees</button>
+                    </div>
+                    <p class="chart-subtitle" id="perpChartSubtitle">Daily trading volume by protocol over the last 7 days</p>
+                </div>
+                <div class="time-selector" id="perpTimeSelector">
+                    <button data-days="7" class="active">7D</button>
+                    <button data-days="14">14D</button>
+                    <button data-days="30">30D</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="perpChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard" id="perpDashboard">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading perp DEX data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Markets Tab -->
+    <div class="tab-content" id="prediction-markets">
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-pred-chart="volume">Volume</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-pred-chart="oi">Open Interest</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-pred-chart="fees">Fees</button>
+                    </div>
+                    <p class="chart-subtitle" id="predChartSubtitle">Daily trading volume by platform over the last 7 days</p>
+                </div>
+                <div class="time-selector" id="predTimeSelector">
+                    <button data-days="7" class="active">7D</button>
+                    <button data-days="14">14D</button>
+                    <button data-days="30">30D</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="predChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard" id="predDashboard">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading prediction market data...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RWAs Tab -->
+    <div class="tab-content" id="rwas">
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-rwa-chart="tvl">Total Value Locked</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-rwa-chart="stablecoins">Stablecoins</button>
+                    </div>
+                    <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked by RWA protocol over the last year</p>
+                </div>
+                <div class="time-selector" id="rwaTimeSelector">
+                    <button data-days="7">7D</button>
+                    <button data-days="30">30D</button>
+                    <button data-days="90">90D</button>
+                    <button data-days="365" class="active">1Y</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="rwaChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- ETFs Tab -->
+    <div class="tab-content" id="etfs">
+        <div class="coming-soon">
+            <h2>ETFs</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <!-- Sentiment Tab -->
+    <div class="tab-content" id="sentiment">
+        <div class="coming-soon">
+            <h2>Sentiment</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <!-- Price Tab -->
+    <div class="tab-content" id="price">
+        <div class="coming-soon">
+            <h2>Price</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <script>
+        // Early declarations for chart initialization flags and state
+        let perpChartInitialized = false;
+        let predChartInitialized = false;
+        let rwaChartInitialized = false;
+        let currentPredChartDays = 7;
+        let currentPredChartType = 'volume';
+        let currentRwaChartDays = 365;
+        let currentRwaChartType = 'tvl';
+        let predChart = null;
+        let rwaChart = null;
+
+        // Detect if running from local file (needed for CORS proxy decisions)
+        const isLocalFile = window.location.protocol === 'file:';
+
+        // Prediction Markets configuration (declared early for tab switching)
+        const predictionMarkets = [
+            {
+                id: 'polymarket',
+                name: 'Polymarket',
+                volumeId: 'polymarket',
+                oiId: 'polymarket',
+                feesId: 'polymarket',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/polymarket.png',
+                chain: 'Polygon',
+                description: 'Leading decentralized prediction market on Polygon. Largest crypto prediction market by volume.',
+                funding: '$2.3B total ($2B from ICE in 2025)',
+                backers: 'Intercontinental Exchange, Founders Fund, General Catalyst, Vitalik Buterin, 1confirmation, Dragonfly'
+            },
+            {
+                id: 'kalshi',
+                name: 'Kalshi',
+                volumeId: 'kalshi',
+                oiId: 'kalshi',
+                feesId: null,
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/kalshi.png',
+                chain: 'Offchain',
+                description: 'CFTC-regulated prediction market. First legal US exchange for event contracts. $11B valuation.',
+                funding: '$1.7B total ($1B Series E in 2025)',
+                backers: 'Paradigm, Sequoia, a16z, Capital G, SV Angel, Charles Schwab'
+            },
+            {
+                id: 'myriad-markets',
+                name: 'Myriad Markets',
+                volumeId: 'myriad-markets',
+                oiId: null,
+                feesId: 'myriad-markets',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/myriad-markets.png',
+                chain: 'Abstract (L2)',
+                description: 'Multichain prediction market (Abstract, Linea, BSC). 500K+ users, backed by Decrypt/DASTAN.',
+                funding: 'Undisclosed (DASTAN subsidiary)',
+                backers: 'DASTAN (Decrypt Media + Rug Radio merger)'
+            }
+        ];
+
+        const predChartColors = [
+            '#3B82F6', // Blue (Polymarket)
+            '#10B981', // Green (Kalshi)
+            '#8B5CF6'  // Purple (Myriad)
+        ];
+
+        // Tab navigation with URL hash persistence
+        function switchToTab(tabId) {
+            // Update active tab button
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+
+            // Show corresponding content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            const tabContent = document.getElementById(tabId);
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+
+            // Update URL hash (without triggering scroll) - clear hash for home
+            if (tabId === 'home') {
+                history.replaceState(null, null, window.location.pathname);
+            } else {
+                history.replaceState(null, null, '#' + tabId);
+            }
+
+            // Trigger perp chart initialization if switching to perpetual-dexs
+            if (tabId === 'perpetual-dexs' && !perpChartInitialized) {
+                perpChartInitialized = true;
+                Promise.all([
+                    updatePerpChart(7, 'volume'),
+                    fetchPerpDashboardData()
+                ]);
+            }
+
+            // Trigger prediction markets chart initialization if switching to prediction-markets
+            if (tabId === 'prediction-markets' && !predChartInitialized) {
+                predChartInitialized = true;
+                Promise.all([
+                    updatePredChart(7, 'volume'),
+                    fetchPredDashboardData()
+                ]);
+            }
+
+            // Trigger RWA chart initialization if switching to rwas
+            if (tabId === 'rwas' && !rwaChartInitialized) {
+                rwaChartInitialized = true;
+                updateRwaChart(365);
+            }
+        }
+
+        // Tab click handlers
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                switchToTab(tabId);
+            });
+        });
+
+        // On page load, check URL hash and switch to that tab
+        function initTabFromHash() {
+            const hash = window.location.hash.slice(1); // Remove the # symbol
+            if (hash) {
+                const validTabs = ['home', 'protocol-revenue', 'perpetual-dexs', 'prediction-markets', 'rwas', 'etfs', 'sentiment', 'price'];
+                if (validTabs.includes(hash)) {
+                    switchToTab(hash);
+                }
+            }
+        }
+
+        // Initialize tab from hash on page load
+        initTabFromHash();
+
+        // Handle browser back/forward navigation
+        window.addEventListener('hashchange', () => {
+            initTabFromHash();
+        });
+        // Protocol configuration with revenue sharing info
+        const protocols = [
+            {
+                coingeckoId: 'hyperliquid',
+                defillamaId: 'hyperliquid',
+                defillamaFeesId: 'hyperliquid',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Buyback & Burn: 97% of trading fees buy back HYPE via Assistance Fund (~$1.5M/day). Dec 2025: governance approved burning 37.5M HYPE ($912M, ~13% of supply) from the fund. Over $1B cumulative buybacks. Next unlock Feb 2026.'
+                }
+            },
+            {
+                coingeckoId: 'aerodrome-finance',
+                defillamaId: 'aerodrome',
+                defillamaFeesId: 'aerodrome',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Vote-Escrow Model: Lock AERO (1-4 years) for veAERO. 100% of trading fees distributed weekly to veAERO voters. Merging with Velodrome into "Aero" Q2 2026 (94.5% to AERO holders). New Momentum Fund executes market-aware buybacks during downturns.'
+                }
+            },
+            {
+                coingeckoId: 'aave',
+                defillamaId: 'aave',
+                defillamaFeesId: 'aave',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Aavenomics: $1M/week AAVE buybacks ($4M program). Anti-GHO tokens (~$6M/year) distributed to stakers (80% stkAAVE, 20% stkBPT) to offset GHO debt 1:1. New Umbrella safety module eliminates slashing risk for stkBPT. 320K AAVE ($65M) returned from closed LEND migration.'
+                }
+            },
+            {
+                coingeckoId: 'uniswap',
+                defillamaId: 'uniswap',
+                defillamaFeesId: 'uniswap',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Fee Switch + Burn: UNIfication passed Dec 2025 (99.9% approval). Protocol fees flow to TokenJar; UNI holders burn tokens to withdraw equivalent value. 100M UNI ($596M) treasury burn executed. ~$26M annualized protocol revenue at current rates.'
+                }
+            },
+            {
+                coingeckoId: 'pump-fun',
+                defillamaId: 'pump',
+                defillamaFeesId: 'pump',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Buyback & Burn: 100% of daily platform revenue (~$1M/day) goes to PUMP token buybacks. Over $230M bought back to date, reducing circulating supply by ~17%. Most aggressive buyback in crypto. Fee restructure planned Q1 2026 (0.05-0.95%). Major 41% token unlock July 2026.'
+                }
+            },
+            {
+                coingeckoId: 'jito-governance-token',
+                defillamaId: 'jito',
+                defillamaFeesId: 'jito',
+                revenueShare: {
+                    status: 'inactive',
+                    mechanism: 'DAO Treasury Accrual: JIP-24 redirects 100% of Block Engine & BAM fees to DAO (~$15M/year). JTO stakers get 0.15% MEV tips via TipRouter. JitoSOL earns staking + MEV yields. BAM testing shows $25M+ quarterly potential. Named SKR Token Guardian Jan 2026.'
+                }
+            },
+            {
+                coingeckoId: 'raydium',
+                defillamaId: 'raydium',
+                defillamaFeesId: 'raydium',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Buyback & Burn + Staking: 12% of ALL trading fees fund RAY buybacks (~$196M cumulative, 26.4% of supply burned). Staking RAY earns ~4.5% APR. LaunchLab drove $12.8M revenue in Q3 2025 (+220% QoQ). ~$57.6M annualized buyback pace.'
+                }
+            },
+            {
+                coingeckoId: 'morpho',
+                defillamaId: 'morpho',
+                defillamaFeesId: 'morpho',
+                revenueShare: {
+                    status: 'none',
+                    mechanism: 'No Revenue Share Yet: Fee switch exists (max 25% of borrower interest) but remains OFF. Policy: 100% of any future revenue reinvested in growth. Morpho Labs now subsidiary of non-profit Morpho Association. V2 launching 2026. Grew to 1.4M users, $13B deposits.'
+                }
+            },
+            {
+                coingeckoId: 'meteora',
+                defillamaId: 'meteora',
+                defillamaFeesId: 'meteora',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Staking + Buybacks: MET stakers earn protocol fees and governance rights. Q4 2025: $10M USDC buyback (2.3% of supply) from $12M quarterly revenue. ~$150M annualized revenue. 48% circulating at TGE, team 18% vests over 6 years. DLMM v2 and DAMM v2 updates live.'
+                }
+            },
+            {
+                coingeckoId: 'jupiter-exchange-solana',
+                defillamaId: 'jupiter',
+                defillamaFeesId: 'jupiter',
+                revenueShare: {
+                    status: 'inactive',
+                    mechanism: 'Buyback Under Review: $70M spent on buybacks in 2025, but price dropped 89% due to 150% supply increase. Founder proposed ending buybacks, redirecting to user incentives. ASR staking: 50M JUP + 75% launchpad fees quarterly. 53M JUP unlocking monthly through June 2026.'
+                }
+            },
+            {
+                coingeckoId: 'ethena',
+                defillamaId: 'ethena',
+                defillamaFeesId: 'ethena',
+                revenueShare: {
+                    status: 'active',
+                    mechanism: 'Fee Switch + Buybacks: Fee switch approved, activating Q1 2026 (5-15% of revenue to sENA stakers, 4.5-34% APY). $890M in ENA buybacks committed 2025. sUSDe yields 6-19% APY. $14.5B TVL, $666M fees, 811K users across 24 networks.'
+                }
+            },
+            {
+                coingeckoId: 'wormhole',
+                defillamaId: 'wormhole',
+                defillamaFeesId: 'wormhole',
+                revenueShare: {
+                    status: 'inactive',
+                    mechanism: 'W 2.0 Strategic Reserve: On-chain + off-chain protocol revenue flows to Wormhole Reserve. Target 4% base staking yield (no inflation, 10B max supply). Portal users earn boosted yields. Fee switches and monetization planned for 2026. Bi-weekly unlocks since Oct 2025.'
+                }
+            },
+            {
+                coingeckoId: null,
+                defillamaId: 'polymarket',
+                defillamaFeesId: 'polymarket',
+                name: 'Polymarket',
+                symbol: 'POLY',
+                logo: 'https://icons.llama.fi/polymarket.png',
+                revenueShare: {
+                    status: 'none',
+                    mechanism: 'POLY Token Airdrop Confirmed: CMO confirmed Oct 2025 "There will be a token, there will be an airdrop." Token launch expected 2026 after U.S. relaunch via acquired CFTC-regulated QCX ($112M). 5-10% supply to airdrop based on trading volume. $2B ICE investment at $9B valuation. Sybil accounts filtered out.'
+                }
+            }
+        ];
+
+        // CORS proxies
+        function proxyUrlAllOrigins(url) {
+            return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+        }
+
+        function proxyUrlCodeTabs(url) {
+            return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url);
+        }
+
+        // Show warning if running locally
+        if (isLocalFile) {
+            console.warn('Running from file:// - some features may be limited. For best experience, run a local server: python3 -m http.server 8000');
+        }
+
+        // Helper to fetch DefiLlama APIs
+        async function fetchDefiLlama(url) {
+            if (isLocalFile) {
+                return fetch(proxyUrlAllOrigins(url));
+            }
+            return fetch(url);
+        }
+
+        // Helper to fetch CoinGecko APIs
+        async function fetchCoinGecko(url) {
+            if (!isLocalFile) {
+                return fetch(url);
+            }
+            // For local, try allorigins first, then codetabs
+            try {
+                const response = await fetch(proxyUrlAllOrigins(url));
+                const text = await response.text();
+                if (text.startsWith('[') || text.startsWith('{')) {
+                    return new Response(text, { status: 200 });
+                }
+            } catch (e) { /* ignore */ }
+
+            // Fallback to codetabs
+            return fetch(proxyUrlCodeTabs(url));
+        }
+
+        // Legacy aliases - proxyUrl only uses proxy when running from file://
+        function proxyUrl(url) {
+            if (isLocalFile) {
+                return proxyUrlAllOrigins(url);
+            }
+            return url; // Direct URL when on server (GitHub Pages, etc.)
+        }
+
+        async function fetchWithProxy(url) {
+            return fetchDefiLlama(url);
+        }
+
+        // Chart colors for each protocol - fully opaque, saturated colors
+        const chartColors = [
+            '#E07800', // Deep Orange
+            '#4A6DD9', // Strong Blue
+            '#7B2FD9', // Deep Purple
+            '#D9A000', // Gold
+            '#00B37D', // Emerald Green
+            '#00C76A', // Bright Green
+            '#0099CC', // Deep Cyan
+            '#E04A8A', // Deep Pink
+            '#3355CC', // Royal Blue
+            '#E04030', // Strong Red
+            '#158A7A', // Teal
+            '#B060B0'  // Deep Plum
+        ];
+
+        let feesChart = null;
+        let perpChart = null;
+
+        // Display name overrides for protocols where DefiLlama returns different names
+        const displayNameOverrides = {
+            'wormhole': 'Wormhole',
+            'pump': 'Pump.fun'
+        };
+
+        // Protocols to show by default in the chart (others will be hidden but clickable in legend)
+        const defaultVisibleProtocols = ['Hyperliquid', 'Pump.fun', 'Aave', 'Uniswap', 'Meteora'];
+
+        // Perpetual DEX configuration with token and airdrop info
+        const perpDexs = [
+            {
+                id: 'hyperliquid',
+                name: 'Hyperliquid',
+                volumeId: 'hyperliquid',
+                oiId: 'hyperliquid',
+                feesId: 'hyperliquid',
+                coingeckoId: 'hyperliquid',
+                hasToken: true,
+                tokenSymbol: 'HYPE',
+                logo: 'https://assets.coingecko.com/coins/images/50885/small/hyperliquid.jpeg',
+                chain: 'Hyperliquid L1',
+                funding: 'Self-funded',
+                backers: 'No VC funding - 100% community-owned, bootstrapped by team',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Season 2 Active: Genesis airdrop (Nov 2024) distributed 310M HYPE to 94K users (~$1.2B value). 38.8% of supply reserved for future rewards. Earn by trading, holding strict-list tokens (HYPE, PURR, HFUN), staking via LSTs, and providing HyperEVM liquidity.'
+                }
+            },
+            {
+                id: 'lighter',
+                name: 'Lighter',
+                volumeId: 'lighter',
+                oiId: 'lighter',
+                feesId: 'lighter',
+                coingeckoId: 'lighter',
+                hasToken: true,
+                tokenSymbol: 'LIT',
+                logo: 'https://assets.coingecko.com/coins/images/53617/small/lighter.jpg',
+                chain: 'Ethereum L2',
+                funding: '$68M',
+                backers: 'Founders Fund, Ribbit Capital, Haun Ventures',
+                airdrop: {
+                    status: 'completed',
+                    mechanism: 'TGE Complete (Dec 2025): 25% of supply airdropped to Season 1 & 2 point farmers. 12.5M points converted to LIT. Zero fees for most traders, 5ms finality. Team tokens locked 1yr + 3yr vest.'
+                }
+            },
+            {
+                id: 'ostium',
+                name: 'Ostium',
+                volumeId: 'ostium',
+                oiId: 'ostium',
+                feesId: 'ostium',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: null,
+                logo: 'https://icons.llama.fi/ostium.png',
+                chain: 'Arbitrum',
+                funding: '$27.8M total',
+                backers: 'General Catalyst, Jump Crypto, Coinbase Ventures, Wintermute, GSR, Balaji Srinivasan, SIG, LocalGlobe',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Season 2 Active: Points program launched March 2025. 10M points retroactive + 500K weekly. Trade RWAs (S&P500, Gold, Forex) with up to 200x leverage. Earn via trading volume, referrals, and liquidity provision. No token announced yet.'
+                }
+            },
+            {
+                id: 'variational',
+                name: 'Variational',
+                volumeId: 'variational',
+                oiId: 'variational',
+                feesId: 'variational',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: 'VAR',
+                logo: 'https://icons.llama.fi/variational.png',
+                chain: 'Arbitrum',
+                funding: '$11.8M',
+                backers: 'Bain Capital Crypto, Coinbase Ventures, Dragonfly, Peak XV, Mirana, Hack VC',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Omni Points Live: 50% of VAR allocated to community. 150K points weekly until Q3 2026. 30%+ revenue for buyback & burn. Zero fees, loss refunds available. US/Canada restricted.'
+                }
+            },
+            {
+                id: 'nado',
+                name: 'Nado',
+                volumeId: 'nado',
+                oiId: 'nado',
+                feesId: 'nado',
+                coingeckoId: null,
+                hasToken: false,
+                tokenSymbol: 'INK',
+                logo: 'https://icons.llama.fi/nado.png',
+                chain: 'Ink (Kraken L2)',
+                funding: 'Kraken-backed',
+                backers: 'Kraken (internal project by former Kraken engineers)',
+                airdrop: {
+                    status: 'active',
+                    mechanism: 'Private Alpha: Built by Kraken team on Ink L2. Points convert 100% to $INK at TGE. Unified margin for spot + perps, up to 20x leverage. Apply via waitlist - prioritizes experienced traders. Fees: 1.5bp taker, -0.8bp maker rebate.'
+                }
+            }
+        ];
+
+        const perpChartColors = [
+            '#00D395', // Green (Hyperliquid)
+            '#627EEA', // Blue (Lighter)
+            '#FF9500', // Orange (Ostium)
+            '#9945FF', // Purple (Variational)
+            '#FF69B4'  // Pink (Nado)
+        ];
+
+        let currentPerpChartDays = 7;
+        let currentPerpChartType = 'volume'; // 'volume', 'oi', or 'fees'
+
+        async function fetchHistoricalFees(days = 7) {
+            const historicalData = [];
+            // Get today's timestamp at midnight UTC
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+
+            // Calculate the start timestamp (7 days ago at midnight UTC)
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < protocols.length; i++) {
+                const protocol = protocols[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${protocol.defillamaFeesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+
+                        // Filter to only include data within our date range
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+
+                        // Use override name if available, otherwise use API name
+                        const displayName = displayNameOverrides[protocol.defillamaFeesId] || data.name || protocol.defillamaFeesId;
+
+                        historicalData.push({
+                            name: displayName,
+                            data: filteredDays,
+                            color: chartColors[i % chartColors.length]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching historical fees for ${protocol.defillamaFeesId}:`, e);
+                }
+            }
+
+            return historicalData;
+        }
+
+        // Bar style: Sharp corners, fully opaque
+        function getBarStyle(color) {
+            return {
+                backgroundColor: color,
+                borderColor: color,
+                borderWidth: 0,
+                borderRadius: 0,
+            };
+        }
+
+        function renderChart(historicalData) {
+            const ctx = document.getElementById('feesChart').getContext('2d');
+
+            // Get all unique dates from all protocols
+            const allDates = new Set();
+            historicalData.forEach(protocol => {
+                protocol.data.forEach(([timestamp]) => {
+                    allDates.add(timestamp);
+                });
+            });
+
+            // Sort dates and format labels
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            // Create datasets - sorted by latest value for legend order
+            const datasetsWithValues = historicalData.map(protocol => {
+                const dataMap = new Map(protocol.data);
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values[values.length - 1] || 0;
+                const isVisible = defaultVisibleProtocols.includes(protocol.name);
+                const barStyle = getBarStyle(protocol.color, ctx);
+
+                return {
+                    label: protocol.name,
+                    data: values,
+                    ...barStyle,
+                    latestValue: latestValue,
+                    hidden: !isVisible  // Hide protocols not in default list
+                };
+            });
+
+            // Sort: visible protocols first (by value), then hidden protocols (by value)
+            datasetsWithValues.sort((a, b) => {
+                if (a.hidden !== b.hidden) {
+                    return a.hidden ? 1 : -1;  // Visible first
+                }
+                return b.latestValue - a.latestValue;  // Then by value
+            });
+
+            // Destroy existing chart if it exists
+            if (feesChart) {
+                feesChart.destroy();
+            }
+
+            feesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                // Custom styling: dim hidden items instead of striking through
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    return datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            strokeStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,  // Never show as "hidden" style (no strikethrough)
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                const dataset = chart.data.datasets[index];
+                                // Toggle visibility - if currently hidden, show it; otherwise hide it
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return context.dataset.label + ': N/A';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#999999',
+                                font: {
+                                    size: 11
+                                },
+                                maxRotation: 0
+                            }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: {
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#999999',
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        let currentChartDays = 7;
+        let currentChartType = 'fees'; // 'fees' or 'holders'
+
+        // Fetch historical holders revenue data
+        async function fetchHistoricalHoldersRevenue(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < protocols.length; i++) {
+                const protocol = protocols[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${protocol.defillamaFeesId}?dataType=dailyHoldersRevenue`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+
+                        const displayName = displayNameOverrides[protocol.defillamaFeesId] || data.name || protocol.defillamaFeesId;
+
+                        historicalData.push({
+                            name: displayName,
+                            data: filteredDays,
+                            color: chartColors[i % chartColors.length]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching holders revenue for ${protocol.defillamaFeesId}:`, e);
+                }
+            }
+
+            return historicalData;
+        }
+
+        async function updateChart(days = 7, chartType = currentChartType) {
+            currentChartDays = days;
+            currentChartType = chartType;
+
+            let historicalData;
+            if (chartType === 'holders') {
+                historicalData = await fetchHistoricalHoldersRevenue(days);
+            } else {
+                historicalData = await fetchHistoricalFees(days);
+            }
+
+            if (historicalData.length > 0) {
+                renderChart(historicalData);
+            }
+
+            // Update subtitle
+            const subtitleText = chartType === 'holders'
+                ? `Daily revenue to token holders (buybacks, distributions) over the last ${days} days`
+                : `Daily fees generated by each protocol over the last ${days} days`;
+            document.getElementById('chartSubtitle').textContent = subtitleText;
+        }
+
+        // Time selector and chart tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Protocol Revenue chart - time selector
+            const timeButtons = document.querySelectorAll('#protocol-revenue .time-selector button');
+            timeButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    timeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const days = parseInt(this.dataset.days);
+                    await updateChart(days, currentChartType);
+                });
+            });
+
+            // Protocol Revenue chart - tab switching
+            const chartTabs = document.querySelectorAll('.chart-tab[data-chart]');
+            chartTabs.forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    chartTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.chart;
+                    await updateChart(currentChartDays, chartType);
+                });
+            });
+
+            // Perpetual DEXs chart - time selector
+            const perpTimeButtons = document.querySelectorAll('#perpTimeSelector button');
+            perpTimeButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    perpTimeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const days = parseInt(this.dataset.days);
+                    await updatePerpChart(days, currentPerpChartType);
+                });
+            });
+
+            // Perpetual DEXs chart - tab switching
+            const perpChartTabs = document.querySelectorAll('.chart-tab[data-perp-chart]');
+            perpChartTabs.forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    perpChartTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.perpChart;
+                    await updatePerpChart(currentPerpChartDays, chartType);
+                });
+            });
+
+            // Prediction Markets chart - time selector
+            const predTimeButtons = document.querySelectorAll('#predTimeSelector button');
+            predTimeButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    predTimeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const days = parseInt(this.dataset.days);
+                    await updatePredChart(days, currentPredChartType);
+                });
+            });
+
+            // Prediction Markets chart - tab switching
+            const predChartTabs = document.querySelectorAll('.chart-tab[data-pred-chart]');
+            predChartTabs.forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    predChartTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.predChart;
+                    await updatePredChart(currentPredChartDays, chartType);
+                });
+            });
+        });
+
+        // Fetch perpetual DEX volume data
+        async function fetchPerpVolume(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < perpDexs.length; i++) {
+                const dex = perpDexs[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/derivatives/${dex.volumeId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+                        historicalData.push({
+                            name: dex.name,
+                            data: filteredDays,
+                            color: perpChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching volume for ${dex.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Fetch perpetual DEX open interest data
+        async function fetchPerpOI(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < perpDexs.length; i++) {
+                const dex = perpDexs[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/open-interest/${dex.oiId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+                        historicalData.push({
+                            name: dex.name,
+                            data: filteredDays,
+                            color: perpChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching OI for ${dex.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Fetch perpetual DEX fees data
+        async function fetchPerpFees(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < perpDexs.length; i++) {
+                const dex = perpDexs[i];
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${dex.feesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+                        historicalData.push({
+                            name: dex.name,
+                            data: filteredDays,
+                            color: perpChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching fees for ${dex.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Render perpetual DEX chart
+        function renderPerpChart(historicalData) {
+            const ctx = document.getElementById('perpChart').getContext('2d');
+
+            const allDates = new Set();
+            historicalData.forEach(protocol => {
+                protocol.data.forEach(([timestamp]) => {
+                    allDates.add(timestamp);
+                });
+            });
+
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            // All 5 perp DEXs visible by default
+            const datasetsWithValues = historicalData.map(protocol => {
+                const dataMap = new Map(protocol.data);
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values[values.length - 1] || 0;
+
+                return {
+                    label: protocol.name,
+                    data: values,
+                    backgroundColor: protocol.color,
+                    borderColor: protocol.color,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    latestValue: latestValue,
+                    hidden: false
+                };
+            });
+
+            datasetsWithValues.sort((a, b) => b.latestValue - a.latestValue);
+
+            if (perpChart) {
+                perpChart.destroy();
+            }
+
+            perpChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: { size: 11, weight: '500' },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    return datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            strokeStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                const dataset = chart.data.datasets[index];
+                                // Toggle visibility - if currently hidden, show it; otherwise hide it
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return context.dataset.label + ': N/A';
+                                    if (value >= 1e9) return context.dataset.label + ': $' + (value / 1e9).toFixed(2) + 'B';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { color: '#999999', font: { size: 11 }, maxRotation: 0 }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: { color: '#f0f0f0', drawBorder: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    if (value >= 1e9) return '$' + (value / 1e9).toFixed(0) + 'B';
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update perpetual DEX chart
+        async function updatePerpChart(days = 7, chartType = currentPerpChartType) {
+            currentPerpChartDays = days;
+            currentPerpChartType = chartType;
+
+            let historicalData;
+            if (chartType === 'oi') {
+                historicalData = await fetchPerpOI(days);
+            } else if (chartType === 'fees') {
+                historicalData = await fetchPerpFees(days);
+            } else {
+                historicalData = await fetchPerpVolume(days);
+            }
+
+            if (historicalData.length > 0) {
+                renderPerpChart(historicalData);
+            }
+
+            const subtitles = {
+                'volume': `Daily trading volume by protocol over the last ${days} days`,
+                'oi': `Daily open interest by protocol over the last ${days} days`,
+                'fees': `Daily fees generated by protocol over the last ${days} days`
+            };
+            document.getElementById('perpChartSubtitle').textContent = subtitles[chartType];
+        }
+
+        // Create perp DEX card
+        function createPerpCard(dex, coinData, feesData) {
+            const hasToken = dex.hasToken;
+            const priceChangeClass = (coinData?.price_change_percentage_24h || 0) >= 0 ? 'positive' : 'negative';
+            const priceChangeSign = (coinData?.price_change_percentage_24h || 0) >= 0 ? '+' : '';
+
+            const airdropStatusLabel = dex.airdrop.status === 'active' ? 'Active' :
+                                       dex.airdrop.status === 'completed' ? 'Completed' : 'None';
+
+            const tokenSection = hasToken ? `
+                <div class="price-section" style="margin-left: auto;">
+                    <span class="price">${formatPrice(coinData?.current_price)}</span>
+                    ${coinData?.price_change_percentage_24h !== undefined ? `
+                        <span class="price-change ${priceChangeClass}">
+                            ${priceChangeSign}${coinData.price_change_percentage_24h?.toFixed(2)}%
+                        </span>
+                    ` : ''}
+                </div>
+            ` : `
+                <div style="margin-left: auto;">
+                    <span class="price-change" style="background: rgba(255, 193, 7, 0.2); color: #ffc107;">No Token Yet</span>
+                </div>
+            `;
+
+            const marketDataSection = hasToken ? `
+                <div class="metrics-section">
+                    <h3>Market Data <span class="source">CoinGecko</span></h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Market Cap</div>
+                            <div class="metric-value">${formatUSD(coinData?.market_cap)}</div>
+                            <div class="metric-subtext">Rank #${coinData?.market_cap_rank || 'N/A'}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">24h Volume</div>
+                            <div class="metric-value">${formatUSD(coinData?.total_volume)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">FDV</div>
+                            <div class="metric-value">${formatUSD(coinData?.fully_diluted_valuation)}</div>
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="metrics-section">
+                    <h3>Platform Info</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Chain</div>
+                            <div class="metric-value" style="font-size: 0.85rem;">${dex.chain}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Token</div>
+                            <div class="metric-value">${dex.tokenSymbol ? '$' + dex.tokenSymbol : 'TBA'}</div>
+                            <div class="metric-subtext">Upcoming</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Status</div>
+                            <div class="metric-value" style="font-size: 0.85rem;">Pre-TGE</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${dex.logo}" alt="${dex.name}" onerror="this.style.display='none'">
+                        <div>
+                            <div class="name">${dex.name}</div>
+                            <div class="symbol">${hasToken ? dex.tokenSymbol : dex.chain}</div>
+                        </div>
+                        ${tokenSection}
+                    </div>
+
+                    <div class="metrics-container">
+                        ${marketDataSection}
+
+                        <div class="metrics-section">
+                            <h3>Trading Stats <span class="source">DefiLlama</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Fees (24h)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total24h)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Fees (30d)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total30d)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">P/F Ratio</div>
+                                    <div class="metric-value">${(coinData?.market_cap && feesData?.total24h) ? (coinData.market_cap / (feesData.total24h * 365)).toFixed(1) + 'x' : '<span class="na">N/A</span>'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-section">
+                            <h3>Funding & Backers</h3>
+                            <div class="metrics-grid" style="grid-template-columns: 1fr 2fr;">
+                                <div class="metric">
+                                    <div class="metric-label">Raised</div>
+                                    <div class="metric-value" style="font-size: 0.95rem;">${dex.funding || 'N/A'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Backers</div>
+                                    <div class="metric-value" style="font-size: 0.7rem; line-height: 1.4; font-weight: 400;">${dex.backers || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="revenue-share" style="border-color: ${dex.airdrop.status === 'active' ? 'rgba(100, 255, 218, 0.2)' : dex.airdrop.status === 'completed' ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 71, 87, 0.2)'}; background: ${dex.airdrop.status === 'active' ? 'rgba(100, 255, 218, 0.05)' : dex.airdrop.status === 'completed' ? 'rgba(0, 255, 136, 0.05)' : 'rgba(255, 71, 87, 0.05)'};">
+                            <h3 style="color: ${dex.airdrop.status === 'active' ? '#64ffda' : dex.airdrop.status === 'completed' ? '#00ff88' : '#ff4757'};">Airdrop / Points Program</h3>
+                            <span class="status ${dex.airdrop.status}">${airdropStatusLabel}</span>
+                            <p>${dex.airdrop.mechanism}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch perp DEX dashboard data
+        async function fetchPerpDashboardData() {
+            const perpDashboard = document.getElementById('perpDashboard');
+
+            // Fetch CoinGecko data for tokens that exist
+            const tokenIds = perpDexs.filter(d => d.coingeckoId).map(d => d.coingeckoId).join(',');
+            let coinDataMap = {};
+
+            if (tokenIds) {
+                console.log('Fetching CoinGecko data for perp DEXs:', tokenIds);
+                const cgUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`;
+                try {
+                    const response = await fetchCoinGecko(cgUrl);
+                    console.log('CoinGecko perp response status:', response.status);
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('CoinGecko perp data received:', data.length, 'coins');
+                        data.forEach(coin => {
+                            coinDataMap[coin.id] = coin;
+                        });
+                    } else {
+                        console.error('CoinGecko perp response not OK:', response.status);
+                    }
+                } catch (e) {
+                    console.error('Error fetching CoinGecko data for perp DEXs:', e);
+                }
+            }
+
+            // Fetch fees data from DefiLlama for each DEX
+            const feesDataMap = {};
+            for (const dex of perpDexs) {
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${dex.feesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        feesDataMap[dex.id] = {
+                            total24h: data.total24h,
+                            total48hto24h: data.total48hto24h,
+                            total7d: data.total7d,
+                            total30d: data.total30d
+                        };
+                    }
+                } catch (e) {
+                    console.error(`Error fetching fees for ${dex.name}:`, e);
+                }
+            }
+
+            // Create cards
+            const cards = perpDexs.map(dex => {
+                const coinData = coinDataMap[dex.coingeckoId] || null;
+                const feesData = feesDataMap[dex.id] || null;
+                return createPerpCard(dex, coinData, feesData);
+            }).join('');
+
+            perpDashboard.innerHTML = cards;
+        }
+
+        // ===== PREDICTION MARKETS FUNCTIONS =====
+
+        // Fetch prediction market volume data
+        async function fetchPredVolume(days = 7) {
+            console.log('fetchPredVolume called with days:', days);
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < predictionMarkets.length; i++) {
+                const market = predictionMarkets[i];
+                try {
+                    const url = proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`);
+                    console.log(`Fetching volume for ${market.name} from:`, url);
+                    const response = await fetch(url);
+                    console.log(`Response for ${market.name}:`, response.status, response.ok);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        console.log(`${market.name} totalDataChart length:`, chartData.length);
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+                        console.log(`${market.name} filtered data points:`, filteredDays.length);
+                        historicalData.push({
+                            name: market.name,
+                            data: filteredDays,
+                            color: predChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching volume for ${market.name}:`, e);
+                }
+            }
+            console.log('fetchPredVolume returning:', historicalData.length, 'markets');
+            return historicalData;
+        }
+
+        // Fetch prediction market open interest data
+        async function fetchPredOI(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < predictionMarkets.length; i++) {
+                const market = predictionMarkets[i];
+                if (!market.oiId) continue; // Skip if no OI endpoint
+                try {
+                    // Use the open-interest endpoint (works for Kalshi)
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/open-interest/${market.oiId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+                        if (filteredDays.length > 0) {
+                            historicalData.push({
+                                name: market.name,
+                                data: filteredDays,
+                                color: predChartColors[i]
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Error fetching OI for ${market.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Fetch prediction market fees data
+        async function fetchPredFees(days = 7) {
+            const historicalData = [];
+            const today = new Date();
+            today.setUTCHours(0, 0, 0, 0);
+            const todayTimestamp = Math.floor(today.getTime() / 1000);
+            const startTimestamp = todayTimestamp - ((days - 1) * 86400);
+
+            for (let i = 0; i < predictionMarkets.length; i++) {
+                const market = predictionMarkets[i];
+                if (!market.feesId) continue; // Skip if no fees data
+                try {
+                    const response = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${market.feesId}`));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const chartData = data.totalDataChart || [];
+                        const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
+                        historicalData.push({
+                            name: market.name,
+                            data: filteredDays,
+                            color: predChartColors[i]
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error fetching fees for ${market.name}:`, e);
+                }
+            }
+            return historicalData;
+        }
+
+        // Render prediction market chart
+        function renderPredChart(historicalData) {
+            console.log('renderPredChart called with', historicalData.length, 'markets');
+            const ctx = document.getElementById('predChart').getContext('2d');
+            console.log('Canvas context obtained:', !!ctx);
+
+            const allDates = new Set();
+            historicalData.forEach(market => {
+                market.data.forEach(([timestamp]) => {
+                    allDates.add(timestamp);
+                });
+            });
+
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            const datasetsWithValues = historicalData.map(market => {
+                const dataMap = new Map(market.data);
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values[values.length - 1] || 0;
+
+                return {
+                    label: market.name,
+                    data: values,
+                    backgroundColor: market.color,
+                    borderColor: market.color,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    latestValue: latestValue,
+                    hidden: false
+                };
+            });
+
+            datasetsWithValues.sort((a, b) => b.latestValue - a.latestValue);
+
+            if (predChart) {
+                predChart.destroy();
+            }
+
+            predChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: { size: 11, weight: '500' },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    return datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            strokeStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                const dataset = chart.data.datasets[index];
+                                // Toggle visibility - if currently hidden, show it; otherwise hide it
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return context.dataset.label + ': N/A';
+                                    if (value >= 1e9) return context.dataset.label + ': $' + (value / 1e9).toFixed(2) + 'B';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { color: '#999999', font: { size: 11 }, maxRotation: 0 }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: { color: '#f0f0f0', drawBorder: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    if (value >= 1e9) return '$' + (value / 1e9).toFixed(0) + 'B';
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('Prediction chart created successfully');
+        }
+
+        // Update prediction market chart
+        async function updatePredChart(days = 7, chartType = currentPredChartType) {
+            console.log('updatePredChart called:', days, chartType);
+            currentPredChartDays = days;
+            currentPredChartType = chartType;
+
+            let historicalData;
+            try {
+                if (chartType === 'oi') {
+                    historicalData = await fetchPredOI(days);
+                } else if (chartType === 'fees') {
+                    historicalData = await fetchPredFees(days);
+                } else {
+                    historicalData = await fetchPredVolume(days);
+                }
+                console.log('Prediction chart data:', historicalData.length, 'series');
+
+                if (historicalData.length > 0) {
+                    renderPredChart(historicalData);
+                } else {
+                    console.warn('No prediction chart data received');
+                }
+            } catch (e) {
+                console.error('Error in updatePredChart:', e);
+            }
+
+            const subtitles = {
+                'volume': `Daily trading volume by platform over the last ${days} days`,
+                'oi': `Daily open interest by platform over the last ${days} days`,
+                'fees': `Daily fees generated by platform over the last ${days} days`
+            };
+            document.getElementById('predChartSubtitle').textContent = subtitles[chartType];
+        }
+
+        // ========== RWA CHART FUNCTIONS ==========
+
+        // Colors for top 10 RWA protocols (no similar colors adjacent)
+        const rwaColors = [
+            '#000000', // Black
+            '#EF4444', // Red
+            '#14B8A6', // Teal
+            '#F97316', // Orange
+            '#8B5CF6', // Purple
+            '#22C55E', // Green
+            '#EC4899', // Pink
+            '#3B82F6', // Blue
+            '#EAB308', // Yellow
+            '#78350F'  // Brown
+        ];
+
+        // Default visible RWA protocols (top 5 by index)
+        const defaultVisibleRwaCount = 5;
+
+        // Fetch ALL RWA protocols from DefiLlama
+        async function fetchAllRwaProtocols() {
+            try {
+                const response = await fetch(proxyUrl('https://api.llama.fi/protocols'));
+                if (response.ok) {
+                    const data = await response.json();
+                    // Filter to RWA category only
+                    return data.filter(p => p.category === 'RWA').map(p => ({
+                        name: p.name,
+                        slug: p.slug,
+                        tvl: p.tvl || 0
+                    }));
+                }
+            } catch (e) {
+                console.error('Error fetching RWA protocols list:', e);
+            }
+            return [];
+        }
+
+        // Fetch RWA TVL data from DefiLlama - ALL protocols
+        async function fetchRwaTvl(days = 30) {
+            const now = Math.floor(Date.now() / 1000);
+            const startTime = now - (days * 24 * 60 * 60);
+
+            // First get all RWA protocols
+            const allProtocols = await fetchAllRwaProtocols();
+            allProtocols.sort((a, b) => (b.tvl || 0) - (a.tvl || 0));
+
+            console.log(`Found ${allProtocols.length} RWA protocols`);
+
+            const results = [];
+            const othersData = new Map(); // Combined data for protocols outside top 10
+
+            // Fetch historical data for each protocol
+            for (let i = 0; i < allProtocols.length; i++) {
+                const protocol = allProtocols[i];
+                try {
+                    const url = `https://api.llama.fi/protocol/${protocol.slug}`;
+                    const response = await fetch(proxyUrl(url));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const tvlData = data.tvl || [];
+
+                        // Filter to requested time range
+                        const filteredData = tvlData
+                            .filter(d => d.date >= startTime)
+                            .map(d => [d.date, d.totalLiquidityUSD]);
+
+                        if (filteredData.length > 0) {
+                            const currentTvl = data.tvl ? data.tvl[data.tvl.length - 1]?.totalLiquidityUSD : 0;
+
+                            if (i < 10) {
+                                // Top 10 get their own entry
+                                results.push({
+                                    name: protocol.name,
+                                    color: rwaColors[i],
+                                    data: filteredData,
+                                    currentTvl: currentTvl,
+                                    isTop10: true
+                                });
+                            } else {
+                                // Others: aggregate into combined dataset
+                                filteredData.forEach(([timestamp, value]) => {
+                                    const existing = othersData.get(timestamp) || 0;
+                                    othersData.set(timestamp, existing + value);
+                                });
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Error fetching RWA data for ${protocol.name}:`, e);
+                }
+            }
+
+            // Add "Other" as combined dataset if there's data - put at BEGINNING for bottom of stack
+            if (othersData.size > 0) {
+                const othersArray = Array.from(othersData.entries()).sort((a, b) => a[0] - b[0]);
+                const othersTvl = othersArray.length > 0 ? othersArray[othersArray.length - 1][1] : 0;
+                results.unshift({
+                    name: 'Other',
+                    color: '#9CA3AF',
+                    data: othersArray,
+                    currentTvl: othersTvl,
+                    isTop10: false,
+                    isOthers: true
+                });
+            }
+
+            // Sort top 10 by TVL, but keep "Other" at position 0 (bottom of stack)
+            const otherDataset = results.find(r => r.isOthers);
+            const top10 = results.filter(r => !r.isOthers).sort((a, b) => (b.currentTvl || 0) - (a.currentTvl || 0));
+
+            // Return with Other first (renders at bottom), then top 10 by TVL
+            return otherDataset ? [otherDataset, ...top10] : top10;
+        }
+
+        // Render RWA stacked area chart
+        function renderRwaChart(historicalData) {
+            const ctx = document.getElementById('rwaChart').getContext('2d');
+
+            // Helper to normalize timestamp to start of day (UTC)
+            const normalizeToDay = (timestamp) => {
+                const date = new Date(timestamp * 1000);
+                date.setUTCHours(0, 0, 0, 0);
+                return Math.floor(date.getTime() / 1000);
+            };
+
+            // Get all unique dates (normalized to day)
+            const allDates = new Set();
+            historicalData.forEach(protocol => {
+                protocol.data.forEach(([timestamp]) => {
+                    allDates.add(normalizeToDay(timestamp));
+                });
+            });
+
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            // Create datasets for area chart
+            const datasetsWithValues = historicalData.map((protocol, index) => {
+                // Create map with normalized dates, keeping last value for each day
+                const dataMap = new Map();
+                protocol.data.forEach(([timestamp, value]) => {
+                    const normalizedTs = normalizeToDay(timestamp);
+                    dataMap.set(normalizedTs, value); // Later values overwrite earlier ones
+                });
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values.filter(v => v !== null).pop() || 0;
+
+                // Top 5 visible by default, [more] hidden by default
+                const isVisible = protocol.isOthers ? false : index < defaultVisibleRwaCount;
+
+                return {
+                    label: protocol.name,
+                    data: values,
+                    backgroundColor: protocol.color + '80',
+                    borderColor: protocol.color,
+                    borderWidth: 1,
+                    fill: 'origin',
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    latestValue: latestValue,
+                    hidden: !isVisible,
+                    isOthers: protocol.isOthers || false
+                };
+            });
+
+            // Keep order as-is (top 10 by TVL, then [more] at the end)
+
+            if (rwaChart) {
+                rwaChart.destroy();
+            }
+
+            rwaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 10,
+                                font: { size: 11, weight: '500' },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    const labels = [];
+
+                                    // Add top 10 protocols (not Other)
+                                    datasets.forEach((dataset, i) => {
+                                        if (dataset.isOthers) return; // Skip [more] for now
+
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+
+                                        labels.push({
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            strokeStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        });
+                                    });
+
+                                    // Add Other at the end of legend (the aggregated dataset)
+                                    datasets.forEach((dataset, i) => {
+                                        if (!dataset.isOthers) return;
+
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+
+                                        labels.push({
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            strokeStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        });
+                                    });
+
+                                    return labels;
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                const dataset = chart.data.datasets[index];
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw; // Use raw value, not stacked
+                                    if (value === null || value === undefined) return context.dataset.label + ': N/A';
+                                    if (value >= 1e9) return context.dataset.label + ': $' + (value / 1e9).toFixed(2) + 'B';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                },
+                                footer: function(tooltipItems) {
+                                    // Show total of visible items
+                                    let total = 0;
+                                    tooltipItems.forEach(item => {
+                                        if (item.raw) total += item.raw;
+                                    });
+                                    if (total >= 1e9) return 'Total: $' + (total / 1e9).toFixed(2) + 'B';
+                                    if (total >= 1e6) return 'Total: $' + (total / 1e6).toFixed(2) + 'M';
+                                    return 'Total: $' + total.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { color: '#999999', font: { size: 11 }, maxRotation: 0 }
+                        },
+                        y: {
+                            stacked: true,
+                            position: 'left',
+                            grid: { color: '#f0f0f0', drawBorder: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    if (value >= 1e9) return '$' + (value / 1e9).toFixed(1) + 'B';
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('RWA chart created successfully');
+        }
+
+        // Update RWA chart
+        async function updateRwaChart(days = 365, chartType = currentRwaChartType) {
+            currentRwaChartDays = days;
+            currentRwaChartType = chartType;
+
+            try {
+                let historicalData;
+                if (chartType === 'stablecoins') {
+                    historicalData = await fetchStablecoinTvl(days);
+                    console.log('Stablecoin chart data:', historicalData.length, 'protocols');
+                } else {
+                    historicalData = await fetchRwaTvl(days);
+                    console.log('RWA chart data:', historicalData.length, 'protocols');
+                }
+
+                if (historicalData.length > 0) {
+                    renderRwaChart(historicalData);
+                } else {
+                    console.warn('No chart data received');
+                }
+            } catch (e) {
+                console.error('Error in updateRwaChart:', e);
+            }
+
+            const timeLabel = days === 365 ? 'year' : `${days} days`;
+            const subtitles = {
+                'tvl': `Total value locked by RWA protocol over the last ${timeLabel}`,
+                'stablecoins': `Total stablecoin market cap over the last ${timeLabel}`
+            };
+            document.getElementById('rwaChartSubtitle').textContent = subtitles[chartType];
+        }
+
+        // ========== STABLECOIN FUNCTIONS ==========
+
+        // Colors for top 10 stablecoins (no similar colors adjacent)
+        const stablecoinColors = [
+            '#000000', // Black
+            '#EF4444', // Red
+            '#14B8A6', // Teal
+            '#F97316', // Orange
+            '#8B5CF6', // Purple
+            '#22C55E', // Green
+            '#EC4899', // Pink
+            '#3B82F6', // Blue
+            '#EAB308', // Yellow
+            '#78350F'  // Brown
+        ];
+
+        // Default visible stablecoins (top 5 by index)
+        const defaultVisibleStablecoinCount = 5;
+
+        // Fetch ALL stablecoin protocols from DefiLlama
+        async function fetchAllStablecoinProtocols() {
+            try {
+                const response = await fetch(proxyUrl('https://stablecoins.llama.fi/stablecoins?includePrices=true'));
+                if (response.ok) {
+                    const data = await response.json();
+                    return (data.peggedAssets || []).map(p => ({
+                        name: p.name,
+                        symbol: p.symbol,
+                        id: p.id,
+                        mcap: p.circulating?.peggedUSD || 0
+                    }));
+                }
+            } catch (e) {
+                console.error('Error fetching stablecoin list:', e);
+            }
+            return [];
+        }
+
+        // Fetch stablecoin historical data
+        async function fetchStablecoinTvl(days = 365) {
+            const now = Math.floor(Date.now() / 1000);
+            const startTime = now - (days * 24 * 60 * 60);
+
+            // Get all stablecoins
+            const allStablecoins = await fetchAllStablecoinProtocols();
+            allStablecoins.sort((a, b) => (b.mcap || 0) - (a.mcap || 0));
+
+            console.log(`Found ${allStablecoins.length} stablecoins`);
+
+            const results = [];
+            const othersData = new Map();
+
+            // Fetch historical data for each stablecoin
+            for (let i = 0; i < Math.min(allStablecoins.length, 50); i++) {
+                const stablecoin = allStablecoins[i];
+                try {
+                    const url = `https://stablecoins.llama.fi/stablecoincharts/all?stablecoin=${stablecoin.id}`;
+                    const response = await fetch(proxyUrl(url));
+                    if (response.ok) {
+                        const data = await response.json();
+
+                        const filteredData = data
+                            .filter(d => d.date >= startTime)
+                            .map(d => [d.date, d.totalCirculating?.peggedUSD || 0]);
+
+                        if (filteredData.length > 0) {
+                            const currentMcap = stablecoin.mcap || 0;
+
+                            if (i < 10) {
+                                results.push({
+                                    name: stablecoin.name,
+                                    color: stablecoinColors[i],
+                                    data: filteredData,
+                                    currentTvl: currentMcap,
+                                    isTop10: true
+                                });
+                            } else {
+                                filteredData.forEach(([timestamp, value]) => {
+                                    const existing = othersData.get(timestamp) || 0;
+                                    othersData.set(timestamp, existing + value);
+                                });
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Error fetching stablecoin data for ${stablecoin.name}:`, e);
+                }
+            }
+
+            // Add "Other" as combined dataset
+            if (othersData.size > 0) {
+                const othersArray = Array.from(othersData.entries()).sort((a, b) => a[0] - b[0]);
+                const othersMcap = othersArray.length > 0 ? othersArray[othersArray.length - 1][1] : 0;
+                results.unshift({
+                    name: 'Other',
+                    color: '#9CA3AF',
+                    data: othersArray,
+                    currentTvl: othersMcap,
+                    isTop10: false,
+                    isOthers: true
+                });
+            }
+
+            // Sort top 10 by mcap, keep "Other" at position 0
+            const otherDataset = results.find(r => r.isOthers);
+            const top10 = results.filter(r => !r.isOthers).sort((a, b) => (b.currentTvl || 0) - (a.currentTvl || 0));
+
+            return otherDataset ? [otherDataset, ...top10] : top10;
+        }
+
+        // ========== END STABLECOIN FUNCTIONS ==========
+
+        // RWA/Stablecoin time selector and chart type event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const rwaTimeSelector = document.getElementById('rwaTimeSelector');
+            if (rwaTimeSelector) {
+                rwaTimeSelector.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', async function() {
+                        rwaTimeSelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        const days = parseInt(this.dataset.days);
+                        await updateRwaChart(days, currentRwaChartType);
+                    });
+                });
+            }
+
+            // Chart type tabs (TVL vs Stablecoins)
+            document.querySelectorAll('[data-rwa-chart]').forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    document.querySelectorAll('[data-rwa-chart]').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.rwaChart;
+                    await updateRwaChart(currentRwaChartDays, chartType);
+                });
+            });
+        });
+
+        // ========== END RWA CHART FUNCTIONS ==========
+
+        // Create prediction market card
+        function createPredCard(market, volumeData, feesData) {
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${market.logo}" alt="${market.name}" onerror="this.style.display='none'">
+                        <div>
+                            <div class="name">${market.name}</div>
+                            <div class="symbol">${market.chain}</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <span class="price-change" style="background: rgba(139, 92, 246, 0.2); color: #8B5CF6;">Prediction Market</span>
+                        </div>
+                    </div>
+
+                    <div class="metrics-container">
+                        <div class="metrics-section">
+                            <h3>Platform Info</h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Chain</div>
+                                    <div class="metric-value" style="font-size: 0.85rem;">${market.chain}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Token</div>
+                                    <div class="metric-value">${market.hasToken ? '$' + market.tokenSymbol : 'None'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Status</div>
+                                    <div class="metric-value" style="font-size: 0.85rem;">Live</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-section">
+                            <h3>Trading Stats <span class="source">DefiLlama</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Volume (24h)</div>
+                                    <div class="metric-value">${formatUSD(volumeData?.total24h)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Volume (30d)</div>
+                                    <div class="metric-value">${formatUSD(volumeData?.total30d)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Fees (24h)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total24h)}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metrics-section">
+                            <h3>Funding & Backers</h3>
+                            <div class="metrics-grid" style="grid-template-columns: 1fr 2fr;">
+                                <div class="metric">
+                                    <div class="metric-label">Raised</div>
+                                    <div class="metric-value" style="font-size: 0.95rem;">${market.funding || 'N/A'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Backers</div>
+                                    <div class="metric-value" style="font-size: 0.7rem; line-height: 1.4; font-weight: 400;">${market.backers || 'N/A'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="revenue-share" style="border-color: rgba(139, 92, 246, 0.2); background: rgba(139, 92, 246, 0.05);">
+                            <h3 style="color: #8B5CF6;">About</h3>
+                            <p>${market.description}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch prediction market dashboard data
+        async function fetchPredDashboardData() {
+            const predDashboard = document.getElementById('predDashboard');
+            console.log('Fetching prediction market dashboard data...');
+
+            // Fetch volume and fees data
+            const volumeDataMap = {};
+            const feesDataMap = {};
+
+            try {
+                for (const market of predictionMarkets) {
+                    try {
+                        const volResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/dexs/${market.volumeId}`));
+                        if (volResponse.ok) {
+                            const data = await volResponse.json();
+                            volumeDataMap[market.id] = {
+                                total24h: data.total24h,
+                                total30d: data.total30d
+                            };
+                            console.log(`Got volume for ${market.name}:`, data.total24h);
+                        }
+                    } catch (e) {
+                        console.error(`Error fetching volume for ${market.name}:`, e);
+                    }
+
+                    if (market.feesId) {
+                        try {
+                            const feesResponse = await fetch(proxyUrl(`https://api.llama.fi/summary/fees/${market.feesId}`));
+                            if (feesResponse.ok) {
+                                const data = await feesResponse.json();
+                                feesDataMap[market.id] = {
+                                    total24h: data.total24h,
+                                    total30d: data.total30d
+                                };
+                            }
+                        } catch (e) {
+                            console.error(`Error fetching fees for ${market.name}:`, e);
+                        }
+                    }
+                }
+
+                // Create cards
+                const cards = predictionMarkets.map(market => {
+                    const volumeData = volumeDataMap[market.id] || null;
+                    const feesData = feesDataMap[market.id] || null;
+                    return createPredCard(market, volumeData, feesData);
+                }).join('');
+
+                predDashboard.innerHTML = cards;
+                console.log('Prediction market dashboard updated');
+            } catch (e) {
+                console.error('Error in fetchPredDashboardData:', e);
+                predDashboard.innerHTML = '<div class="error">Error loading prediction market data. Check console for details.</div>';
+            }
+        }
+
+        function formatUSD(num) {
+            if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
+            num = Number(num);
+            if (num >= 1e9) return '$' + (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return '$' + (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return '$' + (num / 1e3).toFixed(2) + 'K';
+            return '$' + num.toFixed(2);
+        }
+
+        function formatPrice(price) {
+            if (price === null || price === undefined || isNaN(price)) return '<span class="na">N/A</span>';
+            price = Number(price);
+            if (price >= 1) return '$' + price.toFixed(2);
+            if (price >= 0.01) return '$' + price.toFixed(4);
+            return '$' + price.toFixed(6);
+        }
+
+        function formatSupply(num) {
+            if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
+            num = Number(num);
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return num.toFixed(0);
+        }
+
+        function formatPercent(num) {
+            if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
+            num = Number(num);
+            const sign = num >= 0 ? '+' : '';
+            const colorClass = num >= 0 ? 'positive' : 'negative';
+            return `<span class="${colorClass}">${sign}${num.toFixed(2)}%</span>`;
+        }
+
+        function createCard(coinData, protocolData, feesData, revenueShare) {
+            const priceChangeClass = (coinData?.price_change_percentage_24h || 0) >= 0 ? 'positive' : 'negative';
+            const priceChangeSign = (coinData?.price_change_percentage_24h || 0) >= 0 ? '+' : '';
+
+            let feesChange = null;
+            if (feesData?.total24h && feesData?.total48hto24h) {
+                feesChange = ((feesData.total24h - feesData.total48hto24h) / feesData.total48hto24h) * 100;
+            }
+
+            const statusLabel = revenueShare.status === 'active' ? 'Active' :
+                               revenueShare.status === 'inactive' ? 'Limited' : 'None';
+
+            // Check if this is a tokenless protocol (no current price means no token yet)
+            const hasToken = coinData?.current_price !== null && coinData?.current_price !== undefined;
+            const sectionTitle = hasToken ? 'Token Value Accrual' : 'Airdrop Opportunity';
+
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${coinData?.image || ''}" alt="${coinData?.name || 'Protocol'}" onerror="this.style.display='none'">
+                        <div>
+                            <div class="name">${coinData?.name || protocolData?.name || 'Unknown'}</div>
+                            <div class="symbol">${(coinData?.symbol || '').toUpperCase()}</div>
+                        </div>
+                        <div class="price-section" style="margin-left: auto;">
+                            ${hasToken ? `
+                                <span class="price">${formatPrice(coinData?.current_price)}</span>
+                                ${coinData?.price_change_percentage_24h !== undefined && coinData?.price_change_percentage_24h !== null ? `
+                                    <span class="price-change ${priceChangeClass}">
+                                        ${priceChangeSign}${coinData.price_change_percentage_24h?.toFixed(2)}%
+                                    </span>
+                                ` : ''}
+                            ` : `
+                                <span class="price-change" style="background: rgba(139, 92, 246, 0.2); color: #8B5CF6;">No Token Yet</span>
+                            `}
+                        </div>
+                    </div>
+
+                    <div class="metrics-container">
+                        ${hasToken ? `
+                        <div class="metrics-section">
+                            <h3>Market Data <span class="source">CoinGecko</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Market Cap</div>
+                                    <div class="metric-value">${formatUSD(coinData?.market_cap)}</div>
+                                    <div class="metric-subtext">Rank #${coinData?.market_cap_rank || 'N/A'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">24h Volume</div>
+                                    <div class="metric-value">${formatUSD(coinData?.total_volume)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">FDV</div>
+                                    <div class="metric-value">${formatUSD(coinData?.fully_diluted_valuation)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        ` : `
+                        <div class="metrics-section">
+                            <h3>Valuation <span class="source">Private</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Est. Valuation</div>
+                                    <div class="metric-value">$9B</div>
+                                    <div class="metric-subtext">Oct 2025</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Funding Raised</div>
+                                    <div class="metric-value">$2.3B</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Lead Investor</div>
+                                    <div class="metric-value" style="font-size: 0.85rem;">ICE (NYSE owner)</div>
+                                </div>
+                            </div>
+                        </div>
+                        `}
+
+                        <div class="metrics-section">
+                            <h3>Fees & Revenue <span class="source">DefiLlama</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Fees (24h)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total24h)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Fees (30d)</div>
+                                    <div class="metric-value">${formatUSD(feesData?.total30d)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">P/F Ratio</div>
+                                    <div class="metric-value">${(coinData?.market_cap && feesData?.total24h) ? (coinData.market_cap / (feesData.total24h * 365)).toFixed(1) + 'x' : '<span class="na">N/A</span>'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="revenue-share">
+                            <h3>${sectionTitle}</h3>
+                            <span class="status ${revenueShare.status}">${statusLabel}</span>
+                            <p>${revenueShare.mechanism}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch all CoinGecko data in a single batched request
+        async function fetchAllCoinGeckoData() {
+            const allIds = protocols.map(p => p.coingeckoId).filter(id => id !== null).join(',');
+            const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${allIds}&sparkline=false`;
+            const coinMap = {};
+
+            console.log('CoinGecko request URL:', url);
+            console.log('Requesting IDs:', allIds);
+
+            try {
+                const response = await fetchCoinGecko(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('CoinGecko response count:', data.length);
+                    data.forEach(coin => {
+                        coinMap[coin.id] = coin;
+                    });
+                } else {
+                    console.error('CoinGecko response not OK:', response.status, response.statusText);
+                }
+            } catch (e) {
+                console.error('Error fetching CoinGecko data:', e);
+            }
+
+            // Check which protocols are missing and try fetching them individually
+            const missingIds = protocols
+                .filter(p => p.coingeckoId && !coinMap[p.coingeckoId])
+                .map(p => p.coingeckoId);
+
+            if (missingIds.length > 0) {
+                console.warn('Missing CoinGecko data for:', missingIds);
+
+                // Try fetching missing coins individually
+                for (const id of missingIds) {
+                    try {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        const singleUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&sparkline=false`;
+                        const singleResponse = await fetchCoinGecko(singleUrl);
+                        if (singleResponse.ok) {
+                            const singleData = await singleResponse.json();
+                            if (singleData.length > 0) {
+                                coinMap[singleData[0].id] = singleData[0];
+                                console.log(`Successfully fetched missing coin: ${id}`);
+                            }
+                        }
+                    } catch (e) {
+                        console.error(`Failed to fetch individual coin ${id}:`, e);
+                    }
+                }
+            }
+
+            return coinMap;
+        }
+
+        async function fetchProtocolData(protocol, coinDataMap) {
+            // For protocols without a token (like Polymarket), create synthetic coinData
+            let coinData = coinDataMap[protocol.coingeckoId] || null;
+            if (!coinData && protocol.name) {
+                coinData = {
+                    name: protocol.name,
+                    symbol: protocol.symbol || '',
+                    image: protocol.logo || '',
+                    current_price: null,
+                    market_cap: null,
+                    total_volume: null,
+                    fully_diluted_valuation: null,
+                    market_cap_rank: null,
+                    price_change_percentage_24h: null
+                };
+            }
+
+            const results = {
+                coinData: coinData,
+                protocolData: null,
+                feesData: null,
+                revenueShare: protocol.revenueShare
+            };
+
+            const urls = {
+                protocol: `https://api.llama.fi/protocol/${protocol.defillamaId}`,
+                fees: `https://api.llama.fi/summary/fees/${protocol.defillamaFeesId}`
+            };
+
+            const [protocolResponse, feesResponse] = await Promise.allSettled([
+                fetch(proxyUrl(urls.protocol)),
+                fetch(proxyUrl(urls.fees))
+            ]);
+
+            if (protocolResponse.status === 'fulfilled' && protocolResponse.value.ok) {
+                const data = await protocolResponse.value.json();
+                results.protocolData = {
+                    name: data.name,
+                    tvl: data.tvl,
+                    change_1d: data.change_1d,
+                    change_7d: data.change_7d,
+                    change_1m: data.change_1m,
+                    mcapTvl: data.mcapTvl,
+                    category: data.category,
+                    chains: data.chains,
+                    listedAt: data.listedAt,
+                    staking: data.staking,
+                    pool2: data.pool2
+                };
+            }
+
+            if (feesResponse.status === 'fulfilled' && feesResponse.value.ok) {
+                const data = await feesResponse.value.json();
+                results.feesData = {
+                    total24h: data.total24h,
+                    total48hto24h: data.total48hto24h,
+                    total7d: data.total7d,
+                    total30d: data.total30d,
+                    totalAllTime: data.totalAllTime
+                };
+            }
+
+            return results;
+        }
+
+        async function fetchData() {
+            const dashboard = document.getElementById('dashboard');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const lastUpdated = document.getElementById('lastUpdated');
+
+            refreshBtn.disabled = true;
+            refreshBtn.textContent = 'Loading...';
+
+            dashboard.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Fetching data from CoinGecko & DefiLlama...</p>
+                </div>
+            `;
+
+            try {
+                // Fetch all CoinGecko data in one request
+                const coinDataMap = await fetchAllCoinGeckoData();
+
+                const results = await Promise.all(
+                    protocols.map(protocol => fetchProtocolData(protocol, coinDataMap))
+                );
+
+                // Check if we got any data (at least fees data from DefiLlama)
+                const hasData = results.some(r => r.feesData);
+
+                if (!hasData) {
+                    throw new Error('No data received from APIs. Please try refreshing in a few seconds.');
+                }
+
+                // Sort results by 24h fees (highest first)
+                results.sort((a, b) => {
+                    const feesA = a.feesData?.total24h || 0;
+                    const feesB = b.feesData?.total24h || 0;
+                    return feesB - feesA;
+                });
+
+                const cards = results.map(result =>
+                    createCard(result.coinData, result.protocolData, result.feesData, result.revenueShare)
+                ).join('');
+
+                dashboard.innerHTML = cards;
+                lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+                // Update the chart
+                await updateChart();
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                dashboard.innerHTML = `
+                    <div class="error-msg">
+                        <p><strong>Error loading data</strong></p>
+                        <p>Error: ${error.message}</p>
+                        <p style="margin-top: 10px;">Check browser console (F12) for details.</p>
+                    </div>
+                `;
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = 'Refresh Data';
+            }
+        }
+
+        fetchData();
+        setInterval(fetchData, 120000);
+    </script>
+</body>
+</html>
