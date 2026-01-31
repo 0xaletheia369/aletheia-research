@@ -786,13 +786,13 @@
                     <div class="chart-tabs">
                         <span class="chart-tab active">Total Value Locked</span>
                     </div>
-                    <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked by RWA protocol over the last 30 days</p>
+                    <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked by RWA protocol over the last year</p>
                 </div>
                 <div class="time-selector" id="rwaTimeSelector">
-                    <button data-days="7" class="active">7D</button>
+                    <button data-days="7">7D</button>
                     <button data-days="30">30D</button>
                     <button data-days="90">90D</button>
-                    <button data-days="365">1Y</button>
+                    <button data-days="365" class="active">1Y</button>
                 </div>
             </div>
             <div class="chart-wrapper">
@@ -851,7 +851,7 @@
         let rwaChartInitialized = false;
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
-        let currentRwaChartDays = 30;
+        let currentRwaChartDays = 365;
         let predChart = null;
         let rwaChart = null;
 
@@ -959,7 +959,7 @@
             // Trigger RWA chart initialization if switching to rwas
             if (tabId === 'rwas' && !rwaChartInitialized) {
                 rwaChartInitialized = true;
-                updateRwaChart(30);
+                updateRwaChart(365);
             }
         }
 
@@ -2447,12 +2447,12 @@
                 }
             }
 
-            // Add "Others" as combined dataset if there's data
+            // Add "Other" as combined dataset if there's data - put at BEGINNING for bottom of stack
             if (othersData.size > 0) {
                 const othersArray = Array.from(othersData.entries()).sort((a, b) => a[0] - b[0]);
                 const othersTvl = othersArray.length > 0 ? othersArray[othersArray.length - 1][1] : 0;
-                results.push({
-                    name: '[more]',
+                results.unshift({
+                    name: 'Other',
                     color: '#9CA3AF',
                     data: othersArray,
                     currentTvl: othersTvl,
@@ -2461,14 +2461,12 @@
                 });
             }
 
-            // Sort by current TVL but keep [more] at the end
-            results.sort((a, b) => {
-                if (a.isOthers) return 1;
-                if (b.isOthers) return -1;
-                return (b.currentTvl || 0) - (a.currentTvl || 0);
-            });
+            // Sort top 10 by TVL, but keep "Other" at position 0 (bottom of stack)
+            const otherDataset = results.find(r => r.isOthers);
+            const top10 = results.filter(r => !r.isOthers).sort((a, b) => (b.currentTvl || 0) - (a.currentTvl || 0));
 
-            return results;
+            // Return with Other first (renders at bottom), then top 10 by TVL
+            return otherDataset ? [otherDataset, ...top10] : top10;
         }
 
         // Render RWA stacked area chart
@@ -2560,7 +2558,7 @@
                                     const datasets = chart.data.datasets;
                                     const labels = [];
 
-                                    // Add top 10 protocols (not [more])
+                                    // Add top 10 protocols (not Other)
                                     datasets.forEach((dataset, i) => {
                                         if (dataset.isOthers) return; // Skip [more] for now
 
@@ -2583,7 +2581,7 @@
                                         });
                                     });
 
-                                    // Add [more] at the end (the aggregated "Others" dataset)
+                                    // Add Other at the end of legend (the aggregated dataset)
                                     datasets.forEach((dataset, i) => {
                                         if (!dataset.isOthers) return;
 
@@ -2690,12 +2688,12 @@
                 if (historicalData.length > 0) {
                     renderRwaChart(historicalData);
 
-                    // Update summary stats
-                    const totalTvl = historicalData.reduce((sum, p) => sum + (p.currentTvl || 0), 0);
+                    // Update summary stats - use allProtocols for accurate total
+                    const allRwaProtocols = await fetchAllRwaProtocols();
+                    const totalTvl = allRwaProtocols.reduce((sum, p) => sum + (p.tvl || 0), 0);
                     document.getElementById('rwaTotalTvl').textContent = '$' + (totalTvl / 1e9).toFixed(2) + 'B';
 
-                    // Update protocol count (top 10 + others)
-                    const allRwaProtocols = await fetchAllRwaProtocols();
+                    // Update protocol count
                     document.getElementById('rwaProtocolCount').textContent = allRwaProtocols.length;
 
                     // Calculate 7d and 30d changes from the data
@@ -2735,8 +2733,9 @@
                 console.error('Error in updateRwaChart:', e);
             }
 
+            const timeLabel = days === 365 ? 'year' : `${days} days`;
             document.getElementById('rwaChartSubtitle').textContent =
-                `Total value locked by RWA protocol over the last ${days} days`;
+                `Total value locked by RWA protocol over the last ${timeLabel}`;
         }
 
         // RWA time selector event listeners
