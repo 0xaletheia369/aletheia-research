@@ -454,6 +454,13 @@
             height: 350px;
         }
 
+        .chart-data-source {
+            text-align: right;
+            font-size: 0.65rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
         .time-selector {
             display: flex;
             gap: 0;
@@ -828,9 +835,6 @@
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
         </div>
-        <div class="header-right">
-            <p class="sources">Data from <a href="https://www.coingecko.com" target="_blank">CoinGecko</a> & <a href="https://defillama.com" target="_blank">DefiLlama</a></p>
-        </div>
     </div>
 
     <div class="tab-nav">
@@ -906,6 +910,7 @@
         <div class="chart-wrapper">
             <canvas id="feesChart"></canvas>
         </div>
+        <p class="chart-data-source">Data: CoinGecko, DefiLlama</p>
     </div>
 
     <div class="dashboard" id="dashboard">
@@ -941,6 +946,7 @@
             <div class="chart-wrapper">
                 <canvas id="perpChart"></canvas>
             </div>
+            <p class="chart-data-source">Data: CoinGecko, DefiLlama</p>
         </div>
 
         <div class="dashboard" id="perpDashboard">
@@ -974,6 +980,7 @@
             <div class="chart-wrapper">
                 <canvas id="predChart"></canvas>
             </div>
+            <p class="chart-data-source">Data: DefiLlama</p>
         </div>
 
         <div class="dashboard" id="predDashboard">
@@ -1006,6 +1013,7 @@
             <div class="chart-wrapper">
                 <canvas id="rwaChart"></canvas>
             </div>
+            <p class="chart-data-source">Data: CoinGecko, DefiLlama</p>
         </div>
 
         <div class="dashboard" id="rwaDashboard">
@@ -1099,7 +1107,7 @@
                 coingeckoId: null,
                 hasToken: false,
                 tokenSymbol: null,
-                logo: 'https://icons.llama.fi/polymarket.png',
+                logo: 'https://polymarket.com/icons/apple-touch-icon.png',
                 chain: 'Polygon',
                 description: 'Leading decentralized prediction market on Polygon. Largest crypto prediction market by volume.',
                 funding: '$2.3B total ($2B from ICE in 2025)',
@@ -1114,7 +1122,7 @@
                 coingeckoId: null,
                 hasToken: false,
                 tokenSymbol: null,
-                logo: 'https://icons.llama.fi/kalshi.png',
+                logo: 'https://kalshi.com/icons/apple-touch-icon.png',
                 chain: 'Offchain',
                 description: 'CFTC-regulated prediction market. First legal US exchange for event contracts. $11B valuation.',
                 funding: '$1.7B total ($1B Series E in 2025)',
@@ -1129,7 +1137,7 @@
                 coingeckoId: null,
                 hasToken: false,
                 tokenSymbol: null,
-                logo: 'https://icons.llama.fi/myriad-markets.png',
+                logo: 'https://www.myriadmarkets.com/favicon.ico',
                 chain: 'Abstract (L2)',
                 description: 'Multichain prediction market (Abstract, Linea, BSC). 500K+ users, backed by Decrypt/DASTAN.',
                 funding: 'Undisclosed (DASTAN subsidiary)',
@@ -3427,10 +3435,15 @@
                 const response = await fetchCoinGecko(url);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('CoinGecko response count:', data.length);
-                    data.forEach(coin => {
-                        coinMap[coin.id] = coin;
-                    });
+                    console.log('CoinGecko response:', data);
+                    if (Array.isArray(data)) {
+                        console.log('CoinGecko response count:', data.length);
+                        data.forEach(coin => {
+                            coinMap[coin.id] = coin;
+                        });
+                    } else {
+                        console.error('CoinGecko response is not an array:', typeof data);
+                    }
                 } else {
                     console.error('CoinGecko response not OK:', response.status, response.statusText);
                 }
@@ -3536,7 +3549,6 @@
         async function fetchData() {
             const dashboard = document.getElementById('dashboard');
             const refreshBtn = document.getElementById('refreshBtn');
-            const lastUpdated = document.getElementById('lastUpdated');
 
             refreshBtn.disabled = true;
             refreshBtn.textContent = 'Loading...';
@@ -3575,7 +3587,6 @@
                 ).join('');
 
                 dashboard.innerHTML = cards;
-                lastUpdated.textContent = `Last updated: ${new Date().toLocaleString()}`;
 
                 // Update the chart
                 await updateChart();
