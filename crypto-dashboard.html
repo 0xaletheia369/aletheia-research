@@ -669,6 +669,9 @@
         let currentPredChartType = 'volume';
         let predChart = null;
 
+        // Detect if running from local file (needed for CORS proxy decisions)
+        const isLocalFile = window.location.protocol === 'file:';
+
         // Prediction Markets configuration (declared early for tab switching)
         const predictionMarkets = [
             {
@@ -910,9 +913,6 @@
         function proxyUrlCodeTabs(url) {
             return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url);
         }
-
-        // Check if we're running from file:// (local) or http(s):// (server)
-        const isLocalFile = window.location.protocol === 'file:';
 
         // Show warning if running locally
         if (isLocalFile) {
