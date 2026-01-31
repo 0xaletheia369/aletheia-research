@@ -2364,30 +2364,51 @@
 
         // ========== RWA CHART FUNCTIONS ==========
 
-        // RWA Protocol configuration
-        const rwaProtocols = [
-            { name: 'Tether Gold', slug: 'tether-gold', color: '#F7931A' },
-            { name: 'Paxos Gold', slug: 'paxos-gold', color: '#E4B74C' },
-            { name: 'Ondo', slug: 'ondo-yield-assets', color: '#10B981' },
-            { name: 'BlackRock BUIDL', slug: 'blackrock-buidl', color: '#000000' },
-            { name: 'Circle USYC', slug: 'circle-usyc', color: '#2775CA' },
-            { name: 'Centrifuge', slug: 'centrifuge-protocol', color: '#FFC012' },
-            { name: 'Spiko', slug: 'spiko', color: '#6366F1' },
-            { name: 'Ethena USDtb', slug: 'ethena-usdtb', color: '#8B5CF6' },
-            { name: 'WisdomTree', slug: 'wisdomtree', color: '#00A3E0' },
-            { name: 'Superstate USTB', slug: 'superstate-ustb', color: '#EF4444' }
+        // Colors for top 10 RWA protocols
+        const rwaColors = [
+            '#F7931A', '#E4B74C', '#10B981', '#000000', '#2775CA',
+            '#FFC012', '#6366F1', '#8B5CF6', '#00A3E0', '#EF4444'
         ];
 
-        // Default visible RWA protocols (top 5)
-        const defaultVisibleRwaProtocols = ['Tether Gold', 'Paxos Gold', 'Ondo', 'BlackRock BUIDL', 'Circle USYC'];
+        // Default visible RWA protocols (top 5 by index)
+        const defaultVisibleRwaCount = 5;
 
-        // Fetch RWA TVL data from DefiLlama
+        // Fetch ALL RWA protocols from DefiLlama
+        async function fetchAllRwaProtocols() {
+            try {
+                const response = await fetch(proxyUrl('https://api.llama.fi/protocols'));
+                if (response.ok) {
+                    const data = await response.json();
+                    // Filter to RWA category only
+                    return data.filter(p => p.category === 'RWA').map(p => ({
+                        name: p.name,
+                        slug: p.slug,
+                        tvl: p.tvl || 0
+                    }));
+                }
+            } catch (e) {
+                console.error('Error fetching RWA protocols list:', e);
+            }
+            return [];
+        }
+
+        // Fetch RWA TVL data from DefiLlama - ALL protocols
         async function fetchRwaTvl(days = 30) {
-            const results = [];
             const now = Math.floor(Date.now() / 1000);
             const startTime = now - (days * 24 * 60 * 60);
 
-            for (const protocol of rwaProtocols) {
+            // First get all RWA protocols
+            const allProtocols = await fetchAllRwaProtocols();
+            allProtocols.sort((a, b) => (b.tvl || 0) - (a.tvl || 0));
+
+            console.log(`Found ${allProtocols.length} RWA protocols`);
+
+            const results = [];
+            const othersData = new Map(); // Combined data for protocols outside top 10
+
+            // Fetch historical data for each protocol
+            for (let i = 0; i < allProtocols.length; i++) {
+                const protocol = allProtocols[i];
                 try {
                     const url = `https://api.llama.fi/protocol/${protocol.slug}`;
                     const response = await fetch(proxyUrl(url));
@@ -2401,12 +2422,24 @@
                             .map(d => [d.date, d.totalLiquidityUSD]);
 
                         if (filteredData.length > 0) {
-                            results.push({
-                                name: protocol.name,
-                                color: protocol.color,
-                                data: filteredData,
-                                currentTvl: data.tvl ? data.tvl[data.tvl.length - 1]?.totalLiquidityUSD : 0
-                            });
+                            const currentTvl = data.tvl ? data.tvl[data.tvl.length - 1]?.totalLiquidityUSD : 0;
+
+                            if (i < 10) {
+                                // Top 10 get their own entry
+                                results.push({
+                                    name: protocol.name,
+                                    color: rwaColors[i],
+                                    data: filteredData,
+                                    currentTvl: currentTvl,
+                                    isTop10: true
+                                });
+                            } else {
+                                // Others: aggregate into combined dataset
+                                filteredData.forEach(([timestamp, value]) => {
+                                    const existing = othersData.get(timestamp) || 0;
+                                    othersData.set(timestamp, existing + value);
+                                });
+                            }
                         }
                     }
                 } catch (e) {
@@ -2414,8 +2447,27 @@
                 }
             }
 
-            // Sort by current TVL
-            results.sort((a, b) => (b.currentTvl || 0) - (a.currentTvl || 0));
+            // Add "Others" as combined dataset if there's data
+            if (othersData.size > 0) {
+                const othersArray = Array.from(othersData.entries()).sort((a, b) => a[0] - b[0]);
+                const othersTvl = othersArray.length > 0 ? othersArray[othersArray.length - 1][1] : 0;
+                results.push({
+                    name: '[more]',
+                    color: '#9CA3AF',
+                    data: othersArray,
+                    currentTvl: othersTvl,
+                    isTop10: false,
+                    isOthers: true
+                });
+            }
+
+            // Sort by current TVL but keep [more] at the end
+            results.sort((a, b) => {
+                if (a.isOthers) return 1;
+                if (b.isOthers) return -1;
+                return (b.currentTvl || 0) - (a.currentTvl || 0);
+            });
+
             return results;
         }
 
@@ -2445,7 +2497,7 @@
             });
 
             // Create datasets for area chart
-            const datasetsWithValues = historicalData.map(protocol => {
+            const datasetsWithValues = historicalData.map((protocol, index) => {
                 // Create map with normalized dates, keeping last value for each day
                 const dataMap = new Map();
                 protocol.data.forEach(([timestamp, value]) => {
@@ -2454,7 +2506,9 @@
                 });
                 const values = sortedDates.map(date => dataMap.get(date) || null);
                 const latestValue = values.filter(v => v !== null).pop() || 0;
-                const isVisible = defaultVisibleRwaProtocols.includes(protocol.name);
+
+                // Top 5 visible by default, [more] hidden by default
+                const isVisible = protocol.isOthers ? false : index < defaultVisibleRwaCount;
 
                 return {
                     label: protocol.name,
@@ -2468,12 +2522,11 @@
                     pointHoverRadius: 4,
                     latestValue: latestValue,
                     hidden: !isVisible,
-                    order: isVisible ? 0 : 1  // Visible datasets render first (on bottom of stack)
+                    isOthers: protocol.isOthers || false
                 };
             });
 
-            // Sort by TVL value (highest first) - they stack from bottom to top
-            datasetsWithValues.sort((a, b) => b.latestValue - a.latestValue);
+            // Keep order as-is (top 10 by TVL, then [more] at the end)
 
             if (rwaChart) {
                 rwaChart.destroy();
@@ -2506,77 +2559,58 @@
                                 generateLabels: function(chart) {
                                     const datasets = chart.data.datasets;
                                     const labels = [];
-                                    let hiddenCount = 0;
 
+                                    // Add top 10 protocols (not [more])
                                     datasets.forEach((dataset, i) => {
+                                        if (dataset.isOthers) return; // Skip [more] for now
+
                                         const meta = chart.getDatasetMeta(i);
                                         const isHidden = meta.hidden || dataset.hidden;
 
-                                        // Show visible items, count hidden ones
-                                        if (!isHidden) {
-                                            labels.push({
-                                                text: dataset.label,
-                                                fillStyle: dataset.borderColor,
-                                                strokeStyle: dataset.borderColor,
-                                                fontColor: '#333333',
-                                                hidden: false,
-                                                lineCap: 'round',
-                                                lineDash: [],
-                                                lineDashOffset: 0,
-                                                lineJoin: 'round',
-                                                lineWidth: 0,
-                                                pointStyle: 'rect',
-                                                datasetIndex: i
-                                            });
-                                        } else {
-                                            hiddenCount++;
-                                        }
-                                    });
-
-                                    // Add hidden items after visible ones
-                                    datasets.forEach((dataset, i) => {
-                                        const meta = chart.getDatasetMeta(i);
-                                        const isHidden = meta.hidden || dataset.hidden;
-
-                                        if (isHidden) {
-                                            labels.push({
-                                                text: dataset.label,
-                                                fillStyle: dataset.borderColor + '40',
-                                                strokeStyle: dataset.borderColor + '40',
-                                                fontColor: '#aaaaaa',
-                                                hidden: false,
-                                                lineCap: 'round',
-                                                lineDash: [],
-                                                lineDashOffset: 0,
-                                                lineJoin: 'round',
-                                                lineWidth: 0,
-                                                pointStyle: 'rect',
-                                                datasetIndex: i
-                                            });
-                                        }
-                                    });
-
-                                    // Add [more] label if there are hidden items
-                                    if (hiddenCount > 0) {
-                                        // Insert [more] separator before hidden items
-                                        const visibleCount = datasets.length - hiddenCount;
-                                        labels.splice(visibleCount, 0, {
-                                            text: '[more]',
-                                            fillStyle: 'transparent',
-                                            strokeStyle: 'transparent',
-                                            fontColor: '#999999',
+                                        labels.push({
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            strokeStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
                                             hidden: false,
-                                            pointStyle: false,
-                                            datasetIndex: -1
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
                                         });
-                                    }
+                                    });
+
+                                    // Add [more] at the end (the aggregated "Others" dataset)
+                                    datasets.forEach((dataset, i) => {
+                                        if (!dataset.isOthers) return;
+
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+
+                                        labels.push({
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            strokeStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        });
+                                    });
 
                                     return labels;
                                 }
                             },
                             onClick: function(e, legendItem, legend) {
                                 const index = legendItem.datasetIndex;
-                                if (index === -1) return; // Ignore [more] label clicks
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
                                 const dataset = chart.data.datasets[index];
@@ -2659,6 +2693,10 @@
                     // Update summary stats
                     const totalTvl = historicalData.reduce((sum, p) => sum + (p.currentTvl || 0), 0);
                     document.getElementById('rwaTotalTvl').textContent = '$' + (totalTvl / 1e9).toFixed(2) + 'B';
+
+                    // Update protocol count (top 10 + others)
+                    const allRwaProtocols = await fetchAllRwaProtocols();
+                    document.getElementById('rwaProtocolCount').textContent = allRwaProtocols.length;
 
                     // Calculate 7d and 30d changes from the data
                     const now = Math.floor(Date.now() / 1000);
