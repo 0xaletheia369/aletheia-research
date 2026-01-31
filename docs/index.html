@@ -1257,8 +1257,11 @@
                                 const index = legendItem.datasetIndex;
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
-                                // Toggle visibility
-                                meta.hidden = !meta.hidden;
+                                const dataset = chart.data.datasets[index];
+                                // Toggle visibility on both meta and dataset
+                                const newHiddenState = !meta.hidden && !dataset.hidden ? true : false;
+                                meta.hidden = newHiddenState;
+                                dataset.hidden = newHiddenState;
                                 chart.update();
                             }
                         },
@@ -1643,7 +1646,11 @@
                                 const index = legendItem.datasetIndex;
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
-                                meta.hidden = !meta.hidden;
+                                const dataset = chart.data.datasets[index];
+                                // Toggle visibility on both meta and dataset
+                                const newHiddenState = !meta.hidden && !dataset.hidden ? true : false;
+                                meta.hidden = newHiddenState;
+                                dataset.hidden = newHiddenState;
                                 chart.update();
                             }
                         },
@@ -2098,7 +2105,11 @@
                                 const index = legendItem.datasetIndex;
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
-                                meta.hidden = !meta.hidden;
+                                const dataset = chart.data.datasets[index];
+                                // Toggle visibility on both meta and dataset
+                                const newHiddenState = !meta.hidden && !dataset.hidden ? true : false;
+                                meta.hidden = newHiddenState;
+                                dataset.hidden = newHiddenState;
                                 chart.update();
                             }
                         },
@@ -2604,18 +2615,8 @@
                     throw new Error('No data received from APIs. Please try refreshing in a few seconds.');
                 }
 
-                // Sort results: first by revenue share status (active > inactive > none), then by 24h fees
+                // Sort results by 24h fees (highest first)
                 results.sort((a, b) => {
-                    // Status priority: active = 0, inactive = 1, none = 2
-                    const statusOrder = { active: 0, inactive: 1, none: 2 };
-                    const statusA = statusOrder[a.revenueShare.status] ?? 2;
-                    const statusB = statusOrder[b.revenueShare.status] ?? 2;
-
-                    if (statusA !== statusB) {
-                        return statusA - statusB;
-                    }
-
-                    // Within same status, sort by 24h fees (highest first)
                     const feesA = a.feesData?.total24h || 0;
                     const feesB = b.feesData?.total24h || 0;
                     return feesB - feesA;
