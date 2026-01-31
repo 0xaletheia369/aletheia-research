@@ -1120,14 +1120,8 @@
                         const data = await response.json();
                         const chartData = data.totalDataChart || [];
 
-                        // Filter to only include data within our date range (including up to today)
+                        // Filter to only include data within our date range
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
-
-                        // Only add total24h if it's different from the last chart entry (avoid duplicates)
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
 
                         // Use override name if available, otherwise use API name
                         const displayName = displayNameOverrides[protocol.defillamaFeesId] || data.name || protocol.defillamaFeesId;
@@ -1348,12 +1342,6 @@
 
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
 
-                        // Only add total24h if it's different from the last chart entry
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
-
                         const displayName = displayNameOverrides[protocol.defillamaFeesId] || data.name || protocol.defillamaFeesId;
 
                         historicalData.push({
@@ -1477,10 +1465,6 @@
                         const data = await response.json();
                         const chartData = data.totalDataChart || [];
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
                         historicalData.push({
                             name: dex.name,
                             data: filteredDays,
@@ -1510,10 +1494,6 @@
                         const data = await response.json();
                         const chartData = data.totalDataChart || [];
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
                         historicalData.push({
                             name: dex.name,
                             data: filteredDays,
@@ -1543,10 +1523,6 @@
                         const data = await response.json();
                         const chartData = data.totalDataChart || [];
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
                         historicalData.push({
                             name: dex.name,
                             data: filteredDays,
@@ -1931,10 +1907,6 @@
                         const chartData = data.totalDataChart || [];
                         console.log(`${market.name} totalDataChart length:`, chartData.length);
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
                         console.log(`${market.name} filtered data points:`, filteredDays.length);
                         historicalData.push({
                             name: market.name,
@@ -1968,10 +1940,6 @@
                         const data = await response.json();
                         const chartData = data.totalDataChart || [];
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
                         if (filteredDays.length > 0) {
                             historicalData.push({
                                 name: market.name,
@@ -2004,10 +1972,6 @@
                         const data = await response.json();
                         const chartData = data.totalDataChart || [];
                         const filteredDays = chartData.filter(([ts]) => ts >= startTimestamp && ts <= todayTimestamp);
-                        const lastChartValue = chartData.length > 0 ? chartData[chartData.length - 1][1] : null;
-                        if (data.total24h && data.total24h !== lastChartValue) {
-                            filteredDays.push([todayTimestamp, data.total24h]);
-                        }
                         historicalData.push({
                             name: market.name,
                             data: filteredDays,
