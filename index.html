@@ -383,6 +383,10 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
             .header h1 {
                 font-size: 1.8rem;
             }
@@ -393,6 +397,116 @@
 
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-wrapper {
+                height: 280px;
+            }
+
+            .card {
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            .refresh-btn {
+                min-height: 44px;
+                padding: 12px 25px;
+            }
+        }
+
+        /* Mobile Responsiveness - 640px breakpoint */
+        @media (max-width: 640px) {
+            .header {
+                margin-bottom: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .time-selector {
+                align-self: center;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Mobile Responsiveness - 480px breakpoint */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-wrapper {
+                height: 220px;
+            }
+
+            .chart-container {
+                padding: 15px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+
+            .time-selector {
+                width: 100%;
+            }
+
+            .time-selector button {
+                flex: 1;
+                min-height: 44px;
+            }
+
+            .card {
+                padding: 12px;
+                border-radius: 8px;
+            }
+
+            .card-header {
+                margin-bottom: 12px;
+                padding-bottom: 12px;
+            }
+
+            .card-header img {
+                width: 32px;
+                height: 32px;
+            }
+
+            .card-header .name {
+                font-size: 1.1rem;
+            }
+
+            .price {
+                font-size: 1.3rem;
+            }
+
+            .metrics-section {
+                padding: 12px;
+            }
+
+            .metric {
+                padding: 12px 10px;
+            }
+
+            .refresh-btn {
+                width: 100%;
+                margin: 20px auto 0;
             }
         }
     </style>
