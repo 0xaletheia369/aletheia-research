@@ -902,6 +902,18 @@
                     status: 'inactive',
                     mechanism: 'W 2.0 Strategic Reserve: On-chain + off-chain protocol revenue flows to Wormhole Reserve. Target 4% base staking yield (no inflation, 10B max supply). Portal users earn boosted yields. Fee switches and monetization planned for 2026. Bi-weekly unlocks since Oct 2025.'
                 }
+            },
+            {
+                coingeckoId: null,
+                defillamaId: 'polymarket',
+                defillamaFeesId: 'polymarket',
+                name: 'Polymarket',
+                symbol: 'POLY',
+                logo: 'https://icons.llama.fi/polymarket.png',
+                revenueShare: {
+                    status: 'none',
+                    mechanism: 'POLY Token Airdrop Confirmed: CMO confirmed Oct 2025 "There will be a token, there will be an airdrop." Token launch expected 2026 after U.S. relaunch via acquired CFTC-regulated QCX ($112M). 5-10% supply to airdrop based on trading volume. $2B ICE investment at $9B valuation. Sybil accounts filtered out.'
+                }
             }
         ];
 
@@ -2348,25 +2360,34 @@
             const statusLabel = revenueShare.status === 'active' ? 'Active' :
                                revenueShare.status === 'inactive' ? 'Limited' : 'None';
 
+            // Check if this is a tokenless protocol (no current price means no token yet)
+            const hasToken = coinData?.current_price !== null && coinData?.current_price !== undefined;
+            const sectionTitle = hasToken ? 'Token Value Accrual' : 'Airdrop Opportunity';
+
             return `
                 <div class="card">
                     <div class="card-header">
-                        <img src="${coinData?.image || ''}" alt="${coinData?.name || 'Protocol'}">
+                        <img src="${coinData?.image || ''}" alt="${coinData?.name || 'Protocol'}" onerror="this.style.display='none'">
                         <div>
                             <div class="name">${coinData?.name || protocolData?.name || 'Unknown'}</div>
                             <div class="symbol">${(coinData?.symbol || '').toUpperCase()}</div>
                         </div>
                         <div class="price-section" style="margin-left: auto;">
-                            <span class="price">${formatPrice(coinData?.current_price)}</span>
-                            ${coinData?.price_change_percentage_24h !== undefined ? `
-                                <span class="price-change ${priceChangeClass}">
-                                    ${priceChangeSign}${coinData.price_change_percentage_24h?.toFixed(2)}%
-                                </span>
-                            ` : ''}
+                            ${hasToken ? `
+                                <span class="price">${formatPrice(coinData?.current_price)}</span>
+                                ${coinData?.price_change_percentage_24h !== undefined && coinData?.price_change_percentage_24h !== null ? `
+                                    <span class="price-change ${priceChangeClass}">
+                                        ${priceChangeSign}${coinData.price_change_percentage_24h?.toFixed(2)}%
+                                    </span>
+                                ` : ''}
+                            ` : `
+                                <span class="price-change" style="background: rgba(139, 92, 246, 0.2); color: #8B5CF6;">No Token Yet</span>
+                            `}
                         </div>
                     </div>
 
                     <div class="metrics-container">
+                        ${hasToken ? `
                         <div class="metrics-section">
                             <h3>Market Data <span class="source">CoinGecko</span></h3>
                             <div class="metrics-grid">
@@ -2385,6 +2406,26 @@
                                 </div>
                             </div>
                         </div>
+                        ` : `
+                        <div class="metrics-section">
+                            <h3>Valuation <span class="source">Private</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Est. Valuation</div>
+                                    <div class="metric-value">$9B</div>
+                                    <div class="metric-subtext">Oct 2025</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Funding Raised</div>
+                                    <div class="metric-value">$2.3B</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">Lead Investor</div>
+                                    <div class="metric-value" style="font-size: 0.85rem;">ICE (NYSE owner)</div>
+                                </div>
+                            </div>
+                        </div>
+                        `}
 
                         <div class="metrics-section">
                             <h3>Fees & Revenue <span class="source">DefiLlama</span></h3>
@@ -2405,7 +2446,7 @@
                         </div>
 
                         <div class="revenue-share">
-                            <h3>Token Value Accrual</h3>
+                            <h3>${sectionTitle}</h3>
                             <span class="status ${revenueShare.status}">${statusLabel}</span>
                             <p>${revenueShare.mechanism}</p>
                         </div>
@@ -2416,7 +2457,7 @@
 
         // Fetch all CoinGecko data in a single batched request
         async function fetchAllCoinGeckoData() {
-            const allIds = protocols.map(p => p.coingeckoId).join(',');
+            const allIds = protocols.map(p => p.coingeckoId).filter(id => id !== null).join(',');
             const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${allIds}&sparkline=false`;
             const coinMap = {};
 
@@ -2440,7 +2481,7 @@
 
             // Check which protocols are missing and try fetching them individually
             const missingIds = protocols
-                .filter(p => !coinMap[p.coingeckoId])
+                .filter(p => p.coingeckoId && !coinMap[p.coingeckoId])
                 .map(p => p.coingeckoId);
 
             if (missingIds.length > 0) {
@@ -2469,8 +2510,24 @@
         }
 
         async function fetchProtocolData(protocol, coinDataMap) {
+            // For protocols without a token (like Polymarket), create synthetic coinData
+            let coinData = coinDataMap[protocol.coingeckoId] || null;
+            if (!coinData && protocol.name) {
+                coinData = {
+                    name: protocol.name,
+                    symbol: protocol.symbol || '',
+                    image: protocol.logo || '',
+                    current_price: null,
+                    market_cap: null,
+                    total_volume: null,
+                    fully_diluted_valuation: null,
+                    market_cap_rank: null,
+                    price_change_percentage_24h: null
+                };
+            }
+
             const results = {
-                coinData: coinDataMap[protocol.coingeckoId] || null,
+                coinData: coinData,
                 protocolData: null,
                 feesData: null,
                 revenueShare: protocol.revenueShare
