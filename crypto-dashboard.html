@@ -658,11 +658,10 @@
                     <h3>Prediction Markets</h3>
                     <p>Explore Polymarket, Kalshi, and Myriad Markets data</p>
                 </div>
-                <div class="home-nav-card coming-soon-card" onclick="switchToTab('rwas')">
+                <div class="home-nav-card" onclick="switchToTab('rwas')">
                     <div class="home-nav-icon">🏛️</div>
                     <h3>RWAs</h3>
-                    <p>Real World Assets tokenization - Coming soon</p>
-                    <span class="coming-soon-badge">Soon</span>
+                    <p>Real World Assets - Track TVL across tokenized treasuries, gold, and more</p>
                 </div>
                 <div class="home-nav-card coming-soon-card" onclick="switchToTab('etfs')">
                     <div class="home-nav-icon">💰</div>
@@ -781,9 +780,43 @@
 
     <!-- RWAs Tab -->
     <div class="tab-content" id="rwas">
-        <div class="coming-soon">
-            <h2>RWAs</h2>
-            <p>Coming soon...</p>
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <span class="chart-tab active">Total Value Locked</span>
+                    </div>
+                    <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked by RWA protocol over the last 30 days</p>
+                </div>
+                <div class="time-selector" id="rwaTimeSelector">
+                    <button data-days="7" class="active">7D</button>
+                    <button data-days="30">30D</button>
+                    <button data-days="90">90D</button>
+                    <button data-days="365">1Y</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="rwaChart"></canvas>
+            </div>
+        </div>
+
+        <div class="rwa-summary" style="max-width: 1600px; margin: 0 auto 30px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
+                <div class="metric-label">Total RWA TVL</div>
+                <div class="metric-value" id="rwaTotalTvl">Loading...</div>
+            </div>
+            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
+                <div class="metric-label">7D Change</div>
+                <div class="metric-value" id="rwa7dChange">Loading...</div>
+            </div>
+            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
+                <div class="metric-label">30D Change</div>
+                <div class="metric-value" id="rwa30dChange">Loading...</div>
+            </div>
+            <div class="card" style="background: rgba(255, 255, 255, 0.05);">
+                <div class="metric-label">Protocols Tracked</div>
+                <div class="metric-value" id="rwaProtocolCount">10</div>
+            </div>
         </div>
     </div>
 
@@ -815,9 +848,12 @@
         // Early declarations for chart initialization flags and state
         let perpChartInitialized = false;
         let predChartInitialized = false;
+        let rwaChartInitialized = false;
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
+        let currentRwaChartDays = 30;
         let predChart = null;
+        let rwaChart = null;
 
         // Detect if running from local file (needed for CORS proxy decisions)
         const isLocalFile = window.location.protocol === 'file:';
@@ -918,6 +954,12 @@
                     updatePredChart(7, 'volume'),
                     fetchPredDashboardData()
                 ]);
+            }
+
+            // Trigger RWA chart initialization if switching to rwas
+            if (tabId === 'rwas' && !rwaChartInitialized) {
+                rwaChartInitialized = true;
+                updateRwaChart(30);
             }
         }
 
@@ -2319,6 +2361,290 @@
             };
             document.getElementById('predChartSubtitle').textContent = subtitles[chartType];
         }
+
+        // ========== RWA CHART FUNCTIONS ==========
+
+        // RWA Protocol configuration
+        const rwaProtocols = [
+            { name: 'Tether Gold', slug: 'tether-gold', color: '#F7931A' },
+            { name: 'Paxos Gold', slug: 'paxos-gold', color: '#E4B74C' },
+            { name: 'Ondo', slug: 'ondo-yield-assets', color: '#10B981' },
+            { name: 'BlackRock BUIDL', slug: 'blackrock-buidl', color: '#000000' },
+            { name: 'Circle USYC', slug: 'circle-usyc', color: '#2775CA' },
+            { name: 'Centrifuge', slug: 'centrifuge-protocol', color: '#FFC012' },
+            { name: 'Spiko', slug: 'spiko', color: '#6366F1' },
+            { name: 'Ethena USDtb', slug: 'ethena-usdtb', color: '#8B5CF6' },
+            { name: 'WisdomTree', slug: 'wisdomtree', color: '#00A3E0' },
+            { name: 'Superstate USTB', slug: 'superstate-ustb', color: '#EF4444' }
+        ];
+
+        // Default visible RWA protocols (top 5)
+        const defaultVisibleRwaProtocols = ['Tether Gold', 'Paxos Gold', 'Ondo', 'BlackRock BUIDL', 'Circle USYC'];
+
+        // Fetch RWA TVL data from DefiLlama
+        async function fetchRwaTvl(days = 30) {
+            const results = [];
+            const now = Math.floor(Date.now() / 1000);
+            const startTime = now - (days * 24 * 60 * 60);
+
+            for (const protocol of rwaProtocols) {
+                try {
+                    const url = `https://api.llama.fi/protocol/${protocol.slug}`;
+                    const response = await fetch(proxyUrl(url));
+                    if (response.ok) {
+                        const data = await response.json();
+                        const tvlData = data.tvl || [];
+
+                        // Filter to requested time range
+                        const filteredData = tvlData
+                            .filter(d => d.date >= startTime)
+                            .map(d => [d.date, d.totalLiquidityUSD]);
+
+                        if (filteredData.length > 0) {
+                            results.push({
+                                name: protocol.name,
+                                color: protocol.color,
+                                data: filteredData,
+                                currentTvl: data.tvl ? data.tvl[data.tvl.length - 1]?.totalLiquidityUSD : 0
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Error fetching RWA data for ${protocol.name}:`, e);
+                }
+            }
+
+            // Sort by current TVL
+            results.sort((a, b) => (b.currentTvl || 0) - (a.currentTvl || 0));
+            return results;
+        }
+
+        // Render RWA stacked area chart
+        function renderRwaChart(historicalData) {
+            const ctx = document.getElementById('rwaChart').getContext('2d');
+
+            // Get all unique dates
+            const allDates = new Set();
+            historicalData.forEach(protocol => {
+                protocol.data.forEach(([timestamp]) => {
+                    allDates.add(timestamp);
+                });
+            });
+
+            const sortedDates = Array.from(allDates).sort((a, b) => a - b);
+            const labels = sortedDates.map(ts => {
+                const date = new Date(ts * 1000);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            // Create datasets for area chart
+            const datasetsWithValues = historicalData.map(protocol => {
+                const dataMap = new Map(protocol.data);
+                const values = sortedDates.map(date => dataMap.get(date) || null);
+                const latestValue = values.filter(v => v !== null).pop() || 0;
+                const isVisible = defaultVisibleRwaProtocols.includes(protocol.name);
+
+                return {
+                    label: protocol.name,
+                    data: values,
+                    backgroundColor: protocol.color + '40',
+                    borderColor: protocol.color,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    latestValue: latestValue,
+                    hidden: !isVisible
+                };
+            });
+
+            // Sort: visible first, then by value
+            datasetsWithValues.sort((a, b) => {
+                if (a.hidden !== b.hidden) return a.hidden ? 1 : -1;
+                return b.latestValue - a.latestValue;
+            });
+
+            if (rwaChart) {
+                rwaChart.destroy();
+            }
+
+            rwaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsWithValues
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: { size: 11, weight: '500' },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    const datasets = chart.data.datasets;
+                                    return datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            strokeStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                const dataset = chart.data.datasets[index];
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return context.dataset.label + ': N/A';
+                                    if (value >= 1e9) return context.dataset.label + ': $' + (value / 1e9).toFixed(2) + 'B';
+                                    if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
+                                    if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
+                                    return context.dataset.label + ': $' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { color: '#999999', font: { size: 11 }, maxRotation: 0 }
+                        },
+                        y: {
+                            position: 'left',
+                            grid: { color: '#f0f0f0', drawBorder: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    if (value >= 1e9) return '$' + (value / 1e9).toFixed(1) + 'B';
+                                    if (value >= 1e6) return '$' + (value / 1e6).toFixed(0) + 'M';
+                                    if (value >= 1e3) return '$' + (value / 1e3).toFixed(0) + 'K';
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('RWA chart created successfully');
+        }
+
+        // Update RWA chart
+        async function updateRwaChart(days = 30) {
+            currentRwaChartDays = days;
+
+            try {
+                const historicalData = await fetchRwaTvl(days);
+                console.log('RWA chart data:', historicalData.length, 'protocols');
+
+                if (historicalData.length > 0) {
+                    renderRwaChart(historicalData);
+
+                    // Update summary stats
+                    const totalTvl = historicalData.reduce((sum, p) => sum + (p.currentTvl || 0), 0);
+                    document.getElementById('rwaTotalTvl').textContent = '$' + (totalTvl / 1e9).toFixed(2) + 'B';
+
+                    // Calculate 7d and 30d changes from the data
+                    const now = Math.floor(Date.now() / 1000);
+                    const sevenDaysAgo = now - (7 * 24 * 60 * 60);
+                    const thirtyDaysAgo = now - (30 * 24 * 60 * 60);
+
+                    let tvl7dAgo = 0;
+                    let tvl30dAgo = 0;
+
+                    historicalData.forEach(protocol => {
+                        const data = protocol.data;
+                        // Find closest value to 7 days ago
+                        const val7d = data.find(([ts]) => ts <= sevenDaysAgo);
+                        if (val7d) tvl7dAgo += val7d[1];
+                        // Find closest value to 30 days ago
+                        const val30d = data.find(([ts]) => ts <= thirtyDaysAgo);
+                        if (val30d) tvl30dAgo += val30d[1];
+                    });
+
+                    const change7d = tvl7dAgo > 0 ? ((totalTvl - tvl7dAgo) / tvl7dAgo * 100) : 0;
+                    const change30d = tvl30dAgo > 0 ? ((totalTvl - tvl30dAgo) / tvl30dAgo * 100) : 0;
+
+                    const change7dEl = document.getElementById('rwa7dChange');
+                    const change30dEl = document.getElementById('rwa30dChange');
+
+                    change7dEl.textContent = (change7d >= 0 ? '+' : '') + change7d.toFixed(1) + '%';
+                    change7dEl.className = 'metric-value ' + (change7d >= 0 ? 'positive' : 'negative');
+
+                    change30dEl.textContent = (change30d >= 0 ? '+' : '') + change30d.toFixed(1) + '%';
+                    change30dEl.className = 'metric-value ' + (change30d >= 0 ? 'positive' : 'negative');
+
+                } else {
+                    console.warn('No RWA chart data received');
+                }
+            } catch (e) {
+                console.error('Error in updateRwaChart:', e);
+            }
+
+            document.getElementById('rwaChartSubtitle').textContent =
+                `Total value locked by RWA protocol over the last ${days} days`;
+        }
+
+        // RWA time selector event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const rwaTimeSelector = document.getElementById('rwaTimeSelector');
+            if (rwaTimeSelector) {
+                rwaTimeSelector.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', async function() {
+                        rwaTimeSelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        const days = parseInt(this.dataset.days);
+                        await updateRwaChart(days);
+                    });
+                });
+            }
+        });
+
+        // ========== END RWA CHART FUNCTIONS ==========
 
         // Create prediction market card
         function createPredCard(market, volumeData, feesData) {
