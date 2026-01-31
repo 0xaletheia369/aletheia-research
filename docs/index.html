@@ -2459,23 +2459,21 @@
                 return {
                     label: protocol.name,
                     data: values,
-                    backgroundColor: protocol.color + '40',
+                    backgroundColor: protocol.color + '80',
                     borderColor: protocol.color,
-                    borderWidth: 2,
-                    fill: true,
+                    borderWidth: 1,
+                    fill: 'origin',
                     tension: 0.3,
                     pointRadius: 0,
                     pointHoverRadius: 4,
                     latestValue: latestValue,
-                    hidden: !isVisible
+                    hidden: !isVisible,
+                    order: isVisible ? 0 : 1  // Visible datasets render first (on bottom of stack)
                 };
             });
 
-            // Sort: visible first, then by value
-            datasetsWithValues.sort((a, b) => {
-                if (a.hidden !== b.hidden) return a.hidden ? 1 : -1;
-                return b.latestValue - a.latestValue;
-            });
+            // Sort by TVL value (highest first) - they stack from bottom to top
+            datasetsWithValues.sort((a, b) => b.latestValue - a.latestValue);
 
             if (rwaChart) {
                 rwaChart.destroy();
@@ -2501,34 +2499,84 @@
                             labels: {
                                 usePointStyle: true,
                                 pointStyle: 'rect',
-                                padding: 12,
+                                padding: 10,
                                 font: { size: 11, weight: '500' },
                                 boxWidth: 12,
                                 boxHeight: 12,
                                 generateLabels: function(chart) {
                                     const datasets = chart.data.datasets;
-                                    return datasets.map((dataset, i) => {
+                                    const labels = [];
+                                    let hiddenCount = 0;
+
+                                    datasets.forEach((dataset, i) => {
                                         const meta = chart.getDatasetMeta(i);
                                         const isHidden = meta.hidden || dataset.hidden;
-                                        return {
-                                            text: dataset.label,
-                                            fillStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
-                                            strokeStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
-                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
-                                            hidden: false,
-                                            lineCap: 'round',
-                                            lineDash: [],
-                                            lineDashOffset: 0,
-                                            lineJoin: 'round',
-                                            lineWidth: 0,
-                                            pointStyle: 'rect',
-                                            datasetIndex: i
-                                        };
+
+                                        // Show visible items, count hidden ones
+                                        if (!isHidden) {
+                                            labels.push({
+                                                text: dataset.label,
+                                                fillStyle: dataset.borderColor,
+                                                strokeStyle: dataset.borderColor,
+                                                fontColor: '#333333',
+                                                hidden: false,
+                                                lineCap: 'round',
+                                                lineDash: [],
+                                                lineDashOffset: 0,
+                                                lineJoin: 'round',
+                                                lineWidth: 0,
+                                                pointStyle: 'rect',
+                                                datasetIndex: i
+                                            });
+                                        } else {
+                                            hiddenCount++;
+                                        }
                                     });
+
+                                    // Add hidden items after visible ones
+                                    datasets.forEach((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+
+                                        if (isHidden) {
+                                            labels.push({
+                                                text: dataset.label,
+                                                fillStyle: dataset.borderColor + '40',
+                                                strokeStyle: dataset.borderColor + '40',
+                                                fontColor: '#aaaaaa',
+                                                hidden: false,
+                                                lineCap: 'round',
+                                                lineDash: [],
+                                                lineDashOffset: 0,
+                                                lineJoin: 'round',
+                                                lineWidth: 0,
+                                                pointStyle: 'rect',
+                                                datasetIndex: i
+                                            });
+                                        }
+                                    });
+
+                                    // Add [more] label if there are hidden items
+                                    if (hiddenCount > 0) {
+                                        // Insert [more] separator before hidden items
+                                        const visibleCount = datasets.length - hiddenCount;
+                                        labels.splice(visibleCount, 0, {
+                                            text: '[more]',
+                                            fillStyle: 'transparent',
+                                            strokeStyle: 'transparent',
+                                            fontColor: '#999999',
+                                            hidden: false,
+                                            pointStyle: false,
+                                            datasetIndex: -1
+                                        });
+                                    }
+
+                                    return labels;
                                 }
                             },
                             onClick: function(e, legendItem, legend) {
                                 const index = legendItem.datasetIndex;
+                                if (index === -1) return; // Ignore [more] label clicks
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
                                 const dataset = chart.data.datasets[index];
@@ -2548,23 +2596,35 @@
                             padding: 12,
                             callbacks: {
                                 label: function(context) {
-                                    const value = context.parsed.y;
-                                    if (value === null) return context.dataset.label + ': N/A';
+                                    const value = context.raw; // Use raw value, not stacked
+                                    if (value === null || value === undefined) return context.dataset.label + ': N/A';
                                     if (value >= 1e9) return context.dataset.label + ': $' + (value / 1e9).toFixed(2) + 'B';
                                     if (value >= 1e6) return context.dataset.label + ': $' + (value / 1e6).toFixed(2) + 'M';
                                     if (value >= 1e3) return context.dataset.label + ': $' + (value / 1e3).toFixed(2) + 'K';
                                     return context.dataset.label + ': $' + value.toFixed(2);
+                                },
+                                footer: function(tooltipItems) {
+                                    // Show total of visible items
+                                    let total = 0;
+                                    tooltipItems.forEach(item => {
+                                        if (item.raw) total += item.raw;
+                                    });
+                                    if (total >= 1e9) return 'Total: $' + (total / 1e9).toFixed(2) + 'B';
+                                    if (total >= 1e6) return 'Total: $' + (total / 1e6).toFixed(2) + 'M';
+                                    return 'Total: $' + total.toFixed(2);
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
+                            stacked: true,
                             grid: { display: false },
                             border: { display: false },
                             ticks: { color: '#999999', font: { size: 11 }, maxRotation: 0 }
                         },
                         y: {
+                            stacked: true,
                             position: 'left',
                             grid: { color: '#f0f0f0', drawBorder: false },
                             border: { display: false },
