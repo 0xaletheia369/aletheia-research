@@ -1253,10 +1253,10 @@
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
                                 const dataset = chart.data.datasets[index];
-                                // Toggle visibility on both meta and dataset
-                                const newHiddenState = !meta.hidden && !dataset.hidden ? true : false;
-                                meta.hidden = newHiddenState;
-                                dataset.hidden = newHiddenState;
+                                // Toggle visibility - if currently hidden, show it; otherwise hide it
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
                                 chart.update();
                             }
                         },
@@ -1628,10 +1628,10 @@
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
                                 const dataset = chart.data.datasets[index];
-                                // Toggle visibility on both meta and dataset
-                                const newHiddenState = !meta.hidden && !dataset.hidden ? true : false;
-                                meta.hidden = newHiddenState;
-                                dataset.hidden = newHiddenState;
+                                // Toggle visibility - if currently hidden, show it; otherwise hide it
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
                                 chart.update();
                             }
                         },
@@ -2078,10 +2078,10 @@
                                 const chart = legend.chart;
                                 const meta = chart.getDatasetMeta(index);
                                 const dataset = chart.data.datasets[index];
-                                // Toggle visibility on both meta and dataset
-                                const newHiddenState = !meta.hidden && !dataset.hidden ? true : false;
-                                meta.hidden = newHiddenState;
-                                dataset.hidden = newHiddenState;
+                                // Toggle visibility - if currently hidden, show it; otherwise hide it
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
                                 chart.update();
                             }
                         },
