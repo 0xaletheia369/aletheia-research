@@ -2423,11 +2423,18 @@
         function renderRwaChart(historicalData) {
             const ctx = document.getElementById('rwaChart').getContext('2d');
 
-            // Get all unique dates
+            // Helper to normalize timestamp to start of day (UTC)
+            const normalizeToDay = (timestamp) => {
+                const date = new Date(timestamp * 1000);
+                date.setUTCHours(0, 0, 0, 0);
+                return Math.floor(date.getTime() / 1000);
+            };
+
+            // Get all unique dates (normalized to day)
             const allDates = new Set();
             historicalData.forEach(protocol => {
                 protocol.data.forEach(([timestamp]) => {
-                    allDates.add(timestamp);
+                    allDates.add(normalizeToDay(timestamp));
                 });
             });
 
@@ -2439,7 +2446,12 @@
 
             // Create datasets for area chart
             const datasetsWithValues = historicalData.map(protocol => {
-                const dataMap = new Map(protocol.data);
+                // Create map with normalized dates, keeping last value for each day
+                const dataMap = new Map();
+                protocol.data.forEach(([timestamp, value]) => {
+                    const normalizedTs = normalizeToDay(timestamp);
+                    dataMap.set(normalizedTs, value); // Later values overwrite earlier ones
+                });
                 const values = sortedDates.map(date => dataMap.get(date) || null);
                 const latestValue = values.filter(v => v !== null).pop() || 0;
                 const isVisible = defaultVisibleRwaProtocols.includes(protocol.name);
