@@ -1003,7 +1003,9 @@
             <div class="chart-header">
                 <div class="chart-title-section">
                     <div class="chart-tabs">
-                        <span class="chart-tab active">Total Value Locked</span>
+                        <button class="chart-tab active" data-rwa-chart="tvl">Total Value Locked</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-rwa-chart="stablecoins">Stablecoins</button>
                     </div>
                     <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked by RWA protocol over the last year</p>
                 </div>
@@ -1052,6 +1054,7 @@
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
         let currentRwaChartDays = 365;
+        let currentRwaChartType = 'tvl';
         let predChart = null;
         let rwaChart = null;
 
@@ -2876,28 +2879,135 @@
         }
 
         // Update RWA chart
-        async function updateRwaChart(days = 30) {
+        async function updateRwaChart(days = 365, chartType = currentRwaChartType) {
             currentRwaChartDays = days;
+            currentRwaChartType = chartType;
 
             try {
-                const historicalData = await fetchRwaTvl(days);
-                console.log('RWA chart data:', historicalData.length, 'protocols');
+                let historicalData;
+                if (chartType === 'stablecoins') {
+                    historicalData = await fetchStablecoinTvl(days);
+                    console.log('Stablecoin chart data:', historicalData.length, 'protocols');
+                } else {
+                    historicalData = await fetchRwaTvl(days);
+                    console.log('RWA chart data:', historicalData.length, 'protocols');
+                }
 
                 if (historicalData.length > 0) {
                     renderRwaChart(historicalData);
                 } else {
-                    console.warn('No RWA chart data received');
+                    console.warn('No chart data received');
                 }
             } catch (e) {
                 console.error('Error in updateRwaChart:', e);
             }
 
             const timeLabel = days === 365 ? 'year' : `${days} days`;
-            document.getElementById('rwaChartSubtitle').textContent =
-                `Total value locked by RWA protocol over the last ${timeLabel}`;
+            const subtitles = {
+                'tvl': `Total value locked by RWA protocol over the last ${timeLabel}`,
+                'stablecoins': `Total stablecoin market cap over the last ${timeLabel}`
+            };
+            document.getElementById('rwaChartSubtitle').textContent = subtitles[chartType];
         }
 
-        // RWA time selector event listeners
+        // Colors for stablecoins (FT palette)
+        const stablecoinColors = ftColors;
+
+        // Default visible stablecoins (top 5 by index)
+        const defaultVisibleStablecoinCount = 5;
+
+        // Fetch ALL stablecoin protocols from DefiLlama
+        async function fetchAllStablecoinProtocols() {
+            try {
+                const response = await fetch(proxyUrl('https://stablecoins.llama.fi/stablecoins?includePrices=true'));
+                if (response.ok) {
+                    const data = await response.json();
+                    return (data.peggedAssets || []).map(p => ({
+                        name: p.name,
+                        symbol: p.symbol,
+                        id: p.id,
+                        mcap: p.circulating?.peggedUSD || 0
+                    }));
+                }
+            } catch (e) {
+                console.error('Error fetching stablecoin list:', e);
+            }
+            return [];
+        }
+
+        // Fetch stablecoin historical data
+        async function fetchStablecoinTvl(days = 365) {
+            const now = Math.floor(Date.now() / 1000);
+            const startTime = now - (days * 24 * 60 * 60);
+
+            // Get all stablecoins
+            const allStablecoins = await fetchAllStablecoinProtocols();
+            allStablecoins.sort((a, b) => (b.mcap || 0) - (a.mcap || 0));
+
+            console.log(`Found ${allStablecoins.length} stablecoins`);
+
+            const results = [];
+            const othersData = new Map();
+
+            // Fetch historical data for each stablecoin
+            for (let i = 0; i < Math.min(allStablecoins.length, 50); i++) {
+                const stablecoin = allStablecoins[i];
+                try {
+                    const url = `https://stablecoins.llama.fi/stablecoincharts/all?stablecoin=${stablecoin.id}`;
+                    const response = await fetch(proxyUrl(url));
+                    if (response.ok) {
+                        const data = await response.json();
+
+                        const filteredData = data
+                            .filter(d => d.date >= startTime)
+                            .map(d => [d.date, d.totalCirculating?.peggedUSD || 0]);
+
+                        if (filteredData.length > 0) {
+                            const currentMcap = stablecoin.mcap || 0;
+
+                            if (i < 10) {
+                                results.push({
+                                    name: stablecoin.name,
+                                    color: stablecoinColors[i],
+                                    data: filteredData,
+                                    currentTvl: currentMcap,
+                                    isTop10: true
+                                });
+                            } else {
+                                filteredData.forEach(([timestamp, value]) => {
+                                    const existing = othersData.get(timestamp) || 0;
+                                    othersData.set(timestamp, existing + value);
+                                });
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Error fetching stablecoin data for ${stablecoin.name}:`, e);
+                }
+            }
+
+            // Add "Other" as combined dataset
+            if (othersData.size > 0) {
+                const othersArray = Array.from(othersData.entries()).sort((a, b) => a[0] - b[0]);
+                const othersMcap = othersArray.length > 0 ? othersArray[othersArray.length - 1][1] : 0;
+                results.unshift({
+                    name: 'Other',
+                    color: '#9CA3AF',
+                    data: othersArray,
+                    currentTvl: othersMcap,
+                    isTop10: false,
+                    isOthers: true
+                });
+            }
+
+            // Sort top 10 by mcap, keep "Other" at position 0
+            const otherDataset = results.find(r => r.isOthers);
+            const top10 = results.filter(r => !r.isOthers).sort((a, b) => (b.currentTvl || 0) - (a.currentTvl || 0));
+
+            return otherDataset ? [otherDataset, ...top10] : top10;
+        }
+
+        // RWA/Stablecoin time selector and chart type event listeners
         document.addEventListener('DOMContentLoaded', function() {
             const rwaTimeSelector = document.getElementById('rwaTimeSelector');
             if (rwaTimeSelector) {
@@ -2906,10 +3016,20 @@
                         rwaTimeSelector.querySelectorAll('button').forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
                         const days = parseInt(this.dataset.days);
-                        await updateRwaChart(days);
+                        await updateRwaChart(days, currentRwaChartType);
                     });
                 });
             }
+
+            // Chart type tabs (TVL vs Stablecoins)
+            document.querySelectorAll('[data-rwa-chart]').forEach(tab => {
+                tab.addEventListener('click', async function() {
+                    document.querySelectorAll('[data-rwa-chart]').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const chartType = this.dataset.rwaChart;
+                    await updateRwaChart(currentRwaChartDays, chartType);
+                });
+            });
         });
 
         // ========== END RWA CHART FUNCTIONS ==========
