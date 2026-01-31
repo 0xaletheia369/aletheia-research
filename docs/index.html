@@ -1007,7 +1007,7 @@
                         <span class="chart-tab-divider">|</span>
                         <button class="chart-tab" data-rwa-chart="stablecoins">Stablecoins</button>
                     </div>
-                    <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked by RWA protocol over the last year</p>
+                    <p class="chart-subtitle" id="rwaChartSubtitle">Total value locked tokenized RWAs over the last year</p>
                 </div>
                 <div class="time-selector" id="rwaTimeSelector">
                     <button data-days="7">7D</button>
@@ -2904,7 +2904,7 @@
 
             const timeLabel = days === 365 ? 'year' : `${days} days`;
             const subtitles = {
-                'tvl': `Total value locked by RWA protocol over the last ${timeLabel}`,
+                'tvl': `Total value locked tokenized RWAs over the last ${timeLabel}`,
                 'stablecoins': `Total stablecoin market cap over the last ${timeLabel}`
             };
             document.getElementById('rwaChartSubtitle').textContent = subtitles[chartType];
