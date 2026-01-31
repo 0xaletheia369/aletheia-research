@@ -1007,6 +1007,13 @@
                 <canvas id="rwaChart"></canvas>
             </div>
         </div>
+
+        <div class="dashboard" id="rwaDashboard">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading RWA data...</p>
+            </div>
+        </div>
     </div>
 
     <!-- ETFs Tab -->
@@ -1038,12 +1045,45 @@
         let perpChartInitialized = false;
         let predChartInitialized = false;
         let rwaChartInitialized = false;
+        let rwaDashboardInitialized = false;
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
         let currentRwaChartDays = 365;
         let currentRwaChartType = 'tvl';
         let predChart = null;
         let rwaChart = null;
+
+        // RWA tokens configuration (for dashboard cards below chart)
+        const rwaTokens = [
+            {
+                id: 'ethereum',
+                name: 'Ethereum',
+                coingeckoId: 'ethereum',
+                tokenSymbol: 'ETH',
+                logo: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png'
+            },
+            {
+                id: 'solana',
+                name: 'Solana',
+                coingeckoId: 'solana',
+                tokenSymbol: 'SOL',
+                logo: 'https://assets.coingecko.com/coins/images/4128/small/solana.png'
+            },
+            {
+                id: 'ondo-finance',
+                name: 'Ondo Finance',
+                coingeckoId: 'ondo-finance',
+                tokenSymbol: 'ONDO',
+                logo: 'https://assets.coingecko.com/coins/images/26580/small/ONDO.png'
+            },
+            {
+                id: 'canton',
+                name: 'Canton',
+                coingeckoId: 'canton',
+                tokenSymbol: 'CANT',
+                logo: 'https://assets.coingecko.com/coins/images/52490/small/CANTON.jpg'
+            }
+        ];
 
         // Detect if running from local file (needed for CORS proxy decisions)
         const isLocalFile = window.location.protocol === 'file:';
@@ -1160,10 +1200,16 @@
                 ]);
             }
 
-            // Trigger RWA chart initialization if switching to rwas
-            if (tabId === 'rwas' && !rwaChartInitialized) {
-                rwaChartInitialized = true;
-                updateRwaChart(365);
+            // Trigger RWA chart and dashboard initialization if switching to rwas
+            if (tabId === 'rwas') {
+                if (!rwaChartInitialized) {
+                    rwaChartInitialized = true;
+                    updateRwaChart(365);
+                }
+                if (!rwaDashboardInitialized) {
+                    rwaDashboardInitialized = true;
+                    fetchRwaDashboardData();
+                }
             }
         }
 
@@ -3019,6 +3065,86 @@
             });
         });
 
+        // Create RWA token card (similar to protocol revenue cards)
+        function createRwaTokenCard(token, coinData) {
+            const priceChangeClass = (coinData?.price_change_percentage_24h || 0) >= 0 ? 'positive' : 'negative';
+            const priceChangeSign = (coinData?.price_change_percentage_24h || 0) >= 0 ? '+' : '';
+
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${token.logo}" alt="${token.name}" onerror="this.style.display='none'">
+                        <div>
+                            <div class="name">${token.name}</div>
+                            <div class="symbol">${token.tokenSymbol}</div>
+                        </div>
+                        <div class="price-section" style="margin-left: auto;">
+                            <span class="price">${formatPrice(coinData?.current_price)}</span>
+                            ${coinData?.price_change_percentage_24h !== undefined ? `
+                                <span class="price-change ${priceChangeClass}">
+                                    ${priceChangeSign}${coinData.price_change_percentage_24h?.toFixed(2)}%
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="metrics-container">
+                        <div class="metrics-section">
+                            <h3>Market Data <span class="source">CoinGecko</span></h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <div class="metric-label">Market Cap</div>
+                                    <div class="metric-value">${formatUSD(coinData?.market_cap)}</div>
+                                    <div class="metric-subtext">Rank #${coinData?.market_cap_rank || 'N/A'}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">24h Volume</div>
+                                    <div class="metric-value">${formatUSD(coinData?.total_volume)}</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-label">FDV</div>
+                                    <div class="metric-value">${formatUSD(coinData?.fully_diluted_valuation)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch RWA dashboard data
+        async function fetchRwaDashboardData() {
+            const dashboard = document.getElementById('rwaDashboard');
+
+            try {
+                // Fetch CoinGecko data for all RWA tokens
+                const ids = rwaTokens.map(t => t.coingeckoId).join(',');
+                const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=false`);
+
+                if (!response.ok) throw new Error('Failed to fetch RWA token data');
+
+                const coinData = await response.json();
+
+                // Sort by FDV (descending)
+                const sortedTokens = rwaTokens.map(token => {
+                    const data = coinData.find(c => c.id === token.coingeckoId);
+                    return { token, data, fdv: data?.fully_diluted_valuation || 0 };
+                }).sort((a, b) => b.fdv - a.fdv);
+
+                // Generate cards
+                const cards = sortedTokens.map(({ token, data }) => createRwaTokenCard(token, data)).join('');
+                dashboard.innerHTML = cards;
+
+            } catch (error) {
+                console.error('Error fetching RWA dashboard data:', error);
+                dashboard.innerHTML = `
+                    <div class="error-msg">
+                        Failed to load RWA token data. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
         // ========== END RWA CHART FUNCTIONS ==========
 
         // Create prediction market card
@@ -3030,9 +3156,6 @@
                         <div>
                             <div class="name">${market.name}</div>
                             <div class="symbol">${market.chain}</div>
-                        </div>
-                        <div style="margin-left: auto;">
-                            <span class="price-change" style="background: rgba(139, 92, 246, 0.2); color: #8B5CF6;">Prediction Market</span>
                         </div>
                     </div>
 
