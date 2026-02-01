@@ -72,10 +72,12 @@ async function scrapeETFData(page, url, type) {
                 }
             }
 
-            // Get headers
+            // Get headers - if empty, use column index as fallback
             const headerCells = rows[headerRowIndex]?.querySelectorAll('th, td');
-            headerCells?.forEach(cell => {
-                headers.push(cell.textContent.trim());
+            headerCells?.forEach((cell, idx) => {
+                const text = cell.textContent.trim();
+                // Use 'Date' for first column if empty, otherwise use index
+                headers.push(text || (idx === 0 ? 'Date' : `col${idx}`));
             });
 
             // Get data from remaining rows
@@ -89,6 +91,7 @@ async function scrapeETFData(page, url, type) {
 
                 const record = {};
                 let hasData = false;
+                let hasDateLikeValue = false;
 
                 cells.forEach((cell, index) => {
                     const header = headers[index] || `col${index}`;
@@ -104,11 +107,23 @@ async function scrapeETFData(page, url, type) {
                         hasData = true;
                     }
 
+                    // Check if first column looks like a date (contains month name or numbers with separators)
+                    if (index === 0 && value) {
+                        const datePattern = /\d{1,2}\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
+                        const numericDate = /^\d{1,2}[\/-]\d{1,2}/;
+                        if (datePattern.test(value) || numericDate.test(value)) {
+                            hasDateLikeValue = true;
+                        }
+                    }
+
                     record[header] = value;
                 });
 
-                // Only add if we have actual data
-                if (hasData && record[headers[0]] && record[headers[0]].length > 0) {
+                // Only add if we have actual data and first column has meaningful content
+                const firstColValue = record[headers[0]];
+                // Skip if first column is empty, just dashes, or looks like a header/total row
+                const skipPatterns = /^(total|date|\s*-+\s*|)$/i;
+                if (hasData && firstColValue && firstColValue.length > 0 && !skipPatterns.test(firstColValue)) {
                     records.push(record);
                 }
             }
