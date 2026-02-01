@@ -1102,13 +1102,13 @@
             <div class="chart-header">
                 <div class="chart-title-section">
                     <div class="chart-tabs">
-                        <button class="chart-tab active" data-etf-chart="bitcoin">Bitcoin ETFs</button>
+                        <button class="chart-tab active" data-etf-chart="total">Total</button>
                         <span class="chart-tab-divider">|</span>
-                        <button class="chart-tab" data-etf-chart="ethereum">Ethereum ETFs</button>
+                        <button class="chart-tab" data-etf-chart="flow-mcap">Flow to Market Cap</button>
                         <span class="chart-tab-divider">|</span>
-                        <button class="chart-tab" data-etf-chart="solana">Solana ETFs</button>
+                        <button class="chart-tab" data-etf-chart="aum-mcap">AUM to Market Cap</button>
                     </div>
-                    <p class="chart-subtitle" id="etfChartSubtitle">Daily net flows for US spot Bitcoin ETFs</p>
+                    <p class="chart-subtitle" id="etfChartSubtitle">Daily ETF flows by asset ($M)</p>
                 </div>
                 <div class="time-selector" id="etfTimeSelector">
                     <button data-days="7" class="active">7D</button>
@@ -1168,12 +1168,13 @@
         let currentRwaChartDays = 365;
         let currentRwaChartType = 'tvl';
         let currentEtfChartDays = 7;
-        let currentEtfChartType = 'bitcoin';
+        let currentEtfChartType = 'total';
         let predChart = null;
         let rwaChart = null;
         let perpChart = null;
         let etfChart = null;
         let etfData = null;
+        let etfMarketCaps = null;
 
         // RWA tokens configuration (for dashboard cards below chart)
         const rwaTokens = [
@@ -3779,6 +3780,23 @@
             }
         }
 
+        async function fetchEtfMarketCaps() {
+            try {
+                const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana';
+                const response = await fetchCoinGecko(url);
+                const data = await response.json();
+                etfMarketCaps = {
+                    bitcoin: data.find(c => c.id === 'bitcoin')?.market_cap,
+                    ethereum: data.find(c => c.id === 'ethereum')?.market_cap,
+                    solana: data.find(c => c.id === 'solana')?.market_cap
+                };
+                return etfMarketCaps;
+            } catch (error) {
+                console.error('Error fetching market caps:', error);
+                return null;
+            }
+        }
+
         async function initEtfDashboard() {
             const data = await fetchEtfData();
             if (!data || !data.lastUpdated) {
@@ -3792,6 +3810,9 @@
                 document.getElementById('etfDashboard').innerHTML = '';
                 return;
             }
+
+            // Fetch market caps for % calculations (non-blocking)
+            fetchEtfMarketCaps();
 
             updateEtfChart(currentEtfChartDays, currentEtfChartType);
             renderEtfSummary(data);
@@ -3911,36 +3932,207 @@
             document.getElementById('etfDashboard').innerHTML = html;
         }
 
+        function getEtfFlowData(etfInfo, days) {
+            if (!etfInfo || !etfInfo.records) return { labels: [], values: [] };
+            const records = etfInfo.records.slice(0, days).reverse();
+            const totalHeader = etfInfo.headers.find(h => h.toLowerCase().includes('total')) || etfInfo.headers[etfInfo.headers.length - 1];
+            const dateHeader = etfInfo.headers[0];
+
+            const labels = records.map(r => r[dateHeader]);
+            const values = records.map(r => {
+                const val = r[totalHeader]?.replace(/[,$]/g, '') || '0';
+                return parseFloat(val) || 0;
+            });
+            return { labels, values };
+        }
+
+        function alignEtfDatasets(btcData, ethData, solData) {
+            // Find all unique dates across all datasets
+            const allDates = new Set([...btcData.labels, ...ethData.labels, ...solData.labels]);
+            const sortedDates = Array.from(allDates).sort((a, b) => new Date(a) - new Date(b));
+
+            // Create lookup maps
+            const btcMap = new Map(btcData.labels.map((d, i) => [d, btcData.values[i]]));
+            const ethMap = new Map(ethData.labels.map((d, i) => [d, ethData.values[i]]));
+            const solMap = new Map(solData.labels.map((d, i) => [d, solData.values[i]]));
+
+            // Align all datasets to the same dates
+            const labels = sortedDates;
+            const btcValues = sortedDates.map(d => btcMap.get(d) ?? null);
+            const ethValues = sortedDates.map(d => ethMap.get(d) ?? null);
+            const solValues = sortedDates.map(d => solMap.get(d) ?? null);
+
+            return { labels, btcValues, ethValues, solValues };
+        }
+
+        function calculateCumulativeAum(values) {
+            let cumulative = 0;
+            return values.map(v => {
+                if (v !== null) cumulative += v;
+                return cumulative;
+            });
+        }
+
         function updateEtfChart(days, type) {
             if (!etfData) return;
 
             currentEtfChartDays = days;
             currentEtfChartType = type;
 
-            const etfInfo = type === 'bitcoin' ? etfData.bitcoin : (type === 'ethereum' ? etfData.ethereum : etfData.solana);
+            // Get flow data for all 3 assets
+            const btcData = getEtfFlowData(etfData.bitcoin, days);
+            const ethData = getEtfFlowData(etfData.ethereum, days);
+            const solData = getEtfFlowData(etfData.solana, days);
 
-            if (!etfInfo || !etfInfo.records) {
-                console.error('No ETF records available');
-                return;
-            }
+            // Align datasets to common date range
+            const aligned = alignEtfDatasets(btcData, ethData, solData);
 
-            // Update subtitle
+            // Update subtitle based on chart type
             const subtitleEl = document.getElementById('etfChartSubtitle');
-            const typeName = type === 'bitcoin' ? 'Bitcoin' : (type === 'ethereum' ? 'Ethereum' : 'Solana');
-            subtitleEl.textContent = `Daily net flows for US spot ${typeName} ETFs`;
+            let chartType = 'bar';
+            let datasets = [];
+            let yAxisCallback, tooltipCallback;
 
-            // Get records for the time period
-            const records = etfInfo.records.slice(0, days).reverse();
-            const totalHeader = etfInfo.headers.find(h => h.toLowerCase().includes('total')) || etfInfo.headers[etfInfo.headers.length - 1];
+            // Colors: Orange (BTC), Blue (ETH), Green (SOL)
+            const btcColor = ftColors[2]; // Orange
+            const ethColor = ftColors[3]; // Blue
+            const solColor = ftColors[5]; // Green
 
-            const labels = records.map(r => r[etfInfo.headers[0]]);
-            const values = records.map(r => {
-                const val = r[totalHeader]?.replace(/[,$]/g, '') || '0';
-                return parseFloat(val) || 0;
-            });
+            if (type === 'total') {
+                subtitleEl.textContent = 'Daily ETF flows by asset ($M)';
 
-            // Color bars based on positive/negative
-            const barColors = values.map(v => v >= 0 ? 'rgba(38, 166, 154, 0.8)' : 'rgba(211, 47, 47, 0.8)');
+                datasets = [
+                    {
+                        label: 'BTC',
+                        data: aligned.btcValues,
+                        backgroundColor: btcColor + 'CC',
+                        borderColor: btcColor,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'ETH',
+                        data: aligned.ethValues,
+                        backgroundColor: ethColor + 'CC',
+                        borderColor: ethColor,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'SOL',
+                        data: aligned.solValues,
+                        backgroundColor: solColor + 'CC',
+                        borderColor: solColor,
+                        borderWidth: 1
+                    }
+                ];
+
+                yAxisCallback = (value) => '$' + formatSwiss(value, 0) + 'M';
+                tooltipCallback = (context) => {
+                    const val = context.raw;
+                    if (val === null) return 'N/A';
+                    return `${context.dataset.label}: ${val >= 0 ? '+' : ''}$${formatSwiss(val, 1)}M`;
+                };
+
+            } else if (type === 'flow-mcap') {
+                subtitleEl.textContent = 'Daily flow as % of market cap';
+
+                if (!etfMarketCaps) {
+                    subtitleEl.textContent = 'Loading market cap data...';
+                    fetchEtfMarketCaps().then(() => updateEtfChart(days, type));
+                    return;
+                }
+
+                // Convert flows to % of market cap: (flow_$M * 1e6) / market_cap * 100
+                const btcPct = aligned.btcValues.map(v => v !== null ? (v * 1e6) / etfMarketCaps.bitcoin * 100 : null);
+                const ethPct = aligned.ethValues.map(v => v !== null ? (v * 1e6) / etfMarketCaps.ethereum * 100 : null);
+                const solPct = aligned.solValues.map(v => v !== null ? (v * 1e6) / etfMarketCaps.solana * 100 : null);
+
+                datasets = [
+                    {
+                        label: 'BTC',
+                        data: btcPct,
+                        backgroundColor: btcColor + 'CC',
+                        borderColor: btcColor,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'ETH',
+                        data: ethPct,
+                        backgroundColor: ethColor + 'CC',
+                        borderColor: ethColor,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'SOL',
+                        data: solPct,
+                        backgroundColor: solColor + 'CC',
+                        borderColor: solColor,
+                        borderWidth: 1
+                    }
+                ];
+
+                yAxisCallback = (value) => formatSwiss(value, 4) + '%';
+                tooltipCallback = (context) => {
+                    const val = context.raw;
+                    if (val === null) return 'N/A';
+                    return `${context.dataset.label}: ${val >= 0 ? '+' : ''}${formatSwiss(val, 4)}%`;
+                };
+
+            } else if (type === 'aum-mcap') {
+                subtitleEl.textContent = 'Cumulative AUM as % of market cap';
+                chartType = 'line';
+
+                if (!etfMarketCaps) {
+                    subtitleEl.textContent = 'Loading market cap data...';
+                    fetchEtfMarketCaps().then(() => updateEtfChart(days, type));
+                    return;
+                }
+
+                // Calculate cumulative AUM for each asset
+                const btcAum = calculateCumulativeAum(aligned.btcValues);
+                const ethAum = calculateCumulativeAum(aligned.ethValues);
+                const solAum = calculateCumulativeAum(aligned.solValues);
+
+                // Convert to % of market cap
+                const btcPct = btcAum.map(v => (v * 1e6) / etfMarketCaps.bitcoin * 100);
+                const ethPct = ethAum.map(v => (v * 1e6) / etfMarketCaps.ethereum * 100);
+                const solPct = solAum.map(v => (v * 1e6) / etfMarketCaps.solana * 100);
+
+                datasets = [
+                    {
+                        label: 'BTC',
+                        data: btcPct,
+                        borderColor: btcColor,
+                        backgroundColor: btcColor + '33',
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'ETH',
+                        data: ethPct,
+                        borderColor: ethColor,
+                        backgroundColor: ethColor + '33',
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'SOL',
+                        data: solPct,
+                        borderColor: solColor,
+                        backgroundColor: solColor + '33',
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }
+                ];
+
+                yAxisCallback = (value) => formatSwiss(value, 2) + '%';
+                tooltipCallback = (context) => {
+                    const val = context.raw;
+                    return `${context.dataset.label}: ${formatSwiss(val, 2)}%`;
+                };
+            }
 
             const ctx = document.getElementById('etfChart').getContext('2d');
 
@@ -3949,44 +4141,39 @@
             }
 
             etfChart = new Chart(ctx, {
-                type: 'bar',
+                type: chartType,
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Net Flow ($M)',
-                        data: values,
-                        backgroundColor: barColors,
-                        borderColor: barColors.map(c => c.replace('0.8', '1')),
-                        borderWidth: 1
-                    }]
+                    labels: aligned.labels,
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#888',
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
                         },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
-                                    const val = context.raw;
-                                    return `${val >= 0 ? '+' : ''}$${formatSwiss(val, 1)}M`;
-                                }
+                                label: tooltipCallback
                             }
                         }
                     },
                     scales: {
                         y: {
-                            beginAtZero: true,
+                            beginAtZero: type !== 'aum-mcap',
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
                             },
                             ticks: {
                                 color: '#888',
-                                callback: function(value) {
-                                    return '$' + formatSwiss(value, 0) + 'M';
-                                }
+                                callback: yAxisCallback
                             }
                         },
                         x: {
@@ -4003,7 +4190,7 @@
                 }
             });
 
-            // Update dashboard cards for this ETF type
+            // Update dashboard cards
             renderEtfDashboard(etfData);
         }
 
