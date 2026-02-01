@@ -1111,8 +1111,8 @@
                     <p class="chart-subtitle" id="etfChartSubtitle">Daily ETF flows by asset ($M)</p>
                 </div>
                 <div class="time-selector" id="etfTimeSelector">
-                    <button data-days="7" class="active">7D</button>
-                    <button data-days="30">30D</button>
+                    <button data-days="7">7D</button>
+                    <button data-days="30" class="active">30D</button>
                     <button data-days="90">90D</button>
                     <button data-days="365">1Y</button>
                 </div>
@@ -1167,7 +1167,7 @@
         let currentPredChartType = 'volume';
         let currentRwaChartDays = 365;
         let currentRwaChartType = 'tvl';
-        let currentEtfChartDays = 7;
+        let currentEtfChartDays = 30;
         let currentEtfChartType = 'total';
         let predChart = null;
         let rwaChart = null;
@@ -4140,6 +4140,8 @@
                 etfChart.destroy();
             }
 
+            const isStacked = (type === 'total' || type === 'flow-mcap');
+
             etfChart = new Chart(ctx, {
                 type: chartType,
                 data: {
@@ -4156,7 +4158,37 @@
                             labels: {
                                 color: '#888',
                                 usePointStyle: true,
-                                pointStyle: 'circle'
+                                pointStyle: 'rect',
+                                generateLabels: function(chart) {
+                                    return chart.data.datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? '#666666' : dataset.borderColor,
+                                            strokeStyle: isHidden ? '#666666' : dataset.borderColor,
+                                            fontColor: isHidden ? '#666666' : '#888888',
+                                            hidden: false,
+                                            lineCap: 'round',
+                                            lineDash: [],
+                                            lineDashOffset: 0,
+                                            lineJoin: 'round',
+                                            lineWidth: 0,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                const dataset = chart.data.datasets[index];
+                                const isCurrentlyHidden = meta.hidden || dataset.hidden;
+                                meta.hidden = !isCurrentlyHidden;
+                                dataset.hidden = !isCurrentlyHidden;
+                                chart.update();
                             }
                         },
                         tooltip: {
@@ -4167,6 +4199,7 @@
                     },
                     scales: {
                         y: {
+                            stacked: isStacked,
                             beginAtZero: type !== 'aum-mcap',
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
@@ -4177,6 +4210,7 @@
                             }
                         },
                         x: {
+                            stacked: isStacked,
                             grid: {
                                 display: false
                             },
