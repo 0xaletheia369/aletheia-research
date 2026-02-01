@@ -35,6 +35,7 @@ When adding new external API integrations, **ALWAYS test CORS before deploying**
 | CoinGecko | Yes | None |
 | Binance | Yes | None |
 | FRED (`api.stlouisfed.org`) | No | `proxyUrlCodeTabs()` |
+| NY Fed Markets (`markets.newyorkfed.org`) | Yes | None |
 
 ### Common Harmless Errors
 - `favicon.ico 404` - Normal if no favicon exists, doesn't affect functionality

@@ -4805,12 +4805,48 @@
             }
         }
 
+        // Fetch EFFR from NY Fed API (more current than FRED)
+        async function fetchNYFedEFFR(years = 10) {
+            const cacheKey = `nyfed:effr:${years}`;
+            const cached = getCachedData(cacheKey);
+            if (cached) return cached;
+
+            const endDate = new Date().toISOString().split('T')[0];
+            const startDate = new Date(Date.now() - years * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            const url = `https://markets.newyorkfed.org/api/rates/all/search.json?startDate=${startDate}&endDate=${endDate}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`NY Fed API error: ${response.status}`);
+                const json = await response.json();
+
+                // Filter for EFFR entries only and transform
+                const result = json.refRates
+                    .filter(d => d.type === 'EFFR')
+                    .map(d => ({
+                        date: d.effectiveDate,
+                        value: d.percentRate,
+                        targetFrom: d.targetRateFrom,
+                        targetTo: d.targetRateTo
+                    }))
+                    .sort((a, b) => a.date.localeCompare(b.date));
+
+                setCachedData(cacheKey, result);
+                return result;
+            } catch (e) {
+                console.error('Failed to fetch NY Fed EFFR:', e);
+                // Fallback to FRED if NY Fed fails
+                return fetchFredSeries('FEDFUNDS', years);
+            }
+        }
+
         // Fetch all macro data
         async function fetchMacroData(years = 10) {
             const [cpiData, unemploymentData, fedRateData] = await Promise.all([
                 fetchFredSeries('CPIAUCSL', years),      // CPI for All Urban Consumers
                 fetchFredSeries('UNRATE', years),       // Civilian Unemployment Rate
-                fetchFredSeries('FEDFUNDS', years)      // Effective Federal Funds Rate
+                fetchNYFedEFFR(years)                   // EFFR from NY Fed (daily, more current)
             ]);
 
             // Calculate YoY inflation from CPI by matching exact months
@@ -5070,7 +5106,11 @@
             if (fedRateData && fedRateData.length > 0) {
                 const latest = fedRateData[fedRateData.length - 1];
                 document.getElementById('currentFedRate').textContent = latest.value.toFixed(2) + '%';
-                document.getElementById('fedRateDate').textContent = `As of ${formatDisplayDate(latest.date)}`;
+                // Show target range if available (from NY Fed)
+                const targetInfo = latest.targetFrom !== undefined
+                    ? ` (Target: ${latest.targetFrom.toFixed(2)}-${latest.targetTo.toFixed(2)}%)`
+                    : '';
+                document.getElementById('fedRateDate').textContent = `As of ${formatDisplayDate(latest.date)}${targetInfo}`;
             }
         }
 
