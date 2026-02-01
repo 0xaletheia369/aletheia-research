@@ -1996,7 +1996,7 @@
             <div id="tiktokTrends7d" class="tiktok-momentum-cards"></div>
         </div>
 
-        <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Data: Curated TikTok Trends, DexScreener</p>
+        <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Data: TikTok Trends via Apify, DexScreener</p>
     </div>
 
     <script>
@@ -6272,20 +6272,34 @@
 
         // ========== TIKTOK TRENDS FUNCTIONS ==========
 
-        // RapidAPI TikTok Trending Data
-        const RAPIDAPI_KEY = '87b3b4e043mshea64f301549ab43p1b3207jsn24b45080a367';
-        const RAPIDAPI_HOST = 'tiktok-trending-data.p.rapidapi.com';
+        // Cloudflare Worker URL for TikTok trends (proxies Apify API)
+        const TIKTOK_WORKER_URL = 'https://tiktok-trends-proxy.aculsong.workers.dev/trends';
 
         let tiktokTrends = [];
         let tiktokDataLoaded = false;
 
-        // Fetch trending hashtags
-        // Note: RapidAPI TikTok endpoints are currently unavailable (410 Gone)
-        // Using curated meme trends data - these are real viral TikTok trends
-        // TODO: Re-enable API when a working endpoint is found
+        // Fetch trending hashtags from Cloudflare Worker
         async function fetchTikTokTrends() {
-            console.log('Loading curated meme trends (API currently unavailable)');
-            return getFallbackTrends();
+            try {
+                console.log('Fetching TikTok trends from worker...');
+                const response = await fetch(TIKTOK_WORKER_URL);
+
+                if (!response.ok) {
+                    throw new Error(`Worker error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('TikTok trends response:', data);
+
+                if (data.success && data.trends) {
+                    return data.trends;
+                }
+
+                return getFallbackTrends();
+            } catch (error) {
+                console.error('Failed to fetch TikTok trends:', error);
+                return getFallbackTrends();
+            }
         }
 
         // Transform API data to our format
