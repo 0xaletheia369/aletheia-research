@@ -3310,18 +3310,26 @@
             }
         }
 
+        // Swiss number formatting helper (uses apostrophe as thousand separator)
+        function formatSwiss(num, decimals = 2) {
+            const parts = num.toFixed(decimals).split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+            return parts.join('.');
+        }
+
         function formatUSD(num) {
             if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
             num = Number(num);
-            if (num >= 1e9) return '$' + (num / 1e9).toFixed(2) + 'B';
-            if (num >= 1e6) return '$' + (num / 1e6).toFixed(2) + 'M';
-            if (num >= 1e3) return '$' + (num / 1e3).toFixed(2) + 'K';
-            return '$' + num.toFixed(2);
+            if (num >= 1e9) return '$' + formatSwiss(num / 1e9, 2) + 'B';
+            if (num >= 1e6) return '$' + formatSwiss(num / 1e6, 2) + 'M';
+            if (num >= 1e3) return '$' + formatSwiss(num / 1e3, 2) + 'K';
+            return '$' + formatSwiss(num, 2);
         }
 
         function formatPrice(price) {
             if (price === null || price === undefined || isNaN(price)) return '<span class="na">N/A</span>';
             price = Number(price);
+            if (price >= 1000) return '$' + formatSwiss(price, 2);
             if (price >= 1) return '$' + price.toFixed(2);
             if (price >= 0.01) return '$' + price.toFixed(4);
             return '$' + price.toFixed(6);
@@ -3330,9 +3338,9 @@
         function formatSupply(num) {
             if (num === null || num === undefined || isNaN(num)) return '<span class="na">N/A</span>';
             num = Number(num);
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
-            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            if (num >= 1e9) return formatSwiss(num / 1e9, 2) + 'B';
+            if (num >= 1e6) return formatSwiss(num / 1e6, 2) + 'M';
+            if (num >= 1e3) return formatSwiss(num / 1e3, 2) + 'K';
             return num.toFixed(0);
         }
 
