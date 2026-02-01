@@ -1546,13 +1546,44 @@
             });
             await coinGeckoRequestQueue;
 
+            // Helper to unwrap proxy response if needed
+            function unwrapProxyResponse(data) {
+                // If it's already an array, return as-is
+                if (Array.isArray(data)) return data;
+                // Check for common proxy wrapper patterns
+                if (data && typeof data === 'object') {
+                    // allorigins wrapper
+                    if (data.contents) {
+                        try {
+                            const unwrapped = JSON.parse(data.contents);
+                            return unwrapProxyResponse(unwrapped); // Recursively unwrap
+                        } catch (e) { }
+                    }
+                    // Check if it has market_caps (for market_chart endpoint)
+                    if (data.market_caps || data.prices) {
+                        return data;
+                    }
+                    // Check for error response from CoinGecko
+                    if (data.status && data.status.error_code) {
+                        console.warn('CoinGecko API rate limit/error:', data.status.error_message || data.status);
+                        return null;
+                    }
+                    if (data.error) {
+                        console.warn('CoinGecko API error:', data.error);
+                        return null;
+                    }
+                }
+                return data;
+            }
+
             // Try codetabs first (more reliable), then allorigins
             let responseData = null;
             try {
                 const response = await fetch(proxyUrlCodeTabs(url));
                 if (response.ok) {
                     const text = await response.text();
-                    responseData = JSON.parse(text);
+                    const parsed = JSON.parse(text);
+                    responseData = unwrapProxyResponse(parsed);
                 }
             } catch (e) {
                 console.log('Codetabs proxy failed, trying allorigins...');
@@ -1565,11 +1596,7 @@
                     const text = await response.text();
                     if (text.startsWith('[') || text.startsWith('{')) {
                         const parsed = JSON.parse(text);
-                        if (parsed.contents) {
-                            responseData = JSON.parse(parsed.contents);
-                        } else {
-                            responseData = parsed;
-                        }
+                        responseData = unwrapProxyResponse(parsed);
                     }
                 } catch (e) {
                     console.error('All proxies failed for CoinGecko:', url.substring(0, 80));
