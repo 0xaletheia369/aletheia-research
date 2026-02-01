@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-01T01:14:01.243Z",
+  "lastUpdated": "2026-02-01T01:22:51.854Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -8042,7 +8042,11 @@
         "BTC": "-318.2",
         "Total": "-1,113.7"
       }
-    ]
+    ],
+    "debug": {
+      "totalRows": 537,
+      "headerRowIndex": 0
+    }
   },
   "ethereum": {
     "headers": [
@@ -8058,7 +8062,11 @@
       "Grayscale",
       "Total"
     ],
-    "records": []
+    "records": [],
+    "debug": {
+      "totalRows": 399,
+      "headerRowIndex": 0
+    }
   },
   "solana": {
     "headers": [
@@ -8071,7 +8079,11 @@
       "",
       "Total"
     ],
-    "records": []
+    "records": [],
+    "debug": {
+      "totalRows": 20,
+      "headerRowIndex": 0
+    }
   },
   "bitcoinSummary": {
     "latestDate": "11 Jan 2024",
