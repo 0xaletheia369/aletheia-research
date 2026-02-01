@@ -3809,8 +3809,11 @@
                     if (data.market_caps) {
                         data.market_caps.forEach(([timestamp, mcap]) => {
                             const date = new Date(timestamp);
-                            // Use ISO date string (YYYY-MM-DD) as key for consistent matching
-                            const dateKey = date.toISOString().split('T')[0];
+                            // Use local date components to match ETF data date format
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const dateKey = `${year}-${month}-${day}`;
                             mcapMap.set(dateKey, mcap);
                         });
                     }
@@ -3863,14 +3866,18 @@
             const solMap = new Map(solData.labels.map((d, i) => [d, solData.values[i]]));
 
             // Align all datasets to the same dates and format labels
-            // Also create ISO date keys for market cap lookup
+            // Also create ISO date keys for market cap lookup (use local date to avoid timezone shifts)
             const labels = sortedDates.map(d => {
                 const date = new Date(d);
                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             });
             const dateKeys = sortedDates.map(d => {
                 const date = new Date(d);
-                return date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                // Use local date components to avoid UTC timezone shift
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`; // YYYY-MM-DD format
             });
             const btcValues = sortedDates.map(d => btcMap.get(d) ?? null);
             const ethValues = sortedDates.map(d => ethMap.get(d) ?? null);
@@ -3899,7 +3906,7 @@
             let datasets = [];
             let yAxisCallback, tooltipCallback;
 
-            // Colors: Orange (BTC), Blue (ETH), Green (SOL)
+            // Colors: Orange (BTC), Blue (ETH), Green (SOL) - same as other charts
             const btcColor = ftColors[2]; // Orange
             const ethColor = ftColors[3]; // Blue
             const solColor = ftColors[5]; // Green
@@ -3911,23 +3918,26 @@
                     {
                         label: 'BTC',
                         data: aligned.btcValues,
-                        backgroundColor: btcColor + 'CC',
+                        backgroundColor: btcColor,
                         borderColor: btcColor,
-                        borderWidth: 1
+                        borderWidth: 0,
+                        borderRadius: 0
                     },
                     {
                         label: 'ETH',
                         data: aligned.ethValues,
-                        backgroundColor: ethColor + 'CC',
+                        backgroundColor: ethColor,
                         borderColor: ethColor,
-                        borderWidth: 1
+                        borderWidth: 0,
+                        borderRadius: 0
                     },
                     {
                         label: 'SOL',
                         data: aligned.solValues,
-                        backgroundColor: solColor + 'CC',
+                        backgroundColor: solColor,
                         borderColor: solColor,
-                        borderWidth: 1
+                        borderWidth: 0,
+                        borderRadius: 0
                     }
                 ];
 
@@ -3972,23 +3982,26 @@
                     {
                         label: 'BTC',
                         data: btcPct,
-                        backgroundColor: btcColor + 'CC',
+                        backgroundColor: btcColor,
                         borderColor: btcColor,
-                        borderWidth: 1
+                        borderWidth: 0,
+                        borderRadius: 0
                     },
                     {
                         label: 'ETH',
                         data: ethPct,
-                        backgroundColor: ethColor + 'CC',
+                        backgroundColor: ethColor,
                         borderColor: ethColor,
-                        borderWidth: 1
+                        borderWidth: 0,
+                        borderRadius: 0
                     },
                     {
                         label: 'SOL',
                         data: solPct,
-                        backgroundColor: solColor + 'CC',
+                        backgroundColor: solColor,
                         borderColor: solColor,
-                        borderWidth: 1
+                        borderWidth: 0,
+                        borderRadius: 0
                     }
                 ];
 
