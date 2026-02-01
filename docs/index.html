@@ -3986,14 +3986,6 @@
 
                 // Convert flows to % of market cap using historical market cap for each day
                 // (flow_$M * 1e6) / market_cap_on_that_day * 100
-                // Debug: log sample date keys and available market cap dates
-                if (aligned.dateKeys.length > 0) {
-                    console.log('Sample ETF dateKeys:', aligned.dateKeys.slice(0, 3));
-                    console.log('BTC mcap keys sample:', Array.from(etfMarketCaps.bitcoin?.keys() || []).slice(0, 3));
-                    console.log('ETH mcap keys sample:', Array.from(etfMarketCaps.ethereum?.keys() || []).slice(0, 3));
-                    console.log('SOL mcap keys sample:', Array.from(etfMarketCaps.solana?.keys() || []).slice(0, 3));
-                }
-
                 const btcPct = aligned.btcValues.map((v, i) => {
                     if (v === null) return null;
                     const mcap = etfMarketCaps.bitcoin?.get(aligned.dateKeys[i]);
@@ -4009,16 +4001,6 @@
                     const mcap = etfMarketCaps.solana?.get(aligned.dateKeys[i]);
                     return mcap ? (v * 1e6) / mcap * 100 : null;
                 });
-
-                // Debug: count non-null values
-                console.log('Flow-mcap non-null counts:', {
-                    btc: btcPct.filter(v => v !== null).length,
-                    eth: ethPct.filter(v => v !== null).length,
-                    sol: solPct.filter(v => v !== null).length,
-                    total: aligned.dateKeys.length
-                });
-                console.log('ETH values sample:', aligned.ethValues.slice(0, 5));
-                console.log('ETH pct sample:', ethPct.slice(0, 5));
 
                 datasets = [
                     {
