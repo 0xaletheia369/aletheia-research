@@ -1498,38 +1498,67 @@
             return fetch(url);
         }
 
-        // Helper to fetch CoinGecko APIs (always use proxy due to CORS)
+        // CoinGecko cache and rate limiting
+        const coinGeckoCache = new Map();
+        const COINGECKO_CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
+        const COINGECKO_REQUEST_DELAY = 1500; // 1.5 seconds between requests
+        let lastCoinGeckoRequest = 0;
+        let coinGeckoRequestQueue = Promise.resolve();
+
+        // Helper to fetch CoinGecko APIs with caching and rate limiting
         async function fetchCoinGecko(url) {
+            // Check cache first
+            const cached = coinGeckoCache.get(url);
+            if (cached && (Date.now() - cached.timestamp < COINGECKO_CACHE_TTL)) {
+                console.log('CoinGecko cache hit:', url.substring(0, 80));
+                return new Response(JSON.stringify(cached.data), { status: 200 });
+            }
+
+            // Queue the request to enforce rate limiting
+            coinGeckoRequestQueue = coinGeckoRequestQueue.then(async () => {
+                const now = Date.now();
+                const timeSinceLastRequest = now - lastCoinGeckoRequest;
+                if (timeSinceLastRequest < COINGECKO_REQUEST_DELAY) {
+                    await new Promise(r => setTimeout(r, COINGECKO_REQUEST_DELAY - timeSinceLastRequest));
+                }
+                lastCoinGeckoRequest = Date.now();
+            });
+            await coinGeckoRequestQueue;
+
             // Try codetabs first (more reliable), then allorigins
+            let responseData = null;
             try {
                 const response = await fetch(proxyUrlCodeTabs(url));
                 if (response.ok) {
-                    return response;
+                    const text = await response.text();
+                    responseData = JSON.parse(text);
                 }
             } catch (e) {
                 console.log('Codetabs proxy failed, trying allorigins...');
             }
 
             // Fallback to allorigins
-            try {
-                const response = await fetch(proxyUrlAllOrigins(url));
-                const text = await response.text();
-                if (text.startsWith('[') || text.startsWith('{')) {
-                    // Check if it's a wrapper object with contents property
-                    try {
+            if (!responseData) {
+                try {
+                    const response = await fetch(proxyUrlAllOrigins(url));
+                    const text = await response.text();
+                    if (text.startsWith('[') || text.startsWith('{')) {
                         const parsed = JSON.parse(text);
                         if (parsed.contents) {
-                            return new Response(parsed.contents, { status: 200 });
+                            responseData = JSON.parse(parsed.contents);
+                        } else {
+                            responseData = parsed;
                         }
-                        // If parsed is already an array, return as-is
-                        if (Array.isArray(parsed)) {
-                            return new Response(text, { status: 200 });
-                        }
-                    } catch (e) { /* parse error, use text as-is */ }
-                    return new Response(text, { status: 200 });
+                    }
+                } catch (e) {
+                    console.error('All proxies failed for CoinGecko:', url.substring(0, 80));
                 }
-            } catch (e) {
-                console.error('All proxies failed for CoinGecko');
+            }
+
+            if (responseData) {
+                // Cache the successful response
+                coinGeckoCache.set(url, { data: responseData, timestamp: Date.now() });
+                return new Response(JSON.stringify(responseData), { status: 200 });
             }
 
             throw new Error('Failed to fetch from CoinGecko via proxy');
@@ -3912,9 +3941,12 @@
             } else if (type === 'flow-mcap') {
                 subtitleEl.textContent = 'Daily flow as % of market cap';
 
-                if (!etfMarketCaps) {
+                if (!etfMarketCaps || !etfMarketCaps.bitcoin || !etfMarketCaps.ethereum || !etfMarketCaps.solana) {
                     subtitleEl.textContent = 'Loading market cap data...';
-                    fetchEtfMarketCaps().then(() => updateEtfChart(days, type));
+                    fetchEtfMarketCaps().then(() => updateEtfChart(days, type)).catch(() => {
+                        subtitleEl.textContent = 'Market cap data unavailable - showing Total instead';
+                        updateEtfChart(days, 'total');
+                    });
                     return;
                 }
 
@@ -3922,17 +3954,17 @@
                 // (flow_$M * 1e6) / market_cap_on_that_day * 100
                 const btcPct = aligned.btcValues.map((v, i) => {
                     if (v === null) return null;
-                    const mcap = etfMarketCaps.bitcoin.get(aligned.dateKeys[i]);
+                    const mcap = etfMarketCaps.bitcoin?.get(aligned.dateKeys[i]);
                     return mcap ? (v * 1e6) / mcap * 100 : null;
                 });
                 const ethPct = aligned.ethValues.map((v, i) => {
                     if (v === null) return null;
-                    const mcap = etfMarketCaps.ethereum.get(aligned.dateKeys[i]);
+                    const mcap = etfMarketCaps.ethereum?.get(aligned.dateKeys[i]);
                     return mcap ? (v * 1e6) / mcap * 100 : null;
                 });
                 const solPct = aligned.solValues.map((v, i) => {
                     if (v === null) return null;
-                    const mcap = etfMarketCaps.solana.get(aligned.dateKeys[i]);
+                    const mcap = etfMarketCaps.solana?.get(aligned.dateKeys[i]);
                     return mcap ? (v * 1e6) / mcap * 100 : null;
                 });
 
