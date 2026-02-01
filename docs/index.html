@@ -4813,19 +4813,33 @@
                 fetchFredSeries('FEDFUNDS', years)      // Effective Federal Funds Rate
             ]);
 
-            // Calculate YoY inflation from CPI
+            // Calculate YoY inflation from CPI by matching exact months
             let inflationData = null;
             if (cpiData && cpiData.length > 12) {
+                // Create a map of CPI values by year-month
+                const cpiByMonth = new Map();
+                cpiData.forEach(d => {
+                    const key = d.date.substring(0, 7); // "YYYY-MM"
+                    cpiByMonth.set(key, d.value);
+                });
+
                 inflationData = [];
-                for (let i = 12; i < cpiData.length; i++) {
-                    const currentCpi = cpiData[i].value;
-                    const yearAgoCpi = cpiData[i - 12].value;
-                    const yoyChange = ((currentCpi - yearAgoCpi) / yearAgoCpi) * 100;
-                    inflationData.push({
-                        date: cpiData[i].date,
-                        value: yoyChange
-                    });
-                }
+                cpiData.forEach(d => {
+                    const currentDate = new Date(d.date);
+                    const yearAgoDate = new Date(currentDate);
+                    yearAgoDate.setFullYear(yearAgoDate.getFullYear() - 1);
+                    const yearAgoKey = yearAgoDate.toISOString().substring(0, 7);
+
+                    if (cpiByMonth.has(yearAgoKey)) {
+                        const currentCpi = d.value;
+                        const yearAgoCpi = cpiByMonth.get(yearAgoKey);
+                        const yoyChange = ((currentCpi - yearAgoCpi) / yearAgoCpi) * 100;
+                        inflationData.push({
+                            date: d.date,
+                            value: yoyChange
+                        });
+                    }
+                });
             }
 
             return { inflationData, unemploymentData, fedRateData };
