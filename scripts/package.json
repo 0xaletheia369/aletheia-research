@@ -1,0 +1,12 @@
+{
+  "name": "etf-scraper",
+  "version": "1.0.0",
+  "description": "Scrapes ETF flow data from Farside",
+  "main": "scrape-etf.js",
+  "scripts": {
+    "scrape": "node scrape-etf.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}

@@ -1,0 +1,44 @@
+name: Scrape ETF Data
+
+on:
+  schedule:
+    # Run daily at 6:00 AM UTC (after US market close data is updated)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd scripts
+          npm install
+
+      - name: Run scraper
+        run: |
+          cd scripts
+          npm run scrape
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --quiet docs/data/etf-flows.json || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/data/etf-flows.json
+          git commit -m "Update ETF flow data - $(date +'%Y-%m-%d')"
+          git push

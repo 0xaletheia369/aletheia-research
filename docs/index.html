@@ -147,6 +147,72 @@
             font-size: 1rem;
         }
 
+        /* ETF Summary Styles */
+        .etf-summary {
+            margin-bottom: 30px;
+        }
+
+        .etf-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .etf-summary-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .etf-summary-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.1rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .etf-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .etf-stat-label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .etf-stat-value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .etf-stat-value.positive {
+            color: #26a69a;
+        }
+
+        .etf-stat-value.negative {
+            color: #d32f2f;
+        }
+
+        .etf-last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 640px) {
+            .etf-summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .dashboard {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1026,9 +1092,41 @@
 
     <!-- ETFs Tab -->
     <div class="tab-content" id="etfs">
-        <div class="coming-soon">
-            <h2>ETFs</h2>
-            <p>Coming soon...</p>
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-etf-chart="bitcoin">Bitcoin ETFs</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-etf-chart="ethereum">Ethereum ETFs</button>
+                    </div>
+                    <p class="chart-subtitle" id="etfChartSubtitle">Daily net flows for US spot Bitcoin ETFs</p>
+                </div>
+                <div class="time-selector" id="etfTimeSelector">
+                    <button data-days="7" class="active">7D</button>
+                    <button data-days="30">30D</button>
+                    <button data-days="90">90D</button>
+                    <button data-days="365">1Y</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="etfChart"></canvas>
+            </div>
+            <p class="chart-data-source">Data: Farside Investors (updated daily via GitHub Actions)</p>
+        </div>
+
+        <div class="etf-summary" id="etfSummary">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading ETF data...</p>
+            </div>
+        </div>
+
+        <div class="dashboard" id="etfDashboard">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading ETF breakdown...</p>
+            </div>
         </div>
     </div>
 
@@ -1054,15 +1152,20 @@
         let predChartInitialized = false;
         let rwaChartInitialized = false;
         let rwaDashboardInitialized = false;
+        let etfChartInitialized = false;
         let currentPerpChartDays = 7;
         let currentPerpChartType = 'volume';
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
         let currentRwaChartDays = 365;
         let currentRwaChartType = 'tvl';
+        let currentEtfChartDays = 7;
+        let currentEtfChartType = 'bitcoin';
         let predChart = null;
         let rwaChart = null;
         let perpChart = null;
+        let etfChart = null;
+        let etfData = null;
 
         // RWA tokens configuration (for dashboard cards below chart)
         const rwaTokens = [
@@ -1220,6 +1323,14 @@
                 if (!rwaDashboardInitialized) {
                     rwaDashboardInitialized = true;
                     fetchRwaDashboardData();
+                }
+            }
+
+            // Trigger ETF chart and dashboard initialization if switching to etfs
+            if (tabId === 'etfs') {
+                if (!etfChartInitialized) {
+                    etfChartInitialized = true;
+                    initEtfDashboard();
                 }
             }
         }
@@ -3645,6 +3756,249 @@
 
         fetchData();
         setInterval(fetchData, 120000);
+
+        // ===== ETF Dashboard Functions =====
+
+        async function fetchEtfData() {
+            try {
+                const response = await fetch('./data/etf-flows.json');
+                if (!response.ok) throw new Error('Failed to fetch ETF data');
+                etfData = await response.json();
+                return etfData;
+            } catch (error) {
+                console.error('Error fetching ETF data:', error);
+                return null;
+            }
+        }
+
+        async function initEtfDashboard() {
+            const data = await fetchEtfData();
+            if (!data || !data.lastUpdated) {
+                document.getElementById('etfSummary').innerHTML = `
+                    <div class="coming-soon">
+                        <h2>ETF Data Not Available</h2>
+                        <p>Data will be available after the first GitHub Actions scrape runs.</p>
+                        <p>You can trigger it manually in the Actions tab of your repository.</p>
+                    </div>
+                `;
+                document.getElementById('etfDashboard').innerHTML = '';
+                return;
+            }
+
+            updateEtfChart(currentEtfChartDays, currentEtfChartType);
+            renderEtfSummary(data);
+            renderEtfDashboard(data);
+            setupEtfEventListeners();
+        }
+
+        function renderEtfSummary(data) {
+            const btcSummary = data.bitcoinSummary;
+            const ethSummary = data.ethereumSummary;
+            const lastUpdated = new Date(data.lastUpdated).toLocaleDateString('en-GB', {
+                day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            let html = `
+                <div class="etf-summary-grid">
+                    <div class="etf-summary-card">
+                        <h3>Bitcoin ETFs</h3>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">Latest Daily Flow</span>
+                            <span class="etf-stat-value ${parseFloat(btcSummary?.latestFlow?.replace(/[,$]/g, '') || 0) >= 0 ? 'positive' : 'negative'}">
+                                $${btcSummary?.latestFlow || 'N/A'}M
+                            </span>
+                        </div>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">7-Day Net Flow</span>
+                            <span class="etf-stat-value ${parseFloat(btcSummary?.weeklyFlow || 0) >= 0 ? 'positive' : 'negative'}">
+                                $${formatSwiss(parseFloat(btcSummary?.weeklyFlow || 0), 1)}M
+                            </span>
+                        </div>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">Last Date</span>
+                            <span class="etf-stat-value">${btcSummary?.latestDate || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="etf-summary-card">
+                        <h3>Ethereum ETFs</h3>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">Latest Daily Flow</span>
+                            <span class="etf-stat-value ${parseFloat(ethSummary?.latestFlow?.replace(/[,$]/g, '') || 0) >= 0 ? 'positive' : 'negative'}">
+                                $${ethSummary?.latestFlow || 'N/A'}M
+                            </span>
+                        </div>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">7-Day Net Flow</span>
+                            <span class="etf-stat-value ${parseFloat(ethSummary?.weeklyFlow || 0) >= 0 ? 'positive' : 'negative'}">
+                                $${formatSwiss(parseFloat(ethSummary?.weeklyFlow || 0), 1)}M
+                            </span>
+                        </div>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">Last Date</span>
+                            <span class="etf-stat-value">${ethSummary?.latestDate || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="etf-last-updated">Last updated: ${lastUpdated}</p>
+            `;
+            document.getElementById('etfSummary').innerHTML = html;
+        }
+
+        function renderEtfDashboard(data) {
+            const type = currentEtfChartType;
+            const etfInfo = type === 'bitcoin' ? data.bitcoin : data.ethereum;
+
+            if (!etfInfo || !etfInfo.headers || !etfInfo.records) {
+                document.getElementById('etfDashboard').innerHTML = '<p>No ETF breakdown data available.</p>';
+                return;
+            }
+
+            // Get ETF names from headers (skip first column which is date and last which is Total)
+            const etfNames = etfInfo.headers.slice(1, -1);
+            const latestRecord = etfInfo.records[0];
+
+            let html = '<div class="metrics-grid">';
+
+            etfNames.forEach((etfName, index) => {
+                const flow = latestRecord[etfName] || '0';
+                const flowNum = parseFloat(flow.replace(/[,$]/g, '')) || 0;
+                const isPositive = flowNum >= 0;
+
+                html += `
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-name">${etfName}</span>
+                        </div>
+                        <div class="metric-value ${isPositive ? 'positive' : 'negative'}">
+                            $${formatSwiss(Math.abs(flowNum), 1)}M
+                            <span class="metric-change ${isPositive ? 'positive' : 'negative'}">
+                                ${isPositive ? '▲' : '▼'} ${isPositive ? 'Inflow' : 'Outflow'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            document.getElementById('etfDashboard').innerHTML = html;
+        }
+
+        function updateEtfChart(days, type) {
+            if (!etfData) return;
+
+            currentEtfChartDays = days;
+            currentEtfChartType = type;
+
+            const etfInfo = type === 'bitcoin' ? etfData.bitcoin : etfData.ethereum;
+
+            if (!etfInfo || !etfInfo.records) {
+                console.error('No ETF records available');
+                return;
+            }
+
+            // Update subtitle
+            const subtitleEl = document.getElementById('etfChartSubtitle');
+            subtitleEl.textContent = `Daily net flows for US spot ${type === 'bitcoin' ? 'Bitcoin' : 'Ethereum'} ETFs`;
+
+            // Get records for the time period
+            const records = etfInfo.records.slice(0, days).reverse();
+            const totalHeader = etfInfo.headers.find(h => h.toLowerCase().includes('total')) || etfInfo.headers[etfInfo.headers.length - 1];
+
+            const labels = records.map(r => r[etfInfo.headers[0]]);
+            const values = records.map(r => {
+                const val = r[totalHeader]?.replace(/[,$]/g, '') || '0';
+                return parseFloat(val) || 0;
+            });
+
+            // Color bars based on positive/negative
+            const barColors = values.map(v => v >= 0 ? 'rgba(38, 166, 154, 0.8)' : 'rgba(211, 47, 47, 0.8)');
+
+            const ctx = document.getElementById('etfChart').getContext('2d');
+
+            if (etfChart) {
+                etfChart.destroy();
+            }
+
+            etfChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Net Flow ($M)',
+                        data: values,
+                        backgroundColor: barColors,
+                        borderColor: barColors.map(c => c.replace('0.8', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw;
+                                    return `${val >= 0 ? '+' : ''}$${formatSwiss(val, 1)}M`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#888',
+                                callback: function(value) {
+                                    return '$' + formatSwiss(value, 0) + 'M';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#888',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update dashboard cards for this ETF type
+            renderEtfDashboard(etfData);
+        }
+
+        function setupEtfEventListeners() {
+            // Time selector
+            document.querySelectorAll('#etfTimeSelector button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#etfTimeSelector button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const days = parseInt(btn.dataset.days);
+                    updateEtfChart(days, currentEtfChartType);
+                });
+            });
+
+            // Chart type tabs
+            document.querySelectorAll('[data-etf-chart]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-etf-chart]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const type = btn.dataset.etfChart;
+                    updateEtfChart(currentEtfChartDays, type);
+                });
+            });
+        }
 
         // Initialize tab from hash on page load (must be at end after all declarations)
         initTabFromHash();
