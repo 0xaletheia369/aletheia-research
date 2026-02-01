@@ -40,3 +40,34 @@ When adding new external API integrations, **ALWAYS test CORS before deploying**
 
 ### Common Harmless Errors
 - `favicon.ico 404` - Normal if no favicon exists, doesn't affect functionality
+
+---
+
+## Recent Work
+
+**Last session: Feb 1, 2026**
+
+### Completed
+- **Macro page** - Built out the full Macro tab with:
+  - CPI inflation chart (YoY % from FRED API)
+  - Unemployment rate chart (FRED API)
+  - Fed Funds rate (NY Fed API - daily, more current than FRED)
+  - Current value cards showing latest data
+  - Combined/Inflation/Unemployment chart toggle tabs
+  - Time period selectors (5Y, 10Y, 20Y)
+
+- **Fed Decision chart** - Added Polymarket FOMC predictions:
+  - Historical probability line chart from CLOB API
+  - Tabs for March 18, April 29, June 17 meetings
+  - Outcomes: No change, 25 bps decrease, 50+ bps decrease, rate increases
+  - FT color palette, interactive legend
+
+- **Homepage cleanup** - Removed Price tab (placeholder), updated all cards to show active pages
+
+### Data Sources Added
+- FRED API (requires API key: `fffc4b3857d7ee655a7dac83fd77b825`)
+- NY Fed Markets API (no key needed)
+- Polymarket CLOB API (historical prices)
+
+### Next Steps / Ideas
+- (Add future tasks here)
