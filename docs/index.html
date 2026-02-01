@@ -1801,70 +1801,30 @@
 
     <!-- TikTok Tab -->
     <div class="tab-content" id="tiktok">
-        <!-- Time Frame Toggle -->
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px; padding: 0 20px;">
-            <div class="time-selector" id="tiktokTimeSelector">
-                <button data-tiktok-period="24h" class="active">24h</button>
-                <button data-tiktok-period="7d">7d</button>
-            </div>
-        </div>
-
-        <!-- Section A: Ranked List with Sparklines -->
+        <!-- Trending List -->
         <div class="chart-container" style="margin-bottom: 30px;">
             <div class="chart-header">
                 <div class="chart-title-section">
                     <div class="chart-tabs">
-                        <button class="chart-tab active">Section A: Ranked List with Sparklines</button>
+                        <button class="chart-tab active">Trending Now</button>
                     </div>
-                    <p class="chart-subtitle">Click any row to expand details</p>
+                    <p class="chart-subtitle">Top viral trends and memes on TikTok - Click any row to expand</p>
                 </div>
             </div>
             <div id="tiktokRankedList" class="tiktok-ranked-list"></div>
         </div>
 
-        <!-- Section B: Heat Map Table -->
+        <!-- Momentum Cards -->
         <div class="chart-container" style="margin-bottom: 30px;">
             <div class="chart-header">
                 <div class="chart-title-section">
                     <div class="chart-tabs">
-                        <button class="chart-tab active">Section B: Heat Map Table</button>
+                        <button class="chart-tab active">Momentum Overview</button>
                     </div>
-                    <p class="chart-subtitle">Click column headers to sort, click row for details</p>
-                </div>
-            </div>
-            <div id="tiktokHeatMap" class="tiktok-heatmap"></div>
-            <div id="tiktokHeatMapDetail" class="tiktok-detail-panel" style="display: none;"></div>
-        </div>
-
-        <!-- Section C: Momentum Cards -->
-        <div class="chart-container" style="margin-bottom: 30px;">
-            <div class="chart-header">
-                <div class="chart-title-section">
-                    <div class="chart-tabs">
-                        <button class="chart-tab active">Section C: Momentum Cards</button>
-                    </div>
-                    <p class="chart-subtitle">Click any card to expand full details</p>
+                    <p class="chart-subtitle">Click any card for full details</p>
                 </div>
             </div>
             <div id="tiktokMomentumCards" class="tiktok-momentum-cards"></div>
-        </div>
-
-        <!-- Section D: Two-Panel Layout -->
-        <div class="chart-container" style="margin-bottom: 30px;">
-            <div class="chart-header">
-                <div class="chart-title-section">
-                    <div class="chart-tabs">
-                        <button class="chart-tab active">Section D: Two-Panel Layout</button>
-                    </div>
-                    <p class="chart-subtitle">Select from left panel to view details on right</p>
-                </div>
-            </div>
-            <div class="tiktok-two-panel">
-                <div id="tiktokLeftPanel" class="tiktok-left-panel"></div>
-                <div id="tiktokRightPanel" class="tiktok-right-panel">
-                    <div class="tiktok-placeholder">Select a trend from the left to view details</div>
-                </div>
-            </div>
         </div>
 
         <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Sample Data (API integration coming soon)</p>
@@ -5996,316 +5956,311 @@
 
         // ========== TIKTOK TRENDS FUNCTIONS ==========
 
-        // Mock data for TikTok trends
+        // Mock data for TikTok trends (general viral content, not crypto-specific)
         const tiktokTrends = [
             {
                 rank: 1,
-                hashtag: "#shibamania",
-                views: 45200000,
-                views24h: 12500000,
-                growth24h: 340,
-                growth7d: 890,
-                description: "Dog-themed meme trend featuring Shiba Inu reactions and crypto references",
-                keywords: ["shiba", "doge", "dog", "meme", "crypto"],
-                relatedFigures: ["Elon Musk mentions"],
-                sparklineData: [10, 15, 22, 45, 67, 89, 100]
+                hashtag: "#italianbrainrot",
+                views: 892000000,
+                views24h: 156000000,
+                growth24h: 420,
+                growth7d: 1850,
+                description: "Surreal Italian-themed meme videos with absurdist humor and distorted audio",
+                keywords: ["italian", "brainrot", "surreal", "meme"],
+                relatedFigures: ["Various meme creators"],
+                sparklineData: [5, 12, 25, 45, 68, 85, 100]
             },
             {
                 rank: 2,
-                hashtag: "#pumpfun",
-                views: 38700000,
-                views24h: 9800000,
-                growth24h: 275,
-                growth7d: 650,
-                description: "Solana memecoin launches and token trading highlights",
-                keywords: ["solana", "memecoin", "trading", "pump"],
-                relatedFigures: ["Solana ecosystem"],
-                sparklineData: [20, 25, 35, 50, 65, 80, 95]
+                hashtag: "#tralalero",
+                views: 654000000,
+                views24h: 98000000,
+                growth24h: 380,
+                growth7d: 1420,
+                description: "Catchy nonsense song trend with dance challenges and remixes",
+                keywords: ["song", "dance", "viral", "music"],
+                relatedFigures: ["Original creator unknown"],
+                sparklineData: [8, 18, 32, 52, 72, 88, 95]
             },
             {
                 rank: 3,
-                hashtag: "#pepeseason",
-                views: 32100000,
-                views24h: 8200000,
-                growth24h: 220,
-                growth7d: 520,
-                description: "Pepe-themed content and frog memes in crypto context",
-                keywords: ["pepe", "frog", "meme", "green"],
-                relatedFigures: ["PEPE token community"],
-                sparklineData: [30, 40, 45, 55, 70, 85, 90]
+                hashtag: "#verydemure",
+                views: 521000000,
+                views24h: 42000000,
+                growth24h: 145,
+                growth7d: 890,
+                description: "Ironic 'demure and mindful' lifestyle parody videos",
+                keywords: ["demure", "mindful", "aesthetic", "parody"],
+                relatedFigures: ["Jools Lebron"],
+                sparklineData: [15, 28, 42, 58, 72, 84, 92]
             },
             {
                 rank: 4,
-                hashtag: "#cryptobros",
-                views: 28500000,
-                views24h: 6500000,
-                growth24h: 180,
-                growth7d: 420,
-                description: "Satirical content about crypto culture and trading lifestyle",
-                keywords: ["crypto", "trading", "lifestyle", "comedy"],
-                relatedFigures: ["Various crypto influencers"],
-                sparklineData: [25, 30, 40, 50, 60, 75, 85]
+                hashtag: "#skibiditoilet",
+                views: 489000000,
+                views24h: 28000000,
+                growth24h: 85,
+                growth7d: 320,
+                description: "Animated series featuring singing toilets in an epic battle",
+                keywords: ["skibidi", "animation", "series", "toilet"],
+                relatedFigures: ["DaFuq!?Boom!"],
+                sparklineData: [45, 52, 58, 65, 72, 78, 85]
             },
             {
                 rank: 5,
-                hashtag: "#diamondhands",
-                views: 25800000,
-                views24h: 5800000,
-                growth24h: 155,
-                growth7d: 380,
-                description: "HODL culture and commitment to holding crypto assets",
-                keywords: ["hodl", "diamond", "hands", "hold"],
-                relatedFigures: ["WSB crossover"],
-                sparklineData: [35, 40, 50, 55, 65, 70, 80]
+                hashtag: "#delulu",
+                views: 412000000,
+                views24h: 35000000,
+                growth24h: 165,
+                growth7d: 540,
+                description: "Embracing delusional confidence and manifestation humor",
+                keywords: ["delulu", "confidence", "manifest", "funny"],
+                relatedFigures: ["Various creators"],
+                sparklineData: [20, 32, 48, 62, 75, 86, 94]
             },
             {
                 rank: 6,
-                hashtag: "#memecoinszn",
-                views: 23400000,
-                views24h: 5200000,
-                growth24h: 145,
-                growth7d: 340,
-                description: "Memecoin season celebrations and new token discoveries",
-                keywords: ["memecoin", "season", "altcoin", "launch"],
-                relatedFigures: ["Memecoin traders"],
-                sparklineData: [15, 25, 35, 45, 55, 70, 88]
+                hashtag: "#aura",
+                views: 385000000,
+                views24h: 52000000,
+                growth24h: 245,
+                growth7d: 720,
+                description: "Rating situations based on 'aura points' gained or lost",
+                keywords: ["aura", "points", "rating", "energy"],
+                relatedFigures: ["Gen Z creators"],
+                sparklineData: [12, 25, 42, 58, 75, 88, 96]
             },
             {
                 rank: 7,
-                hashtag: "#bonklife",
-                views: 21200000,
-                views24h: 4800000,
-                growth24h: 130,
-                growth7d: 310,
-                description: "Bonk dog meme and Solana memecoin community content",
-                keywords: ["bonk", "solana", "dog", "memecoin"],
-                relatedFigures: ["BONK community"],
-                sparklineData: [40, 45, 50, 58, 65, 72, 82]
+                hashtag: "#girlmath",
+                views: 356000000,
+                views24h: 18000000,
+                growth24h: 72,
+                growth7d: 280,
+                description: "Humorous justifications for purchases using creative logic",
+                keywords: ["shopping", "math", "funny", "justify"],
+                relatedFigures: ["Shopping influencers"],
+                sparklineData: [42, 48, 55, 62, 70, 78, 84]
             },
             {
                 rank: 8,
-                hashtag: "#wagmi",
-                views: 19800000,
-                views24h: 4200000,
-                growth24h: 115,
-                growth7d: 280,
-                description: "We're All Gonna Make It - optimistic crypto community posts",
-                keywords: ["wagmi", "positive", "community", "hope"],
-                relatedFigures: ["NFT and crypto community"],
-                sparklineData: [50, 55, 58, 62, 68, 74, 78]
+                hashtag: "#romanempire",
+                views: 328000000,
+                views24h: 15000000,
+                growth24h: 58,
+                growth7d: 195,
+                description: "Asking men how often they think about the Roman Empire",
+                keywords: ["roman", "empire", "men", "history"],
+                relatedFigures: ["Couples content creators"],
+                sparklineData: [48, 54, 60, 66, 72, 78, 82]
             },
             {
                 rank: 9,
-                hashtag: "#aicoins",
-                views: 18200000,
-                views24h: 4500000,
-                growth24h: 195,
-                growth7d: 450,
-                description: "AI-themed cryptocurrency and token discussions",
-                keywords: ["ai", "artificial", "intelligence", "tech"],
-                relatedFigures: ["AI sector tokens"],
-                sparklineData: [20, 30, 42, 55, 68, 82, 92]
+                hashtag: "#lazygirlJob",
+                views: 298000000,
+                views24h: 22000000,
+                growth24h: 125,
+                growth7d: 385,
+                description: "Celebrating low-stress remote jobs with good work-life balance",
+                keywords: ["job", "remote", "work", "balance"],
+                relatedFigures: ["Career TikTokers"],
+                sparklineData: [25, 38, 52, 65, 78, 88, 94]
             },
             {
                 rank: 10,
-                hashtag: "#rugsafe",
-                views: 16500000,
-                views24h: 3800000,
+                hashtag: "#npc",
+                views: 276000000,
+                views24h: 19000000,
                 growth24h: 98,
-                growth7d: 240,
-                description: "Rug pull warnings and scam awareness content",
-                keywords: ["rug", "scam", "warning", "safe"],
-                relatedFigures: ["Security researchers"],
-                sparklineData: [55, 58, 62, 65, 70, 74, 76]
+                growth7d: 340,
+                description: "Creators acting like video game NPCs during livestreams",
+                keywords: ["npc", "livestream", "gaming", "roleplay"],
+                relatedFigures: ["PinkyDoll", "Cherry Crush"],
+                sparklineData: [28, 42, 55, 68, 78, 86, 92]
             },
             {
                 rank: 11,
-                hashtag: "#dogenation",
-                views: 15200000,
-                views24h: 3500000,
-                growth24h: 85,
-                growth7d: 210,
-                description: "Dogecoin community celebrations and meme content",
-                keywords: ["doge", "dogecoin", "community", "musk"],
-                relatedFigures: ["Elon Musk", "Dogecoin Foundation"],
-                sparklineData: [45, 50, 55, 60, 65, 70, 75]
+                hashtag: "#corecore",
+                views: 254000000,
+                views24h: 12000000,
+                growth24h: 65,
+                growth7d: 215,
+                description: "Emotional video collages exploring modern life and existentialism",
+                keywords: ["aesthetic", "emotional", "collage", "deep"],
+                relatedFigures: ["Video editors"],
+                sparklineData: [38, 45, 52, 60, 68, 76, 82]
             },
             {
                 rank: 12,
-                hashtag: "#ethmaxi",
-                views: 14100000,
-                views24h: 3200000,
-                growth24h: 78,
-                growth7d: 195,
-                description: "Ethereum maximalist content and ecosystem highlights",
-                keywords: ["ethereum", "eth", "defi", "vitalik"],
-                relatedFigures: ["Vitalik Buterin"],
-                sparklineData: [60, 62, 65, 68, 70, 72, 74]
+                hashtag: "#brat",
+                views: 242000000,
+                views24h: 45000000,
+                growth24h: 285,
+                growth7d: 680,
+                description: "Charli XCX album aesthetic - lime green, messy, party girl energy",
+                keywords: ["charli", "music", "aesthetic", "party"],
+                relatedFigures: ["Charli XCX"],
+                sparklineData: [10, 22, 38, 55, 72, 88, 98]
             },
             {
                 rank: 13,
-                hashtag: "#bullrun2026",
-                views: 13200000,
-                views24h: 3800000,
-                growth24h: 165,
-                growth7d: 380,
-                description: "Bull market predictions and portfolio showcase posts",
-                keywords: ["bull", "run", "2026", "market"],
-                relatedFigures: ["Crypto analysts"],
-                sparklineData: [25, 35, 45, 58, 70, 82, 90]
+                hashtag: "#icks",
+                views: 218000000,
+                views24h: 14000000,
+                growth24h: 82,
+                growth7d: 265,
+                description: "Sharing random turn-offs and dating dealbreakers",
+                keywords: ["dating", "turnoff", "relationship", "funny"],
+                relatedFigures: ["Dating content creators"],
+                sparklineData: [32, 42, 52, 62, 72, 80, 86]
             },
             {
                 rank: 14,
-                hashtag: "#nftdegen",
-                views: 12400000,
-                views24h: 2800000,
-                growth24h: 72,
-                growth7d: 175,
-                description: "NFT collecting and trading degen lifestyle content",
-                keywords: ["nft", "degen", "collect", "art"],
-                relatedFigures: ["NFT artists"],
-                sparklineData: [48, 52, 56, 60, 64, 68, 72]
+                hashtag: "#mewing",
+                views: 198000000,
+                views24h: 16000000,
+                growth24h: 115,
+                growth7d: 320,
+                description: "Tongue posture technique trend claiming to improve jawline",
+                keywords: ["jawline", "face", "beauty", "technique"],
+                relatedFigures: ["Looksmaxxing community"],
+                sparklineData: [22, 35, 48, 62, 75, 85, 92]
             },
             {
                 rank: 15,
-                hashtag: "#defifarmer",
-                views: 11500000,
-                views24h: 2600000,
-                growth24h: 68,
-                growth7d: 160,
-                description: "DeFi yield farming strategies and airdrop hunting",
-                keywords: ["defi", "yield", "farm", "airdrop"],
-                relatedFigures: ["DeFi protocols"],
-                sparklineData: [52, 55, 58, 62, 65, 68, 71]
+                hashtag: "#sleepygirlmocktail",
+                views: 185000000,
+                views24h: 24000000,
+                growth24h: 195,
+                growth7d: 480,
+                description: "Magnesium and tart cherry juice drinks for better sleep",
+                keywords: ["sleep", "drink", "health", "recipe"],
+                relatedFigures: ["Wellness creators"],
+                sparklineData: [15, 28, 45, 62, 78, 90, 96]
             },
             {
                 rank: 16,
-                hashtag: "#solanagang",
-                views: 10800000,
-                views24h: 2900000,
-                growth24h: 125,
-                growth7d: 290,
-                description: "Solana ecosystem updates and community content",
-                keywords: ["solana", "sol", "fast", "cheap"],
-                relatedFigures: ["Solana Labs"],
-                sparklineData: [30, 38, 48, 58, 68, 78, 85]
+                hashtag: "#bereal",
+                views: 172000000,
+                views24h: 8500000,
+                growth24h: 48,
+                growth7d: 165,
+                description: "Authentic unfiltered daily life moments and reactions",
+                keywords: ["authentic", "real", "daily", "unfiltered"],
+                relatedFigures: ["Gen Z users"],
+                sparklineData: [52, 56, 62, 68, 74, 78, 82]
             },
             {
                 rank: 17,
-                hashtag: "#btcmaxi",
-                views: 10200000,
-                views24h: 2200000,
-                growth24h: 55,
-                growth7d: 135,
-                description: "Bitcoin maximalist takes and store of value narratives",
-                keywords: ["bitcoin", "btc", "maxi", "gold"],
-                relatedFigures: ["Michael Saylor"],
-                sparklineData: [65, 66, 68, 70, 71, 73, 75]
+                hashtag: "#quietluxury",
+                views: 165000000,
+                views24h: 11000000,
+                growth24h: 92,
+                growth7d: 285,
+                description: "Understated wealth aesthetic - no logos, quality materials",
+                keywords: ["fashion", "luxury", "minimal", "wealth"],
+                relatedFigures: ["Fashion influencers"],
+                sparklineData: [28, 38, 50, 62, 72, 82, 88]
             },
             {
                 rank: 18,
-                hashtag: "#airdropszn",
-                views: 9800000,
-                views24h: 2500000,
-                growth24h: 110,
-                growth7d: 265,
-                description: "Airdrop hunting tutorials and eligibility strategies",
-                keywords: ["airdrop", "free", "tokens", "eligibility"],
-                relatedFigures: ["Airdrop hunters"],
-                sparklineData: [28, 38, 48, 58, 68, 78, 86]
+                hashtag: "#moots",
+                views: 152000000,
+                views24h: 18000000,
+                growth24h: 175,
+                growth7d: 425,
+                description: "Mutual followers creating content for each other",
+                keywords: ["friends", "mutual", "community", "collab"],
+                relatedFigures: ["TikTok community"],
+                sparklineData: [18, 32, 48, 62, 75, 86, 94]
             },
             {
                 rank: 19,
-                hashtag: "#catcoins",
-                views: 9200000,
-                views24h: 2800000,
-                growth24h: 145,
-                growth7d: 340,
-                description: "Cat-themed memecoins gaining momentum vs dog coins",
-                keywords: ["cat", "memecoin", "pets", "cute"],
-                relatedFigures: ["Cat token communities"],
-                sparklineData: [18, 28, 40, 55, 70, 82, 92]
+                hashtag: "#ratgirl",
+                views: 145000000,
+                views24h: 21000000,
+                growth24h: 210,
+                growth7d: 520,
+                description: "Embracing chaotic goblin energy and messy living",
+                keywords: ["chaos", "goblin", "messy", "energy"],
+                relatedFigures: ["Chaotic creators"],
+                sparklineData: [12, 25, 42, 58, 74, 88, 95]
             },
             {
                 rank: 20,
-                hashtag: "#rektpost",
-                views: 8500000,
-                views24h: 1900000,
-                growth24h: 48,
-                growth7d: 115,
-                description: "Loss porn and failed trade stories for entertainment",
-                keywords: ["rekt", "loss", "trade", "fail"],
-                relatedFigures: ["Retail traders"],
-                sparklineData: [55, 58, 60, 63, 66, 68, 70]
+                hashtag: "#lookmaxxing",
+                views: 138000000,
+                views24h: 15000000,
+                growth24h: 155,
+                growth7d: 380,
+                description: "Self-improvement focused on maximizing physical appearance",
+                keywords: ["glow", "up", "improvement", "looks"],
+                relatedFigures: ["Self-improvement creators"],
+                sparklineData: [20, 35, 50, 64, 76, 86, 92]
             },
             {
                 rank: 21,
-                hashtag: "#basedchain",
-                views: 8100000,
-                views24h: 2100000,
-                growth24h: 95,
-                growth7d: 230,
-                description: "Base L2 ecosystem content and new project launches",
-                keywords: ["base", "l2", "coinbase", "ethereum"],
-                relatedFigures: ["Coinbase"],
-                sparklineData: [32, 42, 52, 60, 70, 78, 84]
+                hashtag: "#cleangirlAesthetic",
+                views: 128000000,
+                views24h: 7200000,
+                growth24h: 62,
+                growth7d: 185,
+                description: "Minimal makeup, slicked hair, gold jewelry aesthetic",
+                keywords: ["minimal", "aesthetic", "beauty", "clean"],
+                relatedFigures: ["Beauty influencers"],
+                sparklineData: [45, 50, 56, 62, 68, 74, 80]
             },
             {
                 rank: 22,
-                hashtag: "#onchaingang",
-                views: 7600000,
-                views24h: 1700000,
-                growth24h: 65,
-                growth7d: 155,
-                description: "On-chain analysis and whale watching content",
-                keywords: ["onchain", "data", "whale", "analysis"],
-                relatedFigures: ["On-chain analysts"],
-                sparklineData: [42, 48, 54, 60, 65, 70, 74]
+                hashtag: "#slay",
+                views: 118000000,
+                views24h: 9800000,
+                growth24h: 118,
+                growth7d: 295,
+                description: "Celebrating confidence, success, and iconic moments",
+                keywords: ["confidence", "success", "iconic", "queen"],
+                relatedFigures: ["Various creators"],
+                sparklineData: [25, 38, 52, 65, 76, 85, 90]
             },
             {
                 rank: 23,
-                hashtag: "#mooncalls",
-                views: 7100000,
-                views24h: 1600000,
-                growth24h: 58,
-                growth7d: 140,
-                description: "Moonshot predictions and speculative picks",
-                keywords: ["moon", "call", "100x", "gem"],
-                relatedFigures: ["Crypto influencers"],
-                sparklineData: [45, 50, 55, 60, 65, 68, 72]
+                hashtag: "#unhinged",
+                views: 108000000,
+                views24h: 13000000,
+                growth24h: 168,
+                growth7d: 410,
+                description: "Chaotic, unpredictable content that breaks social norms",
+                keywords: ["chaos", "random", "wild", "funny"],
+                relatedFigures: ["Comedy creators"],
+                sparklineData: [15, 28, 45, 60, 75, 87, 94]
             },
             {
                 rank: 24,
-                hashtag: "#tokenomics",
-                views: 6700000,
-                views24h: 1400000,
-                growth24h: 52,
-                growth7d: 125,
-                description: "Token economics breakdowns and investment analysis",
-                keywords: ["tokenomics", "supply", "vest", "unlock"],
-                relatedFigures: ["Crypto researchers"],
-                sparklineData: [50, 54, 58, 62, 65, 68, 71]
+                hashtag: "#booktok",
+                views: 98000000,
+                views24h: 6500000,
+                growth24h: 78,
+                growth7d: 220,
+                description: "Book recommendations, reviews, and reading challenges",
+                keywords: ["books", "reading", "review", "recommend"],
+                relatedFigures: ["Book influencers"],
+                sparklineData: [35, 42, 50, 58, 66, 74, 82]
             },
             {
                 rank: 25,
-                hashtag: "#ponziszn",
-                views: 6300000,
-                views24h: 1800000,
+                hashtag: "#outfit",
+                views: 92000000,
+                views24h: 8200000,
                 growth24h: 125,
-                growth7d: 295,
-                description: "Satirical takes on unsustainable yields and schemes",
-                keywords: ["ponzi", "yield", "degen", "risk"],
-                relatedFigures: ["DeFi degens"],
-                sparklineData: [22, 32, 45, 58, 72, 84, 90]
+                growth7d: 310,
+                description: "Daily outfit inspiration and OOTD (outfit of the day) posts",
+                keywords: ["fashion", "style", "ootd", "clothes"],
+                relatedFigures: ["Fashion creators"],
+                sparklineData: [22, 35, 48, 60, 72, 82, 88]
             }
         ];
 
         let tiktokInitialized = false;
-        let currentTiktokPeriod = '24h';
-        let tiktokHeatmapSortColumn = 'rank';
-        let tiktokHeatmapSortAsc = true;
-        let selectedTiktokHeatmapRow = null;
-        let selectedTiktokTwoPanelItem = null;
 
         // Format large numbers
         function formatTiktokViews(num) {
@@ -6315,21 +6270,11 @@
             return num.toString();
         }
 
-        // Get growth badge class based on value
+        // Get growth badge class based on 7d value
         function getGrowthBadgeClass(growth) {
-            if (growth >= 200) return 'high';
-            if (growth >= 100) return 'medium';
+            if (growth >= 500) return 'high';
+            if (growth >= 200) return 'medium';
             return 'low';
-        }
-
-        // Get growth value based on current period
-        function getGrowth(trend) {
-            return currentTiktokPeriod === '24h' ? trend.growth24h : trend.growth7d;
-        }
-
-        // Get views value based on current period
-        function getViews(trend) {
-            return currentTiktokPeriod === '24h' ? trend.views24h : trend.views;
         }
 
         // Draw mini sparkline on canvas
@@ -6373,14 +6318,11 @@
             ctx.fill();
         }
 
-        // ===== Section A: Ranked List with Sparklines =====
+        // ===== Ranked List with Sparklines =====
         function renderRankedList() {
             const container = document.getElementById('tiktokRankedList');
-            const sortedTrends = [...tiktokTrends].sort((a, b) => {
-                const growthA = getGrowth(a);
-                const growthB = getGrowth(b);
-                return growthB - growthA;
-            });
+            // Sort by 7d growth (highest first)
+            const sortedTrends = [...tiktokTrends].sort((a, b) => b.growth7d - a.growth7d);
 
             container.innerHTML = sortedTrends.map((trend, index) => `
                 <div class="tiktok-row" data-trend-index="${trend.rank - 1}">
@@ -6389,8 +6331,8 @@
                     <div class="tiktok-sparkline">
                         <canvas id="sparkline-a-${trend.rank}" width="100" height="30"></canvas>
                     </div>
-                    <div class="tiktok-views">${formatTiktokViews(getViews(trend))}</div>
-                    <div class="tiktok-growth-badge ${getGrowthBadgeClass(getGrowth(trend))}">+${getGrowth(trend)}%</div>
+                    <div class="tiktok-views">${formatTiktokViews(trend.views)}</div>
+                    <div class="tiktok-growth-badge ${getGrowthBadgeClass(trend.growth7d)}">+${trend.growth7d}%</div>
                 </div>
                 <div class="tiktok-row-details" id="detail-a-${trend.rank}">
                     <div class="tiktok-detail-grid">
@@ -6399,14 +6341,14 @@
                             <div class="tiktok-detail-value">${trend.description}</div>
                         </div>
                         <div class="tiktok-detail-item">
+                            <div class="tiktok-detail-label">24h / 7d Growth</div>
+                            <div class="tiktok-detail-value">+${trend.growth24h}% / +${trend.growth7d}%</div>
+                        </div>
+                        <div class="tiktok-detail-item">
                             <div class="tiktok-detail-label">Keywords</div>
                             <div class="tiktok-keywords">
                                 ${trend.keywords.map(k => `<span class="tiktok-keyword">${k}</span>`).join('')}
                             </div>
-                        </div>
-                        <div class="tiktok-detail-item">
-                            <div class="tiktok-detail-label">Related Figures</div>
-                            <div class="tiktok-detail-value">${trend.relatedFigures.join(', ')}</div>
                         </div>
                     </div>
                 </div>
@@ -6437,152 +6379,18 @@
             });
         }
 
-        // ===== Section B: Heat Map Table =====
-        function getIntensityClass(value, max) {
-            const ratio = value / max;
-            if (ratio >= 0.8) return 'cell-intensity-5';
-            if (ratio >= 0.6) return 'cell-intensity-4';
-            if (ratio >= 0.4) return 'cell-intensity-3';
-            if (ratio >= 0.2) return 'cell-intensity-2';
-            return 'cell-intensity-1';
-        }
-
-        function renderHeatMapTable() {
-            const container = document.getElementById('tiktokHeatMap');
-            const detailPanel = document.getElementById('tiktokHeatMapDetail');
-
-            // Sort data
-            let sortedTrends = [...tiktokTrends];
-            sortedTrends.sort((a, b) => {
-                let valA, valB;
-                switch (tiktokHeatmapSortColumn) {
-                    case 'hashtag':
-                        valA = a.hashtag.toLowerCase();
-                        valB = b.hashtag.toLowerCase();
-                        break;
-                    case 'views':
-                        valA = getViews(a);
-                        valB = getViews(b);
-                        break;
-                    case 'growth24h':
-                        valA = a.growth24h;
-                        valB = a.growth24h;
-                        break;
-                    case 'growth7d':
-                        valA = a.growth7d;
-                        valB = b.growth7d;
-                        break;
-                    default:
-                        valA = a.rank;
-                        valB = b.rank;
-                }
-                if (typeof valA === 'string') {
-                    return tiktokHeatmapSortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                }
-                return tiktokHeatmapSortAsc ? valA - valB : valB - valA;
-            });
-
-            const maxViews = Math.max(...sortedTrends.map(t => getViews(t)));
-            const maxGrowth24h = Math.max(...sortedTrends.map(t => t.growth24h));
-            const maxGrowth7d = Math.max(...sortedTrends.map(t => t.growth7d));
-
-            const getSortClass = (col) => {
-                if (tiktokHeatmapSortColumn !== col) return '';
-                return tiktokHeatmapSortAsc ? 'sorted-asc' : 'sorted-desc';
-            };
-
-            container.innerHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-sort="rank" class="${getSortClass('rank')}">Rank</th>
-                            <th data-sort="hashtag" class="${getSortClass('hashtag')}">Hashtag</th>
-                            <th data-sort="views" class="${getSortClass('views')}">Views</th>
-                            <th data-sort="growth24h" class="${getSortClass('growth24h')}">24h Growth</th>
-                            <th data-sort="growth7d" class="${getSortClass('growth7d')}">7d Growth</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${sortedTrends.map(trend => `
-                            <tr data-trend-rank="${trend.rank}" class="${selectedTiktokHeatmapRow === trend.rank ? 'selected' : ''}">
-                                <td>${trend.rank}</td>
-                                <td style="color: #0A7B83; font-weight: 600;">${trend.hashtag}</td>
-                                <td class="${getIntensityClass(getViews(trend), maxViews)}">${formatTiktokViews(getViews(trend))}</td>
-                                <td class="${getIntensityClass(trend.growth24h, maxGrowth24h)}">+${trend.growth24h}%</td>
-                                <td class="${getIntensityClass(trend.growth7d, maxGrowth7d)}">+${trend.growth7d}%</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-
-            // Add sort handlers
-            container.querySelectorAll('th[data-sort]').forEach(th => {
-                th.addEventListener('click', function() {
-                    const col = this.dataset.sort;
-                    if (tiktokHeatmapSortColumn === col) {
-                        tiktokHeatmapSortAsc = !tiktokHeatmapSortAsc;
-                    } else {
-                        tiktokHeatmapSortColumn = col;
-                        tiktokHeatmapSortAsc = col === 'rank' || col === 'hashtag';
-                    }
-                    renderHeatMapTable();
-                });
-            });
-
-            // Add row click handlers
-            container.querySelectorAll('tbody tr').forEach(row => {
-                row.addEventListener('click', function() {
-                    const rank = parseInt(this.dataset.trendRank);
-                    const trend = tiktokTrends.find(t => t.rank === rank);
-
-                    container.querySelectorAll('tbody tr').forEach(r => r.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedTiktokHeatmapRow = rank;
-
-                    detailPanel.style.display = 'block';
-                    detailPanel.innerHTML = `
-                        <h3>${trend.hashtag}</h3>
-                        <div class="tiktok-detail-grid">
-                            <div class="tiktok-detail-item">
-                                <div class="tiktok-detail-label">Total Views</div>
-                                <div class="tiktok-detail-value">${formatTiktokViews(trend.views)}</div>
-                            </div>
-                            <div class="tiktok-detail-item">
-                                <div class="tiktok-detail-label">24h Views</div>
-                                <div class="tiktok-detail-value">${formatTiktokViews(trend.views24h)}</div>
-                            </div>
-                            <div class="tiktok-detail-item">
-                                <div class="tiktok-detail-label">Description</div>
-                                <div class="tiktok-detail-value">${trend.description}</div>
-                            </div>
-                            <div class="tiktok-detail-item">
-                                <div class="tiktok-detail-label">Keywords</div>
-                                <div class="tiktok-keywords">
-                                    ${trend.keywords.map(k => `<span class="tiktok-keyword">${k}</span>`).join('')}
-                                </div>
-                            </div>
-                            <div class="tiktok-detail-item">
-                                <div class="tiktok-detail-label">Related Figures</div>
-                                <div class="tiktok-detail-value">${trend.relatedFigures.join(', ')}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-        }
-
-        // ===== Section C: Momentum Cards =====
+        // ===== Momentum Cards =====
         function renderMomentumCards() {
             const container = document.getElementById('tiktokMomentumCards');
-            const maxViews = Math.max(...tiktokTrends.map(t => getViews(t)));
+            const maxViews = Math.max(...tiktokTrends.map(t => t.views));
 
-            const sortedTrends = [...tiktokTrends].sort((a, b) => getGrowth(b) - getGrowth(a));
+            // Sort by 7d growth (highest first)
+            const sortedTrends = [...tiktokTrends].sort((a, b) => b.growth7d - a.growth7d);
 
             container.innerHTML = sortedTrends.map(trend => {
-                const popularity = (getViews(trend) / maxViews) * 100;
-                const growth = getGrowth(trend);
-                const color = growth >= 200 ? '#00c853' : growth >= 100 ? '#ffa000' : '#757575';
+                const popularity = (trend.views / maxViews) * 100;
+                const color24h = trend.growth24h >= 200 ? '#00c853' : trend.growth24h >= 100 ? '#ffa000' : '#757575';
+                const color7d = trend.growth7d >= 500 ? '#00c853' : trend.growth7d >= 200 ? '#ffa000' : '#757575';
 
                 return `
                     <div class="tiktok-momentum-card" data-trend-rank="${trend.rank}">
@@ -6596,17 +6404,21 @@
                                 <span>${popularity.toFixed(0)}%</span>
                             </div>
                             <div class="tiktok-progress-bar">
-                                <div class="tiktok-progress-fill" style="width: ${popularity}%; background: ${color};"></div>
+                                <div class="tiktok-progress-fill" style="width: ${popularity}%; background: ${color7d};"></div>
                             </div>
                         </div>
                         <div class="tiktok-card-stats">
                             <div class="tiktok-card-stat">
-                                <div class="tiktok-card-stat-label">Views</div>
-                                <div class="tiktok-card-stat-value">${formatTiktokViews(getViews(trend))}</div>
+                                <div class="tiktok-card-stat-label">Total Views</div>
+                                <div class="tiktok-card-stat-value">${formatTiktokViews(trend.views)}</div>
                             </div>
                             <div class="tiktok-card-stat">
-                                <div class="tiktok-card-stat-label">Growth</div>
-                                <div class="tiktok-card-stat-value" style="color: ${color};">+${growth}%</div>
+                                <div class="tiktok-card-stat-label">24h Growth</div>
+                                <div class="tiktok-card-stat-value" style="color: ${color24h};">+${trend.growth24h}%</div>
+                            </div>
+                            <div class="tiktok-card-stat">
+                                <div class="tiktok-card-stat-label">7d Growth</div>
+                                <div class="tiktok-card-stat-value" style="color: ${color7d};">+${trend.growth7d}%</div>
                             </div>
                         </div>
                         <div class="tiktok-card-details" id="card-detail-${trend.rank}">
@@ -6642,115 +6454,16 @@
             });
         }
 
-        // ===== Section D: Two-Panel Layout =====
-        function renderTwoPanelLayout() {
-            const leftPanel = document.getElementById('tiktokLeftPanel');
-            const rightPanel = document.getElementById('tiktokRightPanel');
-
-            const sortedTrends = [...tiktokTrends].sort((a, b) => a.rank - b.rank);
-
-            leftPanel.innerHTML = sortedTrends.map(trend => `
-                <div class="tiktok-left-item" data-trend-rank="${trend.rank}">
-                    <div class="tiktok-left-rank">#${trend.rank}</div>
-                    <div class="tiktok-left-content">
-                        <div class="tiktok-left-hashtag">${trend.hashtag}</div>
-                        <div class="tiktok-left-stat">${formatTiktokViews(getViews(trend))} views | +${getGrowth(trend)}%</div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Add click handlers
-            leftPanel.querySelectorAll('.tiktok-left-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const rank = parseInt(this.dataset.trendRank);
-                    const trend = tiktokTrends.find(t => t.rank === rank);
-
-                    leftPanel.querySelectorAll('.tiktok-left-item').forEach(i => i.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedTiktokTwoPanelItem = rank;
-
-                    const growth = getGrowth(trend);
-                    const growthColor = growth >= 200 ? '#00c853' : growth >= 100 ? '#ffa000' : '#757575';
-
-                    rightPanel.innerHTML = `
-                        <div class="tiktok-right-header">
-                            <h2 class="tiktok-right-hashtag">${trend.hashtag}</h2>
-                            <p class="tiktok-right-description">${trend.description}</p>
-                        </div>
-                        <div class="tiktok-right-stats">
-                            <div class="tiktok-right-stat">
-                                <div class="tiktok-right-stat-label">Total Views</div>
-                                <div class="tiktok-right-stat-value">${formatTiktokViews(trend.views)}</div>
-                            </div>
-                            <div class="tiktok-right-stat">
-                                <div class="tiktok-right-stat-label">24h Views</div>
-                                <div class="tiktok-right-stat-value">${formatTiktokViews(trend.views24h)}</div>
-                            </div>
-                            <div class="tiktok-right-stat">
-                                <div class="tiktok-right-stat-label">${currentTiktokPeriod === '24h' ? '24h' : '7d'} Growth</div>
-                                <div class="tiktok-right-stat-value positive" style="color: ${growthColor};">+${growth}%</div>
-                            </div>
-                            <div class="tiktok-right-stat">
-                                <div class="tiktok-right-stat-label">Rank</div>
-                                <div class="tiktok-right-stat-value">#${trend.rank}</div>
-                            </div>
-                        </div>
-                        <div class="tiktok-right-sparkline">
-                            <div class="tiktok-right-section-title">7-Day Trend</div>
-                            <canvas id="sparkline-d-${trend.rank}" width="400" height="100"></canvas>
-                        </div>
-                        <div class="tiktok-right-section">
-                            <div class="tiktok-right-section-title">Keywords</div>
-                            <div class="tiktok-keywords">
-                                ${trend.keywords.map(k => `<span class="tiktok-keyword">${k}</span>`).join('')}
-                            </div>
-                        </div>
-                        <div class="tiktok-right-section">
-                            <div class="tiktok-right-section-title">Related Figures</div>
-                            <div class="tiktok-detail-value">${trend.relatedFigures.join(', ')}</div>
-                        </div>
-                    `;
-
-                    // Draw larger sparkline
-                    const canvas = document.getElementById(`sparkline-d-${trend.rank}`);
-                    if (canvas) {
-                        canvas.width = canvas.parentElement.clientWidth - 20;
-                        drawSparkline(canvas, trend.sparklineData, '#0A7B83');
-                    }
-                });
-            });
-        }
-
-        // Initialize all TikTok sections
+        // Initialize TikTok tab
         function initTiktokTab() {
             renderRankedList();
-            renderHeatMapTable();
             renderMomentumCards();
-            renderTwoPanelLayout();
-        }
-
-        // Setup TikTok event listeners
-        function setupTiktokEventListeners() {
-            document.querySelectorAll('#tiktokTimeSelector button').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('#tiktokTimeSelector button').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentTiktokPeriod = this.dataset.tiktokPeriod;
-
-                    // Re-render all sections
-                    renderRankedList();
-                    renderHeatMapTable();
-                    renderMomentumCards();
-                    renderTwoPanelLayout();
-                });
-            });
         }
 
         // Initialize TikTok tab when clicked
         document.querySelector('[data-tab="tiktok"]').addEventListener('click', function() {
             if (!tiktokInitialized) {
                 tiktokInitialized = true;
-                setupTiktokEventListeners();
                 initTiktokTab();
             }
         });
