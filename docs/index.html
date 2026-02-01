@@ -1520,97 +1520,143 @@
             return fetch(url);
         }
 
-        // CoinGecko cache and rate limiting
-        const coinGeckoCache = new Map();
-        const COINGECKO_CACHE_TTL = 10 * 60 * 1000; // 10 minutes cache
-        const COINGECKO_REQUEST_DELAY = 3000; // 3 seconds between requests (CoinGecko free tier is strict)
-        let lastCoinGeckoRequest = 0;
-        let coinGeckoRequestQueue = Promise.resolve();
+        // Mobula API configuration
+        // Get your free API key from https://admin.mobula.io
+        const MOBULA_API_KEY = '58764b68-44ca-4ac2-aee0-c3ca4a64c12c';
 
-        // Helper to fetch CoinGecko APIs with caching and rate limiting
-        async function fetchCoinGecko(url) {
-            // Check cache first
-            const cached = coinGeckoCache.get(url);
-            if (cached && (Date.now() - cached.timestamp < COINGECKO_CACHE_TTL)) {
-                console.log('CoinGecko cache hit:', url.substring(0, 80));
-                return new Response(JSON.stringify(cached.data), { status: 200 });
-            }
-
-            // Queue the request to enforce rate limiting
-            coinGeckoRequestQueue = coinGeckoRequestQueue.then(async () => {
-                const now = Date.now();
-                const timeSinceLastRequest = now - lastCoinGeckoRequest;
-                if (timeSinceLastRequest < COINGECKO_REQUEST_DELAY) {
-                    await new Promise(r => setTimeout(r, COINGECKO_REQUEST_DELAY - timeSinceLastRequest));
-                }
-                lastCoinGeckoRequest = Date.now();
+        // Helper to fetch Mobula APIs with authentication
+        async function fetchMobula(url) {
+            const response = await fetch(url, {
+                headers: { 'Authorization': MOBULA_API_KEY }
             });
-            await coinGeckoRequestQueue;
+            if (!response.ok) throw new Error(`Mobula API error: ${response.status}`);
+            return response.json();
+        }
 
-            // Helper to unwrap proxy response if needed
-            function unwrapProxyResponse(data) {
-                // If it's already an array, return as-is
-                if (Array.isArray(data)) return data;
-                // Check for common proxy wrapper patterns
-                if (data && typeof data === 'object') {
-                    // allorigins wrapper
-                    if (data.contents) {
-                        try {
-                            const unwrapped = JSON.parse(data.contents);
-                            return unwrapProxyResponse(unwrapped); // Recursively unwrap
-                        } catch (e) { }
+        // CoinGecko ID to Mobula asset name mapping
+        const mobulaAssetMap = {
+            'hyperliquid': 'Hyperliquid',
+            'aerodrome-finance': 'Aerodrome Finance',
+            'aave': 'Aave',
+            'uniswap': 'Uniswap',
+            'pump-fun': 'Pump.fun',
+            'jito-governance-token': 'Jito',
+            'raydium': 'Raydium',
+            'morpho': 'Morpho',
+            'meteora': 'Meteora',
+            'jupiter-exchange-solana': 'Jupiter',
+            'ethena': 'Ethena',
+            'wormhole': 'Wormhole',
+            'ethereum': 'Ethereum',
+            'solana': 'Solana',
+            'bitcoin': 'Bitcoin',
+            'ondo-finance': 'Ondo Finance',
+            'canton-network': 'Canton Network',
+            'lighter': 'Lighter'
+        };
+
+        // Convert CoinGecko ID to Mobula asset name
+        function toMobulaAsset(coingeckoId) {
+            return mobulaAssetMap[coingeckoId] || coingeckoId;
+        }
+
+        // Fetch market data from Mobula with CoinGecko fallback
+        async function fetchMarketData(assets) {
+            // Convert CoinGecko IDs to Mobula asset names
+            const mobulaAssets = assets.split(',').map(id => toMobulaAsset(id.trim())).join(',');
+
+            try {
+                const url = `https://api.mobula.io/api/1/market/multi-data?assets=${encodeURIComponent(mobulaAssets)}`;
+                const data = await fetchMobula(url);
+
+                // Transform Mobula response to match CoinGecko format
+                // Mobula returns: { data: { "Asset Name": { price, market_cap, volume, ... } } }
+                const result = [];
+                if (data && data.data) {
+                    // Create reverse mapping from Mobula asset names back to CoinGecko IDs
+                    const reverseMap = {};
+                    for (const [cgId, mobulaName] of Object.entries(mobulaAssetMap)) {
+                        reverseMap[mobulaName.toLowerCase()] = cgId;
                     }
-                    // Check if it has market_caps (for market_chart endpoint)
-                    if (data.market_caps || data.prices) {
-                        return data;
-                    }
-                    // Check for error response from CoinGecko
-                    if (data.status && data.status.error_code) {
-                        console.warn('CoinGecko API rate limit/error:', data.status.error_message || data.status);
-                        return null;
-                    }
-                    if (data.error) {
-                        console.warn('CoinGecko API error:', data.error);
-                        return null;
+
+                    for (const [assetName, assetData] of Object.entries(data.data)) {
+                        const cgId = reverseMap[assetName.toLowerCase()] || assetName.toLowerCase().replace(/\s+/g, '-');
+                        result.push({
+                            id: cgId,
+                            name: assetName,
+                            symbol: assetData.symbol || '',
+                            image: assetData.logo || '',
+                            current_price: assetData.price,
+                            market_cap: assetData.market_cap,
+                            total_volume: assetData.volume,
+                            fully_diluted_valuation: assetData.market_cap_diluted,
+                            price_change_percentage_24h: assetData.price_change_24h
+                        });
                     }
                 }
-                return data;
+                console.log('Mobula market data received:', result.length, 'assets');
+                return result;
+            } catch (e) {
+                console.warn('Mobula failed, falling back to CoinGecko:', e.message);
+                return await fetchCoinGeckoFallback(assets);
             }
+        }
 
-            // Try codetabs first (more reliable), then allorigins
-            let responseData = null;
+        // Fetch historical market cap data from Mobula
+        async function fetchHistoricalMarketCap(asset, days = 365) {
+            const mobulaAsset = toMobulaAsset(asset);
+            const now = Date.now();
+            const from = now - (days * 24 * 60 * 60 * 1000);
+
+            try {
+                const url = `https://api.mobula.io/api/1/market/history?asset=${encodeURIComponent(mobulaAsset)}&from=${from}&to=${now}`;
+                const data = await fetchMobula(url);
+
+                // Mobula returns: { data: { market_cap_history: [[timestamp, value], ...] } }
+                if (data && data.data && data.data.market_cap_history) {
+                    return data.data.market_cap_history;
+                }
+                return [];
+            } catch (e) {
+                console.warn(`Mobula historical data failed for ${asset}, falling back to CoinGecko:`, e.message);
+                return await fetchCoinGeckoHistoricalFallback(asset, days);
+            }
+        }
+
+        // CoinGecko fallback for market data
+        async function fetchCoinGeckoFallback(ids) {
+            const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&sparkline=false`;
             try {
                 const response = await fetch(proxyUrlCodeTabs(url));
                 if (response.ok) {
-                    const text = await response.text();
-                    const parsed = JSON.parse(text);
-                    responseData = unwrapProxyResponse(parsed);
+                    const data = await response.json();
+                    if (Array.isArray(data)) {
+                        console.log('CoinGecko fallback succeeded:', data.length, 'coins');
+                        return data;
+                    }
                 }
             } catch (e) {
-                console.log('Codetabs proxy failed, trying allorigins...');
+                console.error('CoinGecko fallback also failed:', e);
             }
+            return [];
+        }
 
-            // Fallback to allorigins
-            if (!responseData) {
-                try {
-                    const response = await fetch(proxyUrlAllOrigins(url));
-                    const text = await response.text();
-                    if (text.startsWith('[') || text.startsWith('{')) {
-                        const parsed = JSON.parse(text);
-                        responseData = unwrapProxyResponse(parsed);
+        // CoinGecko fallback for historical data
+        async function fetchCoinGeckoHistoricalFallback(coin, days) {
+            const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=${days}`;
+            try {
+                const response = await fetch(proxyUrlCodeTabs(url));
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.market_caps) {
+                        console.log('CoinGecko historical fallback succeeded for', coin);
+                        return data.market_caps;
                     }
-                } catch (e) {
-                    console.error('All proxies failed for CoinGecko:', url.substring(0, 80));
                 }
+            } catch (e) {
+                console.error('CoinGecko historical fallback also failed:', e);
             }
-
-            if (responseData) {
-                // Cache the successful response
-                coinGeckoCache.set(url, { data: responseData, timestamp: Date.now() });
-                return new Response(JSON.stringify(responseData), { status: 200 });
-            }
-
-            throw new Error('Failed to fetch from CoinGecko via proxy');
+            return [];
         }
 
         // Legacy aliases - proxyUrl only uses proxy when running from file://
@@ -2470,31 +2516,22 @@
         async function fetchPerpDashboardData() {
             const perpDashboard = document.getElementById('perpDashboard');
 
-            // Fetch CoinGecko data for tokens that exist
+            // Fetch market data for tokens that exist (using Mobula with CoinGecko fallback)
             const tokenIds = perpDexs.filter(d => d.coingeckoId).map(d => d.coingeckoId).join(',');
             let coinDataMap = {};
 
             if (tokenIds) {
-                console.log('Fetching CoinGecko data for perp DEXs:', tokenIds);
-                const cgUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${tokenIds}&sparkline=false`;
+                console.log('Fetching market data for perp DEXs:', tokenIds);
                 try {
-                    const response = await fetchCoinGecko(cgUrl);
-                    console.log('CoinGecko perp response status:', response.status);
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (Array.isArray(data)) {
-                            console.log('CoinGecko perp data received:', data.length, 'coins');
-                            data.forEach(coin => {
-                                coinDataMap[coin.id] = coin;
-                            });
-                        } else {
-                            console.error('CoinGecko perp data is not an array:', typeof data);
-                        }
-                    } else {
-                        console.error('CoinGecko perp response not OK:', response.status);
+                    const data = await fetchMarketData(tokenIds);
+                    if (Array.isArray(data)) {
+                        console.log('Perp market data received:', data.length, 'coins');
+                        data.forEach(coin => {
+                            coinDataMap[coin.id] = coin;
+                        });
                     }
                 } catch (e) {
-                    console.error('Error fetching CoinGecko data for perp DEXs:', e);
+                    console.error('Error fetching market data for perp DEXs:', e);
                 }
             }
 
@@ -3327,19 +3364,14 @@
             const dashboard = document.getElementById('rwaDashboard');
 
             try {
-                // Fetch CoinGecko data for all RWA tokens
+                // Fetch market data for all RWA tokens (using Mobula with CoinGecko fallback)
                 const ids = rwaTokens.map(t => t.coingeckoId).join(',');
-                const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&sparkline=false`;
-                const response = await fetchCoinGecko(url);
-
-                if (!response.ok) throw new Error('Failed to fetch RWA token data');
-
-                const coinData = await response.json();
+                const coinData = await fetchMarketData(ids);
 
                 // Ensure coinData is an array
                 if (!Array.isArray(coinData)) {
                     console.error('RWA coinData is not an array:', coinData);
-                    throw new Error('Invalid response format from CoinGecko');
+                    throw new Error('Invalid response format');
                 }
 
                 // Sort by FDV (descending)
@@ -3641,33 +3673,23 @@
             `;
         }
 
-        // Fetch all CoinGecko data in a single batched request
+        // Fetch all market data using Mobula API (with CoinGecko fallback)
         async function fetchAllCoinGeckoData() {
             const allIds = protocols.map(p => p.coingeckoId).filter(id => id !== null).join(',');
-            const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${allIds}&sparkline=false`;
             const coinMap = {};
 
-            console.log('CoinGecko request URL:', url);
-            console.log('Requesting IDs:', allIds);
+            console.log('Fetching market data for:', allIds);
 
             try {
-                const response = await fetchCoinGecko(url);
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('CoinGecko response:', data);
-                    if (Array.isArray(data)) {
-                        console.log('CoinGecko response count:', data.length);
-                        data.forEach(coin => {
-                            coinMap[coin.id] = coin;
-                        });
-                    } else {
-                        console.error('CoinGecko response is not an array:', typeof data);
-                    }
-                } else {
-                    console.error('CoinGecko response not OK:', response.status, response.statusText);
+                const data = await fetchMarketData(allIds);
+                if (Array.isArray(data)) {
+                    console.log('Market data received:', data.length, 'coins');
+                    data.forEach(coin => {
+                        coinMap[coin.id] = coin;
+                    });
                 }
             } catch (e) {
-                console.error('Error fetching CoinGecko data:', e);
+                console.error('Error fetching market data:', e);
             }
 
             // Check which protocols are missing and try fetching them individually
@@ -3676,20 +3698,15 @@
                 .map(p => p.coingeckoId);
 
             if (missingIds.length > 0) {
-                console.warn('Missing CoinGecko data for:', missingIds);
+                console.warn('Missing market data for:', missingIds);
 
                 // Try fetching missing coins individually
                 for (const id of missingIds) {
                     try {
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        const singleUrl = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}&sparkline=false`;
-                        const singleResponse = await fetchCoinGecko(singleUrl);
-                        if (singleResponse.ok) {
-                            const singleData = await singleResponse.json();
-                            if (singleData.length > 0) {
-                                coinMap[singleData[0].id] = singleData[0];
-                                console.log(`Successfully fetched missing coin: ${id}`);
-                            }
+                        const data = await fetchMarketData(id);
+                        if (data.length > 0) {
+                            coinMap[data[0].id] = data[0];
+                            console.log(`Successfully fetched missing coin: ${id}`);
                         }
                     } catch (e) {
                         console.error(`Failed to fetch individual coin ${id}:`, e);
@@ -3775,7 +3792,7 @@
             dashboard.innerHTML = `
                 <div class="loading">
                     <div class="loading-spinner"></div>
-                    <p>Fetching data from CoinGecko & DefiLlama...</p>
+                    <p>Fetching data from Mobula & DefiLlama...</p>
                 </div>
             `;
 
@@ -3844,19 +3861,18 @@
 
         async function fetchEtfMarketCaps() {
             // Fetch historical market cap data for each coin (last 365 days)
+            // Uses Mobula API with CoinGecko fallback
             const coins = ['bitcoin', 'ethereum', 'solana'];
             const results = {};
 
             for (const coin of coins) {
                 try {
-                    const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=365`;
-                    const response = await fetchCoinGecko(url);
-                    const data = await response.json();
+                    const marketCaps = await fetchHistoricalMarketCap(coin, 365);
 
                     // Convert to date -> market_cap map (using date string as key)
                     const mcapMap = new Map();
-                    if (data && data.market_caps && Array.isArray(data.market_caps)) {
-                        data.market_caps.forEach(([timestamp, mcap]) => {
+                    if (Array.isArray(marketCaps) && marketCaps.length > 0) {
+                        marketCaps.forEach(([timestamp, mcap]) => {
                             const date = new Date(timestamp);
                             // Use local date components to match ETF data date format
                             const year = date.getFullYear();
@@ -3867,7 +3883,7 @@
                         });
                         console.log(`Loaded ${mcapMap.size} market cap entries for ${coin}`);
                     } else {
-                        console.warn(`No market cap data for ${coin}:`, data);
+                        console.warn(`No market cap data for ${coin}`);
                     }
                     results[coin] = mcapMap;
                 } catch (error) {
