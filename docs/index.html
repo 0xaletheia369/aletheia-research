@@ -1157,6 +1157,57 @@
             </div>
             <p class="chart-data-source">Data: Alternative.me</p>
         </div>
+
+        <!-- ATH Predictions Row -->
+        <div style="display: flex; gap: 20px; margin-top: 20px;">
+            <!-- Bitcoin ATH Predictions -->
+            <div class="chart-container" style="flex: 1;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Bitcoin ATH Predictions</button>
+                        </div>
+                        <p class="chart-subtitle">Will BTC reach a new all-time high by...</p>
+                    </div>
+                </div>
+                <div class="chart-wrapper" style="height: 200px;">
+                    <canvas id="btcAthChart"></canvas>
+                </div>
+                <p class="chart-data-source">Data: <a href="https://polymarket.com/event/bitcoin-all-time-high-by" target="_blank" style="color: inherit;">Polymarket</a></p>
+            </div>
+
+            <!-- Ethereum ATH Predictions -->
+            <div class="chart-container" style="flex: 1;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Ethereum ATH Predictions</button>
+                        </div>
+                        <p class="chart-subtitle">Will ETH reach a new all-time high by...</p>
+                    </div>
+                </div>
+                <div class="chart-wrapper" style="height: 200px;">
+                    <canvas id="ethAthChart"></canvas>
+                </div>
+                <p class="chart-data-source">Data: <a href="https://polymarket.com/event/ethereum-all-time-high-by" target="_blank" style="color: inherit;">Polymarket</a></p>
+            </div>
+
+            <!-- Solana ATH Predictions -->
+            <div class="chart-container" style="flex: 1;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Solana ATH Predictions</button>
+                        </div>
+                        <p class="chart-subtitle">Will SOL reach a new all-time high by...</p>
+                    </div>
+                </div>
+                <div class="chart-wrapper" style="height: 200px;">
+                    <canvas id="solAthChart"></canvas>
+                </div>
+                <p class="chart-data-source">Data: <a href="https://polymarket.com/event/solana-all-time-high-by" target="_blank" style="color: inherit;">Polymarket</a></p>
+            </div>
+        </div>
     </div>
 
     <!-- Price Tab -->
@@ -1196,6 +1247,9 @@
         let etfChart = null;
         let fearGreedChart = null;
         let currentFearGreedDays = 365;
+        let btcAthChart = null;
+        let ethAthChart = null;
+        let solAthChart = null;
         let etfData = null;
         let etfMarketCaps = null;
 
@@ -1935,6 +1989,123 @@
             }
         }
 
+        // Polymarket ATH Predictions API
+        async function fetchPolymarketAth(slug) {
+            const cacheKey = `polymarket:${slug}`;
+            const cached = getCachedData(cacheKey);
+            if (cached) return cached;
+
+            const url = `https://gamma-api.polymarket.com/events/slug/${slug}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Polymarket API error: ${response.status}`);
+            const json = await response.json();
+
+            // Transform to chart-friendly format
+            const result = json.markets.map(m => {
+                const prices = JSON.parse(m.outcomePrices);
+                const yesPrice = parseFloat(prices[0]);
+                // Extract date from question (e.g., "March 31, 2026")
+                const dateMatch = m.question.match(/(March|June|September|December)\s+\d+,\s+\d+/);
+                const dateLabel = dateMatch ? dateMatch[0].replace(', 2026', '') : m.question;
+                return {
+                    label: dateLabel,
+                    probability: Math.round(yesPrice * 100),
+                    endDate: m.endDate
+                };
+            }).sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+
+            setCachedData(cacheKey, result);
+            return result;
+        }
+
+        function renderAthChart(canvasId, chartRef, data, color) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+
+            if (chartRef) chartRef.destroy();
+
+            const labels = data.map(d => d.label);
+            const values = data.map(d => d.probability);
+
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Probability',
+                        data: values,
+                        backgroundColor: color,
+                        borderRadius: 4,
+                        barThickness: 24
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw}% Yes`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        y: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#333333',
+                                font: { size: 11, weight: '500' }
+                            }
+                        }
+                    }
+                }
+            });
+
+            return chart;
+        }
+
+        async function updateAthCharts() {
+            try {
+                const [btcData, ethData, solData] = await Promise.all([
+                    fetchPolymarketAth('bitcoin-all-time-high-by'),
+                    fetchPolymarketAth('ethereum-all-time-high-by'),
+                    fetchPolymarketAth('solana-all-time-high-by')
+                ]);
+                btcAthChart = renderAthChart('btcAthChart', btcAthChart, btcData, '#f7931a');
+                ethAthChart = renderAthChart('ethAthChart', ethAthChart, ethData, '#627eea');
+                solAthChart = renderAthChart('solAthChart', solAthChart, solData, '#14f195');
+            } catch (e) {
+                console.error('Failed to fetch ATH prediction data:', e);
+            }
+        }
+
         // Legacy aliases - proxyUrl only uses proxy when running from file://
         function proxyUrl(url) {
             if (isLocalFile) {
@@ -2420,10 +2591,13 @@
                 });
             });
 
-            // Initialize Fear & Greed chart when Sentiment tab is clicked
+            // Initialize Sentiment tab charts when tab is clicked
             document.querySelector('[data-tab="sentiment"]').addEventListener('click', async function() {
                 if (!fearGreedChart) {
                     await updateFearGreedChart(currentFearGreedDays);
+                }
+                if (!btcAthChart) {
+                    await updateAthCharts();
                 }
             });
         });
