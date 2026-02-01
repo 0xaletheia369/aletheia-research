@@ -9,6 +9,7 @@
 - Ask clarifying questions (using AskUserQuestion) before implementing when requirements are unclear
 - Always push changes to GitHub after committing
 - Suggest updates to CLAUDE.md when noticing patterns or preferences worth persisting
+- NEVER use made up/hardcoded fallback data - always use real API data
 
 ## Technical Notes
 

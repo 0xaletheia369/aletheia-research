@@ -11,6 +11,17 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+// Correct input for the TikTok Trends Scraper
+const SCRAPER_INPUT = {
+  numberOfItems: 30,
+  type: "hashtag",
+  region: "US",
+  resultsPerPage: 30,
+  adsScrapeHashtags: true,
+  adsCountryCode: "US",
+  adsTimeRange: "7"
+};
+
 export default {
   async fetch(request, env, ctx) {
     // Handle CORS preflight
@@ -32,7 +43,7 @@ export default {
       // Check cache first (skip if ?nocache=1)
       const skipCache = url.searchParams.get('nocache') === '1';
       const cache = caches.default;
-      const cacheKey = new Request('https://cache.local/tiktok-trends-v2', { method: 'GET' });
+      const cacheKey = new Request('https://cache.local/tiktok-trends-v3', { method: 'GET' });
 
       if (!skipCache) {
         let cachedResponse = await cache.match(cacheKey);
@@ -67,26 +78,20 @@ export default {
 
       const rawData = await apifyResponse.json();
 
-      // Transform to our format
-      let trends = transformApifyData(rawData);
-      let source = 'apify';
-
-      // If we got too few results, merge with fallback data
-      if (trends.length < 5) {
-        console.log(`Only got ${trends.length} trends from Apify, merging with fallback`);
-        const fallback = getFallbackTrends();
-        // Add Apify trends first, then fill with fallback (avoiding duplicates)
-        const apifyHashtags = new Set(trends.map(t => t.hashtag.toLowerCase()));
-        const uniqueFallback = fallback.filter(t => !apifyHashtags.has(t.hashtag.toLowerCase()));
-        trends = [...trends, ...uniqueFallback].slice(0, 30);
-        source = 'apify+fallback';
+      // Check if we got data
+      if (!rawData || rawData.length === 0) {
+        throw new Error('No data returned from Apify');
       }
+
+      // Transform to our format
+      const trends = transformApifyData(rawData);
 
       // Create response
       const responseData = {
         success: true,
         trends: trends,
-        source: source,
+        count: trends.length,
+        source: 'apify',
         timestamp: new Date().toISOString()
       };
 
@@ -115,7 +120,7 @@ export default {
       return new Response(JSON.stringify({
         success: false,
         error: error.message,
-        trends: getFallbackTrends()
+        trends: []
       }), {
         status: 500,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
@@ -131,22 +136,18 @@ async function startNewRun(env) {
   const runResponse = await fetch(runUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      // Default input for the scraper
-      maxItems: 30
-    })
+    body: JSON.stringify(SCRAPER_INPUT)
   });
 
   if (!runResponse.ok) {
     throw new Error('Failed to start Apify run');
   }
 
-  // Return fallback data while run is in progress
+  // Return message indicating scraper is starting
   return new Response(JSON.stringify({
     success: true,
-    trends: getFallbackTrends(),
-    source: 'fallback',
-    message: 'Scraper started, using fallback data. Refresh in a few minutes.',
+    trends: [],
+    message: 'Scraper started. Please refresh in 1-2 minutes.',
     timestamp: new Date().toISOString()
   }), {
     headers: {
@@ -158,7 +159,6 @@ async function startNewRun(env) {
 
 // Transform Apify data to our dashboard format
 function transformApifyData(data) {
-  // Handle different possible structures from the scraper
   let items = [];
 
   if (Array.isArray(data)) {
@@ -170,50 +170,56 @@ function transformApifyData(data) {
   }
 
   return items.slice(0, 30).map((item, index) => {
-    // Extract hashtag name from various possible fields
-    const hashtag = item.hashtag || item.name || item.title || item.challengeName || `#trend${index + 1}`;
+    // Extract hashtag name
+    const hashtag = item.name || item.hashtag || item.title || item.challengeName;
     const cleanHashtag = hashtag.startsWith('#') ? hashtag : '#' + hashtag;
 
-    // Extract view count
-    const views = item.views || item.videoCount || item.stats?.videoCount ||
-                  item.stats?.viewCount || Math.floor(Math.random() * 500000000) + 1000000;
+    // Use real data from Apify
+    const videoCount = item.videoCount || 0;
+    const viewCount = item.viewCount || 0;
 
-    // Extract or estimate growth metrics
-    const growth5h = item.growth5h || item.growthRate || Math.floor(Math.random() * 500) + 20;
-    const growth24h = item.growth24h || item.trend || Math.floor(Math.random() * 800) + 50;
-    const growth7d = item.growth7d || Math.floor(Math.random() * 1500) + 100;
+    // Calculate growth from trendingHistogram if available
+    let growth5h = 0;
+    let growth24h = 0;
+    let growth7d = 0;
 
-    // Description
-    const description = item.description || item.desc || `Trending ${cleanHashtag} content on TikTok`;
+    if (item.trendingHistogram && item.trendingHistogram.length > 0) {
+      const histogram = item.trendingHistogram;
+      const latest = histogram[histogram.length - 1]?.value || 0;
+      const oldest = histogram[0]?.value || 0;
 
-    // Keywords from hashtag
+      if (oldest > 0) {
+        growth7d = Math.round(((latest - oldest) / oldest) * 100);
+      }
+
+      // Estimate shorter timeframes based on rank change
+      if (item.rankDiff) {
+        growth24h = item.rankDiff * 10; // Rough estimate based on rank movement
+        growth5h = Math.round(growth24h / 4);
+      }
+    }
+
+    // Description from industry or generated
+    const description = item.industryName
+      ? `Trending in ${item.industryName}`
+      : `Trending ${cleanHashtag} on TikTok`;
+
+    // Keywords from hashtag name
     const tagName = cleanHashtag.replace(/^#/, '').toLowerCase();
-    const keywords = item.keywords || [tagName];
 
     return {
       hashtag: cleanHashtag,
-      views: typeof views === 'string' ? parseInt(views.replace(/[^0-9]/g, '')) || 1000000 : views,
-      growth5h,
-      growth24h,
-      growth7d,
-      description,
-      keywords
+      views: viewCount || videoCount * 1000, // Estimate views from video count if not available
+      videoCount: videoCount,
+      growth5h: growth5h,
+      growth24h: growth24h,
+      growth7d: growth7d,
+      description: description,
+      keywords: [tagName],
+      rank: item.rank || index + 1,
+      rankDiff: item.rankDiff || 0,
+      industry: item.industryName || null,
+      url: item.url || `https://www.tiktok.com/tag/${tagName}`
     };
   });
-}
-
-// Fallback data with real viral memes
-function getFallbackTrends() {
-  return [
-    { hashtag: "#tungtungtungsahur", views: 450000000, growth5h: 320, growth24h: 890, growth7d: 2100, description: "Viral brainrot sound trend", keywords: ["brainrot", "sound", "viral"] },
-    { hashtag: "#cappuccinoassassino", views: 380000000, growth5h: 280, growth24h: 750, growth7d: 1850, description: "Italian brainrot coffee assassin meme", keywords: ["italian", "brainrot", "coffee"] },
-    { hashtag: "#bombardirocrocodilo", views: 520000000, growth5h: 180, growth24h: 520, growth7d: 1650, description: "Bombardiro crocodile Italian brainrot", keywords: ["bombardiro", "crocodile", "italian"] },
-    { hashtag: "#tralalerotralala", views: 680000000, growth5h: 150, growth24h: 420, growth7d: 1420, description: "Catchy Italian nonsense song trend", keywords: ["tralalero", "song", "dance"] },
-    { hashtag: "#italianbrainrot", views: 920000000, growth5h: 95, growth24h: 380, growth7d: 1250, description: "Surreal Italian-themed absurdist memes", keywords: ["italian", "brainrot", "surreal"] },
-    { hashtag: "#ballerinacappuccina", views: 290000000, growth5h: 420, growth24h: 980, growth7d: 1100, description: "Dancing ballerina cappuccino meme", keywords: ["ballerina", "dance", "coffee"] },
-    { hashtag: "#brrbrrpatapim", views: 185000000, growth5h: 580, growth24h: 1200, growth7d: 890, description: "New brainrot sound effect trend", keywords: ["sound", "brainrot", "patapim"] },
-    { hashtag: "#skibiditoilet", views: 890000000, growth5h: 45, growth24h: 120, growth7d: 380, description: "Animated singing toilet series", keywords: ["skibidi", "animation", "toilet"] },
-    { hashtag: "#67", views: 320000000, growth5h: 250, growth24h: 680, growth7d: 1500, description: "Mason the brainrot kid six-seven meme", keywords: ["67", "mason", "brainrot"] },
-    { hashtag: "#moodeng", views: 450000000, growth5h: 65, growth24h: 180, growth7d: 520, description: "Baby pygmy hippo from Thailand", keywords: ["moodeng", "hippo", "cute"] }
-  ];
 }
