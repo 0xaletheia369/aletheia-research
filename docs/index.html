@@ -1801,30 +1801,43 @@
 
     <!-- TikTok Tab -->
     <div class="tab-content" id="tiktok">
-        <!-- Trending List -->
+        <!-- 5h Emerging Trends -->
         <div class="chart-container" style="margin-bottom: 30px;">
             <div class="chart-header">
                 <div class="chart-title-section">
                     <div class="chart-tabs">
-                        <button class="chart-tab active">Trending Now</button>
+                        <button class="chart-tab active">Emerging (5h)</button>
                     </div>
-                    <p class="chart-subtitle">Top viral trends and memes on TikTok - Click any row to expand</p>
+                    <p class="chart-subtitle">Early signals - New trends gaining momentum in the last 5 hours</p>
                 </div>
             </div>
-            <div id="tiktokRankedList" class="tiktok-ranked-list"></div>
+            <div id="tiktokTrends5h" class="tiktok-momentum-cards"></div>
         </div>
 
-        <!-- Momentum Cards -->
+        <!-- 24h Hot Trends -->
         <div class="chart-container" style="margin-bottom: 30px;">
             <div class="chart-header">
                 <div class="chart-title-section">
                     <div class="chart-tabs">
-                        <button class="chart-tab active">Momentum Overview</button>
+                        <button class="chart-tab active">Hot Now (24h)</button>
                     </div>
-                    <p class="chart-subtitle">Click any card for full details</p>
+                    <p class="chart-subtitle">What's trending in the last 24 hours</p>
                 </div>
             </div>
-            <div id="tiktokMomentumCards" class="tiktok-momentum-cards"></div>
+            <div id="tiktokTrends24h" class="tiktok-momentum-cards"></div>
+        </div>
+
+        <!-- 7d Weekly Winners -->
+        <div class="chart-container" style="margin-bottom: 30px;">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active">Weekly Winners (7d)</button>
+                    </div>
+                    <p class="chart-subtitle">Top performing trends over the past week</p>
+                </div>
+            </div>
+            <div id="tiktokTrends7d" class="tiktok-momentum-cards"></div>
         </div>
 
         <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Sample Data (API integration coming soon)</p>
@@ -5957,306 +5970,277 @@
         // ========== TIKTOK TRENDS FUNCTIONS ==========
 
         // Mock data for TikTok trends (general viral content, not crypto-specific)
+        // Each trend has different growth rates for 5h, 24h, and 7d to show how trends evolve
         const tiktokTrends = [
             {
-                rank: 1,
                 hashtag: "#italianbrainrot",
                 views: 892000000,
-                views24h: 156000000,
+                growth5h: 85,
                 growth24h: 420,
                 growth7d: 1850,
                 description: "Surreal Italian-themed meme videos with absurdist humor and distorted audio",
-                keywords: ["italian", "brainrot", "surreal", "meme"],
-                relatedFigures: ["Various meme creators"],
-                sparklineData: [5, 12, 25, 45, 68, 85, 100]
+                keywords: ["italian", "brainrot", "surreal", "meme"]
             },
             {
-                rank: 2,
                 hashtag: "#tralalero",
                 views: 654000000,
-                views24h: 98000000,
+                growth5h: 120,
                 growth24h: 380,
                 growth7d: 1420,
                 description: "Catchy nonsense song trend with dance challenges and remixes",
-                keywords: ["song", "dance", "viral", "music"],
-                relatedFigures: ["Original creator unknown"],
-                sparklineData: [8, 18, 32, 52, 72, 88, 95]
+                keywords: ["song", "dance", "viral", "music"]
             },
             {
-                rank: 3,
                 hashtag: "#verydemure",
                 views: 521000000,
-                views24h: 42000000,
+                growth5h: 45,
                 growth24h: 145,
                 growth7d: 890,
                 description: "Ironic 'demure and mindful' lifestyle parody videos",
-                keywords: ["demure", "mindful", "aesthetic", "parody"],
-                relatedFigures: ["Jools Lebron"],
-                sparklineData: [15, 28, 42, 58, 72, 84, 92]
+                keywords: ["demure", "mindful", "aesthetic", "parody"]
             },
             {
-                rank: 4,
+                hashtag: "#bombardiro",
+                views: 28000000,
+                growth5h: 890,
+                growth24h: 1250,
+                growth7d: 340,
+                description: "New absurdist meme combining random words with chaotic energy",
+                keywords: ["absurd", "chaos", "random", "new"]
+            },
+            {
                 hashtag: "#skibiditoilet",
                 views: 489000000,
-                views24h: 28000000,
+                growth5h: 25,
                 growth24h: 85,
                 growth7d: 320,
                 description: "Animated series featuring singing toilets in an epic battle",
-                keywords: ["skibidi", "animation", "series", "toilet"],
-                relatedFigures: ["DaFuq!?Boom!"],
-                sparklineData: [45, 52, 58, 65, 72, 78, 85]
+                keywords: ["skibidi", "animation", "series", "toilet"]
             },
             {
-                rank: 5,
+                hashtag: "#crocodilochon",
+                views: 15000000,
+                growth5h: 1200,
+                growth24h: 2100,
+                growth7d: 180,
+                description: "Brand new surreal animal mashup meme exploding right now",
+                keywords: ["animal", "mashup", "surreal", "new"]
+            },
+            {
                 hashtag: "#delulu",
                 views: 412000000,
-                views24h: 35000000,
+                growth5h: 55,
                 growth24h: 165,
                 growth7d: 540,
                 description: "Embracing delusional confidence and manifestation humor",
-                keywords: ["delulu", "confidence", "manifest", "funny"],
-                relatedFigures: ["Various creators"],
-                sparklineData: [20, 32, 48, 62, 75, 86, 94]
+                keywords: ["delulu", "confidence", "manifest", "funny"]
             },
             {
-                rank: 6,
                 hashtag: "#aura",
                 views: 385000000,
-                views24h: 52000000,
+                growth5h: 180,
                 growth24h: 245,
                 growth7d: 720,
                 description: "Rating situations based on 'aura points' gained or lost",
-                keywords: ["aura", "points", "rating", "energy"],
-                relatedFigures: ["Gen Z creators"],
-                sparklineData: [12, 25, 42, 58, 75, 88, 96]
+                keywords: ["aura", "points", "rating", "energy"]
             },
             {
-                rank: 7,
+                hashtag: "#tungstenball",
+                views: 8500000,
+                growth5h: 950,
+                growth24h: 680,
+                growth7d: 95,
+                description: "Oddly satisfying tungsten cube and ball videos going viral",
+                keywords: ["tungsten", "satisfying", "metal", "asmr"]
+            },
+            {
                 hashtag: "#girlmath",
                 views: 356000000,
-                views24h: 18000000,
+                growth5h: 22,
                 growth24h: 72,
                 growth7d: 280,
                 description: "Humorous justifications for purchases using creative logic",
-                keywords: ["shopping", "math", "funny", "justify"],
-                relatedFigures: ["Shopping influencers"],
-                sparklineData: [42, 48, 55, 62, 70, 78, 84]
+                keywords: ["shopping", "math", "funny", "justify"]
             },
             {
-                rank: 8,
-                hashtag: "#romanempire",
-                views: 328000000,
-                views24h: 15000000,
-                growth24h: 58,
-                growth7d: 195,
-                description: "Asking men how often they think about the Roman Empire",
-                keywords: ["roman", "empire", "men", "history"],
-                relatedFigures: ["Couples content creators"],
-                sparklineData: [48, 54, 60, 66, 72, 78, 82]
-            },
-            {
-                rank: 9,
                 hashtag: "#lazygirlJob",
                 views: 298000000,
-                views24h: 22000000,
+                growth5h: 68,
                 growth24h: 125,
                 growth7d: 385,
                 description: "Celebrating low-stress remote jobs with good work-life balance",
-                keywords: ["job", "remote", "work", "balance"],
-                relatedFigures: ["Career TikTokers"],
-                sparklineData: [25, 38, 52, 65, 78, 88, 94]
+                keywords: ["job", "remote", "work", "balance"]
             },
             {
-                rank: 10,
                 hashtag: "#npc",
                 views: 276000000,
-                views24h: 19000000,
+                growth5h: 42,
                 growth24h: 98,
                 growth7d: 340,
                 description: "Creators acting like video game NPCs during livestreams",
-                keywords: ["npc", "livestream", "gaming", "roleplay"],
-                relatedFigures: ["PinkyDoll", "Cherry Crush"],
-                sparklineData: [28, 42, 55, 68, 78, 86, 92]
+                keywords: ["npc", "livestream", "gaming", "roleplay"]
             },
             {
-                rank: 11,
-                hashtag: "#corecore",
-                views: 254000000,
-                views24h: 12000000,
-                growth24h: 65,
-                growth7d: 215,
-                description: "Emotional video collages exploring modern life and existentialism",
-                keywords: ["aesthetic", "emotional", "collage", "deep"],
-                relatedFigures: ["Video editors"],
-                sparklineData: [38, 45, 52, 60, 68, 76, 82]
-            },
-            {
-                rank: 12,
                 hashtag: "#brat",
                 views: 242000000,
-                views24h: 45000000,
+                growth5h: 210,
                 growth24h: 285,
                 growth7d: 680,
                 description: "Charli XCX album aesthetic - lime green, messy, party girl energy",
-                keywords: ["charli", "music", "aesthetic", "party"],
-                relatedFigures: ["Charli XCX"],
-                sparklineData: [10, 22, 38, 55, 72, 88, 98]
+                keywords: ["charli", "music", "aesthetic", "party"]
             },
             {
-                rank: 13,
-                hashtag: "#icks",
-                views: 218000000,
-                views24h: 14000000,
-                growth24h: 82,
-                growth7d: 265,
-                description: "Sharing random turn-offs and dating dealbreakers",
-                keywords: ["dating", "turnoff", "relationship", "funny"],
-                relatedFigures: ["Dating content creators"],
-                sparklineData: [32, 42, 52, 62, 72, 80, 86]
+                hashtag: "#capcut2026",
+                views: 12000000,
+                growth5h: 780,
+                growth24h: 520,
+                growth7d: 125,
+                description: "New CapCut template going viral with glitch transitions",
+                keywords: ["capcut", "edit", "template", "glitch"]
             },
             {
-                rank: 14,
-                hashtag: "#mewing",
-                views: 198000000,
-                views24h: 16000000,
-                growth24h: 115,
-                growth7d: 320,
-                description: "Tongue posture technique trend claiming to improve jawline",
-                keywords: ["jawline", "face", "beauty", "technique"],
-                relatedFigures: ["Looksmaxxing community"],
-                sparklineData: [22, 35, 48, 62, 75, 85, 92]
-            },
-            {
-                rank: 15,
                 hashtag: "#sleepygirlmocktail",
                 views: 185000000,
-                views24h: 24000000,
+                growth5h: 95,
                 growth24h: 195,
                 growth7d: 480,
                 description: "Magnesium and tart cherry juice drinks for better sleep",
-                keywords: ["sleep", "drink", "health", "recipe"],
-                relatedFigures: ["Wellness creators"],
-                sparklineData: [15, 28, 45, 62, 78, 90, 96]
+                keywords: ["sleep", "drink", "health", "recipe"]
             },
             {
-                rank: 16,
-                hashtag: "#bereal",
-                views: 172000000,
-                views24h: 8500000,
-                growth24h: 48,
-                growth7d: 165,
-                description: "Authentic unfiltered daily life moments and reactions",
-                keywords: ["authentic", "real", "daily", "unfiltered"],
-                relatedFigures: ["Gen Z users"],
-                sparklineData: [52, 56, 62, 68, 74, 78, 82]
-            },
-            {
-                rank: 17,
-                hashtag: "#quietluxury",
-                views: 165000000,
-                views24h: 11000000,
-                growth24h: 92,
-                growth7d: 285,
-                description: "Understated wealth aesthetic - no logos, quality materials",
-                keywords: ["fashion", "luxury", "minimal", "wealth"],
-                relatedFigures: ["Fashion influencers"],
-                sparklineData: [28, 38, 50, 62, 72, 82, 88]
-            },
-            {
-                rank: 18,
-                hashtag: "#moots",
-                views: 152000000,
-                views24h: 18000000,
-                growth24h: 175,
-                growth7d: 425,
-                description: "Mutual followers creating content for each other",
-                keywords: ["friends", "mutual", "community", "collab"],
-                relatedFigures: ["TikTok community"],
-                sparklineData: [18, 32, 48, 62, 75, 86, 94]
-            },
-            {
-                rank: 19,
                 hashtag: "#ratgirl",
                 views: 145000000,
-                views24h: 21000000,
+                growth5h: 145,
                 growth24h: 210,
                 growth7d: 520,
                 description: "Embracing chaotic goblin energy and messy living",
-                keywords: ["chaos", "goblin", "messy", "energy"],
-                relatedFigures: ["Chaotic creators"],
-                sparklineData: [12, 25, 42, 58, 74, 88, 95]
+                keywords: ["chaos", "goblin", "messy", "energy"]
             },
             {
-                rank: 20,
-                hashtag: "#lookmaxxing",
-                views: 138000000,
-                views24h: 15000000,
-                growth24h: 155,
-                growth7d: 380,
-                description: "Self-improvement focused on maximizing physical appearance",
-                keywords: ["glow", "up", "improvement", "looks"],
-                relatedFigures: ["Self-improvement creators"],
-                sparklineData: [20, 35, 50, 64, 76, 86, 92]
+                hashtag: "#moots",
+                views: 152000000,
+                growth5h: 88,
+                growth24h: 175,
+                growth7d: 425,
+                description: "Mutual followers creating content for each other",
+                keywords: ["friends", "mutual", "community", "collab"]
             },
             {
-                rank: 21,
-                hashtag: "#cleangirlAesthetic",
-                views: 128000000,
-                views24h: 7200000,
-                growth24h: 62,
-                growth7d: 185,
-                description: "Minimal makeup, slicked hair, gold jewelry aesthetic",
-                keywords: ["minimal", "aesthetic", "beauty", "clean"],
-                relatedFigures: ["Beauty influencers"],
-                sparklineData: [45, 50, 56, 62, 68, 74, 80]
-            },
-            {
-                rank: 22,
-                hashtag: "#slay",
-                views: 118000000,
-                views24h: 9800000,
-                growth24h: 118,
-                growth7d: 295,
-                description: "Celebrating confidence, success, and iconic moments",
-                keywords: ["confidence", "success", "iconic", "queen"],
-                relatedFigures: ["Various creators"],
-                sparklineData: [25, 38, 52, 65, 76, 85, 90]
-            },
-            {
-                rank: 23,
                 hashtag: "#unhinged",
                 views: 108000000,
-                views24h: 13000000,
+                growth5h: 110,
                 growth24h: 168,
                 growth7d: 410,
                 description: "Chaotic, unpredictable content that breaks social norms",
-                keywords: ["chaos", "random", "wild", "funny"],
-                relatedFigures: ["Comedy creators"],
-                sparklineData: [15, 28, 45, 60, 75, 87, 94]
+                keywords: ["chaos", "random", "wild", "funny"]
             },
             {
-                rank: 24,
+                hashtag: "#lookmaxxing",
+                views: 138000000,
+                growth5h: 75,
+                growth24h: 155,
+                growth7d: 380,
+                description: "Self-improvement focused on maximizing physical appearance",
+                keywords: ["glow", "up", "improvement", "looks"]
+            },
+            {
+                hashtag: "#mewing",
+                views: 198000000,
+                growth5h: 52,
+                growth24h: 115,
+                growth7d: 320,
+                description: "Tongue posture technique trend claiming to improve jawline",
+                keywords: ["jawline", "face", "beauty", "technique"]
+            },
+            {
+                hashtag: "#slay",
+                views: 118000000,
+                growth5h: 62,
+                growth24h: 118,
+                growth7d: 295,
+                description: "Celebrating confidence, success, and iconic moments",
+                keywords: ["confidence", "success", "iconic", "queen"]
+            },
+            {
+                hashtag: "#quietluxury",
+                views: 165000000,
+                growth5h: 38,
+                growth24h: 92,
+                growth7d: 285,
+                description: "Understated wealth aesthetic - no logos, quality materials",
+                keywords: ["fashion", "luxury", "minimal", "wealth"]
+            },
+            {
+                hashtag: "#icks",
+                views: 218000000,
+                growth5h: 35,
+                growth24h: 82,
+                growth7d: 265,
+                description: "Sharing random turn-offs and dating dealbreakers",
+                keywords: ["dating", "turnoff", "relationship", "funny"]
+            },
+            {
                 hashtag: "#booktok",
                 views: 98000000,
-                views24h: 6500000,
+                growth5h: 28,
                 growth24h: 78,
                 growth7d: 220,
                 description: "Book recommendations, reviews, and reading challenges",
-                keywords: ["books", "reading", "review", "recommend"],
-                relatedFigures: ["Book influencers"],
-                sparklineData: [35, 42, 50, 58, 66, 74, 82]
+                keywords: ["books", "reading", "review", "recommend"]
             },
             {
-                rank: 25,
+                hashtag: "#corecore",
+                views: 254000000,
+                growth5h: 18,
+                growth24h: 65,
+                growth7d: 215,
+                description: "Emotional video collages exploring modern life and existentialism",
+                keywords: ["aesthetic", "emotional", "collage", "deep"]
+            },
+            {
+                hashtag: "#romanempire",
+                views: 328000000,
+                growth5h: 15,
+                growth24h: 58,
+                growth7d: 195,
+                description: "Asking men how often they think about the Roman Empire",
+                keywords: ["roman", "empire", "men", "history"]
+            },
+            {
+                hashtag: "#cleangirlAesthetic",
+                views: 128000000,
+                growth5h: 22,
+                growth24h: 62,
+                growth7d: 185,
+                description: "Minimal makeup, slicked hair, gold jewelry aesthetic",
+                keywords: ["minimal", "aesthetic", "beauty", "clean"]
+            },
+            {
+                hashtag: "#bereal",
+                views: 172000000,
+                growth5h: 12,
+                growth24h: 48,
+                growth7d: 165,
+                description: "Authentic unfiltered daily life moments and reactions",
+                keywords: ["authentic", "real", "daily", "unfiltered"]
+            },
+            {
                 hashtag: "#outfit",
                 views: 92000000,
-                views24h: 8200000,
+                growth5h: 58,
                 growth24h: 125,
                 growth7d: 310,
                 description: "Daily outfit inspiration and OOTD (outfit of the day) posts",
-                keywords: ["fashion", "style", "ootd", "clothes"],
-                relatedFigures: ["Fashion creators"],
-                sparklineData: [22, 35, 48, 60, 72, 82, 88]
+                keywords: ["fashion", "style", "ootd", "clothes"]
+            },
+            {
+                hashtag: "#catvibes",
+                views: 5200000,
+                growth5h: 1450,
+                growth24h: 890,
+                growth7d: 65,
+                description: "New cat behavior meme format taking off this hour",
+                keywords: ["cat", "pets", "funny", "behavior"]
             }
         ];
 
@@ -6270,179 +6254,87 @@
             return num.toString();
         }
 
-        // Get growth badge class based on 7d value
-        function getGrowthBadgeClass(growth) {
-            if (growth >= 500) return 'high';
-            if (growth >= 200) return 'medium';
-            return 'low';
+        // Get growth color based on value and timeframe thresholds
+        function getGrowthColor(growth, timeframe) {
+            if (timeframe === '5h') {
+                if (growth >= 500) return '#00c853';
+                if (growth >= 200) return '#ffa000';
+                return '#757575';
+            } else if (timeframe === '24h') {
+                if (growth >= 300) return '#00c853';
+                if (growth >= 150) return '#ffa000';
+                return '#757575';
+            } else { // 7d
+                if (growth >= 800) return '#00c853';
+                if (growth >= 400) return '#ffa000';
+                return '#757575';
+            }
         }
 
-        // Draw mini sparkline on canvas
-        function drawSparkline(canvas, data, color = '#0A7B83') {
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width;
-            const height = canvas.height;
-            const padding = 2;
+        // Render trend cards for a specific timeframe
+        function renderTrendCards(containerId, sortKey, timeframeLabel) {
+            const container = document.getElementById(containerId);
+            const maxViews = Math.max(...tiktokTrends.map(t => t.views));
 
-            ctx.clearRect(0, 0, width, height);
+            // Sort by the specified growth key (highest first)
+            const sortedTrends = [...tiktokTrends].sort((a, b) => b[sortKey] - a[sortKey]);
 
-            const max = Math.max(...data);
-            const min = Math.min(...data);
-            const range = max - min || 1;
+            // Show top 10 for each timeframe
+            const topTrends = sortedTrends.slice(0, 10);
 
-            ctx.beginPath();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
+            container.innerHTML = topTrends.map((trend, index) => {
+                const growth = trend[sortKey];
+                const color = getGrowthColor(growth, timeframeLabel);
+                const popularity = (trend.views / maxViews) * 100;
 
-            data.forEach((value, index) => {
-                const x = padding + (index / (data.length - 1)) * (width - 2 * padding);
-                const y = height - padding - ((value - min) / range) * (height - 2 * padding);
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            ctx.stroke();
-
-            // Add fill gradient
-            ctx.lineTo(width - padding, height - padding);
-            ctx.lineTo(padding, height - padding);
-            ctx.closePath();
-            const gradient = ctx.createLinearGradient(0, 0, 0, height);
-            gradient.addColorStop(0, color + '40');
-            gradient.addColorStop(1, color + '00');
-            ctx.fillStyle = gradient;
-            ctx.fill();
-        }
-
-        // ===== Ranked List with Sparklines =====
-        function renderRankedList() {
-            const container = document.getElementById('tiktokRankedList');
-            // Sort by 7d growth (highest first)
-            const sortedTrends = [...tiktokTrends].sort((a, b) => b.growth7d - a.growth7d);
-
-            container.innerHTML = sortedTrends.map((trend, index) => `
-                <div class="tiktok-row" data-trend-index="${trend.rank - 1}">
-                    <div class="tiktok-rank">#${index + 1}</div>
-                    <div class="tiktok-hashtag">${trend.hashtag}</div>
-                    <div class="tiktok-sparkline">
-                        <canvas id="sparkline-a-${trend.rank}" width="100" height="30"></canvas>
-                    </div>
-                    <div class="tiktok-views">${formatTiktokViews(trend.views)}</div>
-                    <div class="tiktok-growth-badge ${getGrowthBadgeClass(trend.growth7d)}">+${trend.growth7d}%</div>
-                </div>
-                <div class="tiktok-row-details" id="detail-a-${trend.rank}">
-                    <div class="tiktok-detail-grid">
-                        <div class="tiktok-detail-item">
+                return `
+                    <div class="tiktok-momentum-card" data-hashtag="${trend.hashtag}">
+                        <div class="tiktok-card-header">
+                            <div class="tiktok-card-hashtag">${trend.hashtag}</div>
+                            <div class="tiktok-card-rank">#${index + 1}</div>
+                        </div>
+                        <div class="tiktok-progress-container">
+                            <div class="tiktok-progress-label">
+                                <span>Popularity</span>
+                                <span>${formatTiktokViews(trend.views)}</span>
+                            </div>
+                            <div class="tiktok-progress-bar">
+                                <div class="tiktok-progress-fill" style="width: ${popularity}%; background: ${color};"></div>
+                            </div>
+                        </div>
+                        <div class="tiktok-card-stats">
+                            <div class="tiktok-card-stat">
+                                <div class="tiktok-card-stat-label">5h</div>
+                                <div class="tiktok-card-stat-value" style="color: ${getGrowthColor(trend.growth5h, '5h')};">+${trend.growth5h}%</div>
+                            </div>
+                            <div class="tiktok-card-stat">
+                                <div class="tiktok-card-stat-label">24h</div>
+                                <div class="tiktok-card-stat-value" style="color: ${getGrowthColor(trend.growth24h, '24h')};">+${trend.growth24h}%</div>
+                            </div>
+                            <div class="tiktok-card-stat">
+                                <div class="tiktok-card-stat-label">7d</div>
+                                <div class="tiktok-card-stat-value" style="color: ${getGrowthColor(trend.growth7d, '7d')};">+${trend.growth7d}%</div>
+                            </div>
+                        </div>
+                        <div class="tiktok-card-details" id="detail-${containerId}-${index}">
                             <div class="tiktok-detail-label">Description</div>
-                            <div class="tiktok-detail-value">${trend.description}</div>
-                        </div>
-                        <div class="tiktok-detail-item">
-                            <div class="tiktok-detail-label">24h / 7d Growth</div>
-                            <div class="tiktok-detail-value">+${trend.growth24h}% / +${trend.growth7d}%</div>
-                        </div>
-                        <div class="tiktok-detail-item">
+                            <div class="tiktok-detail-value" style="margin-bottom: 12px;">${trend.description}</div>
                             <div class="tiktok-detail-label">Keywords</div>
                             <div class="tiktok-keywords">
                                 ${trend.keywords.map(k => `<span class="tiktok-keyword">${k}</span>`).join('')}
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
-
-            // Draw sparklines
-            sortedTrends.forEach(trend => {
-                const canvas = document.getElementById(`sparkline-a-${trend.rank}`);
-                if (canvas) drawSparkline(canvas, trend.sparklineData);
-            });
-
-            // Add click handlers
-            container.querySelectorAll('.tiktok-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    const index = this.dataset.trendIndex;
-                    const detailEl = document.getElementById(`detail-a-${parseInt(index) + 1}`);
-                    const isExpanded = detailEl.classList.contains('visible');
-
-                    // Close all details
-                    container.querySelectorAll('.tiktok-row-details').forEach(d => d.classList.remove('visible'));
-                    container.querySelectorAll('.tiktok-row').forEach(r => r.classList.remove('expanded'));
-
-                    if (!isExpanded) {
-                        detailEl.classList.add('visible');
-                        this.classList.add('expanded');
-                    }
-                });
-            });
-        }
-
-        // ===== Momentum Cards =====
-        function renderMomentumCards() {
-            const container = document.getElementById('tiktokMomentumCards');
-            const maxViews = Math.max(...tiktokTrends.map(t => t.views));
-
-            // Sort by 7d growth (highest first)
-            const sortedTrends = [...tiktokTrends].sort((a, b) => b.growth7d - a.growth7d);
-
-            container.innerHTML = sortedTrends.map(trend => {
-                const popularity = (trend.views / maxViews) * 100;
-                const color24h = trend.growth24h >= 200 ? '#00c853' : trend.growth24h >= 100 ? '#ffa000' : '#757575';
-                const color7d = trend.growth7d >= 500 ? '#00c853' : trend.growth7d >= 200 ? '#ffa000' : '#757575';
-
-                return `
-                    <div class="tiktok-momentum-card" data-trend-rank="${trend.rank}">
-                        <div class="tiktok-card-header">
-                            <div class="tiktok-card-hashtag">${trend.hashtag}</div>
-                            <div class="tiktok-card-rank">#${trend.rank}</div>
-                        </div>
-                        <div class="tiktok-progress-container">
-                            <div class="tiktok-progress-label">
-                                <span>Popularity</span>
-                                <span>${popularity.toFixed(0)}%</span>
-                            </div>
-                            <div class="tiktok-progress-bar">
-                                <div class="tiktok-progress-fill" style="width: ${popularity}%; background: ${color7d};"></div>
-                            </div>
-                        </div>
-                        <div class="tiktok-card-stats">
-                            <div class="tiktok-card-stat">
-                                <div class="tiktok-card-stat-label">Total Views</div>
-                                <div class="tiktok-card-stat-value">${formatTiktokViews(trend.views)}</div>
-                            </div>
-                            <div class="tiktok-card-stat">
-                                <div class="tiktok-card-stat-label">24h Growth</div>
-                                <div class="tiktok-card-stat-value" style="color: ${color24h};">+${trend.growth24h}%</div>
-                            </div>
-                            <div class="tiktok-card-stat">
-                                <div class="tiktok-card-stat-label">7d Growth</div>
-                                <div class="tiktok-card-stat-value" style="color: ${color7d};">+${trend.growth7d}%</div>
-                            </div>
-                        </div>
-                        <div class="tiktok-card-details" id="card-detail-${trend.rank}">
-                            <div class="tiktok-detail-label">Description</div>
-                            <div class="tiktok-detail-value" style="margin-bottom: 12px;">${trend.description}</div>
-                            <div class="tiktok-detail-label">Keywords</div>
-                            <div class="tiktok-keywords" style="margin-bottom: 12px;">
-                                ${trend.keywords.map(k => `<span class="tiktok-keyword">${k}</span>`).join('')}
-                            </div>
-                            <div class="tiktok-detail-label">Related Figures</div>
-                            <div class="tiktok-detail-value">${trend.relatedFigures.join(', ')}</div>
-                        </div>
-                    </div>
                 `;
             }).join('');
 
-            // Add click handlers
-            container.querySelectorAll('.tiktok-momentum-card').forEach(card => {
+            // Add click handlers for expanding cards
+            container.querySelectorAll('.tiktok-momentum-card').forEach((card, index) => {
                 card.addEventListener('click', function() {
-                    const rank = this.dataset.trendRank;
-                    const detailEl = document.getElementById(`card-detail-${rank}`);
+                    const detailEl = document.getElementById(`detail-${containerId}-${index}`);
                     const isExpanded = detailEl.classList.contains('visible');
 
-                    // Close all
+                    // Close all in this container
                     container.querySelectorAll('.tiktok-card-details').forEach(d => d.classList.remove('visible'));
                     container.querySelectorAll('.tiktok-momentum-card').forEach(c => c.classList.remove('expanded'));
 
@@ -6454,10 +6346,11 @@
             });
         }
 
-        // Initialize TikTok tab
+        // Initialize TikTok tab with three sections
         function initTiktokTab() {
-            renderRankedList();
-            renderMomentumCards();
+            renderTrendCards('tiktokTrends5h', 'growth5h', '5h');
+            renderTrendCards('tiktokTrends24h', 'growth24h', '24h');
+            renderTrendCards('tiktokTrends7d', 'growth7d', '7d');
         }
 
         // Initialize TikTok tab when clicked
