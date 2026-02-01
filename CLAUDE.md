@@ -13,12 +13,13 @@
 ## Technical Notes
 
 ### CORS Proxy for External APIs
-When adding new external API integrations, always check if CORS headers are present. Many APIs (like Polymarket) don't have CORS headers and will fail on GitHub Pages.
+When adding new external API integrations, always check if CORS headers are present. Many APIs don't have CORS headers and will fail on GitHub Pages.
 
-**Solution:** Use `proxyUrlAllOrigins(url)` for APIs without CORS support:
-```javascript
-const response = await fetch(proxyUrlAllOrigins(url));
-```
+**Available proxies:**
+- `proxyUrlAllOrigins(url)` - General purpose, but fails with some APIs
+- `proxyUrlCodeTabs(url)` - More reliable, works with Polymarket
 
-APIs that need proxy: Polymarket (`gamma-api.polymarket.com`)
-APIs that work directly: Alternative.me (Fear & Greed), DefiLlama
+**Which proxy to use:**
+- Polymarket (`gamma-api.polymarket.com`) → `proxyUrlCodeTabs()` (allorigins returns 520 error)
+- DefiLlama → works directly (has CORS headers)
+- Alternative.me (Fear & Greed) → works directly (has CORS headers)

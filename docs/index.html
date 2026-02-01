@@ -1996,7 +1996,7 @@
             if (cached) return cached;
 
             const url = `https://gamma-api.polymarket.com/events/slug/${slug}`;
-            const response = await fetch(proxyUrlAllOrigins(url));
+            const response = await fetch(proxyUrlCodeTabs(url));
             if (!response.ok) throw new Error(`Polymarket API error: ${response.status}`);
             const json = await response.json();
 
