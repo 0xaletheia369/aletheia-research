@@ -1521,8 +1521,8 @@
 
         // CoinGecko cache and rate limiting
         const coinGeckoCache = new Map();
-        const COINGECKO_CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
-        const COINGECKO_REQUEST_DELAY = 1500; // 1.5 seconds between requests
+        const COINGECKO_CACHE_TTL = 10 * 60 * 1000; // 10 minutes cache
+        const COINGECKO_REQUEST_DELAY = 3000; // 3 seconds between requests (CoinGecko free tier is strict)
         let lastCoinGeckoRequest = 0;
         let coinGeckoRequestQueue = Promise.resolve();
 
