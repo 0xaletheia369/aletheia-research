@@ -4895,6 +4895,12 @@
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
+        // Format date as "December 2025" (for monthly data like CPI/unemployment)
+        function formatMonthYear(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
+
         // Render macro chart
         function renderMacroChart(data, chartType = 'combined') {
             const ctx = document.getElementById('macroChart').getContext('2d');
@@ -4979,11 +4985,6 @@
                         callback: function(value) {
                             return value.toFixed(1) + '%';
                         }
-                    },
-                    title: {
-                        display: chartType === 'combined',
-                        text: 'Inflation (%)',
-                        color: inflationColor
                     }
                 }
             };
@@ -4999,11 +5000,6 @@
                         callback: function(value) {
                             return value.toFixed(1) + '%';
                         }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Unemployment (%)',
-                        color: unemploymentColor
                     }
                 };
             }
@@ -5093,14 +5089,14 @@
                 const latest = inflationData[inflationData.length - 1];
                 document.getElementById('currentCpi').textContent = latest.value.toFixed(1) + '%';
                 document.getElementById('currentCpi').style.color = inflationColor;
-                document.getElementById('cpiDate').textContent = `As of ${formatDisplayDate(latest.date)}`;
+                document.getElementById('cpiDate').textContent = `As of ${formatMonthYear(latest.date)}`;
             }
 
             if (unemploymentData && unemploymentData.length > 0) {
                 const latest = unemploymentData[unemploymentData.length - 1];
                 document.getElementById('currentUnemployment').textContent = latest.value.toFixed(1) + '%';
                 document.getElementById('currentUnemployment').style.color = unemploymentColor;
-                document.getElementById('unemploymentDate').textContent = `As of ${formatDisplayDate(latest.date)}`;
+                document.getElementById('unemploymentDate').textContent = `As of ${formatMonthYear(latest.date)}`;
             }
 
             if (fedRateData && fedRateData.length > 0) {
