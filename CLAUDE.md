@@ -13,13 +13,27 @@
 ## Technical Notes
 
 ### CORS Proxy for External APIs
-When adding new external API integrations, always check if CORS headers are present. Many APIs don't have CORS headers and will fail on GitHub Pages.
+When adding new external API integrations, **ALWAYS test CORS before deploying**. Many APIs don't have CORS headers and will fail on GitHub Pages.
+
+**Checklist for new API integrations:**
+1. Test API directly in browser console: `fetch('https://api.example.com/...').then(r => r.json())`
+2. If CORS error → use `proxyUrlCodeTabs(url)`
+3. Test proxy works: `curl -s "https://api.codetabs.com/v1/proxy/?quest=<encoded-url>"`
+4. Deploy and verify on GitHub Pages
 
 **Available proxies:**
-- `proxyUrlAllOrigins(url)` - General purpose, but fails with some APIs
-- `proxyUrlCodeTabs(url)` - More reliable, works with Polymarket
+- `proxyUrlCodeTabs(url)` - Reliable, use this for most APIs without CORS
+- `proxyUrlAllOrigins(url)` - Backup, but fails with some APIs (e.g., Polymarket returns 520)
 
-**Which proxy to use:**
-- Polymarket (`gamma-api.polymarket.com`) → `proxyUrlCodeTabs()` (allorigins returns 520 error)
-- DefiLlama → works directly (has CORS headers)
-- Alternative.me (Fear & Greed) → works directly (has CORS headers)
+**Known API CORS status:**
+| API | CORS | Proxy needed |
+|-----|------|--------------|
+| Polymarket (`gamma-api.polymarket.com`) | No | `proxyUrlCodeTabs()` |
+| DefiLlama (`api.llama.fi`) | Yes | None |
+| Alternative.me (Fear & Greed) | Yes | None |
+| Mobula | Yes | None |
+| CoinGecko | Yes | None |
+| Binance | Yes | None |
+
+### Common Harmless Errors
+- `favicon.ico 404` - Normal if no favicon exists, doesn't affect functionality
