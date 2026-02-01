@@ -1871,9 +1871,11 @@
                         tooltip: {
                             backgroundColor: '#ffffff',
                             titleColor: '#1a1a1a',
-                            bodyColor: '#1a1a1a',
+                            bodyColor: '#333333',
                             borderColor: '#e0e0e0',
                             borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
                             callbacks: {
                                 label: function(context) {
                                     const value = context.raw;
@@ -1889,12 +1891,27 @@
                         }
                     },
                     scales: {
-                        x: { grid: { display: false } },
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                maxRotation: 0
+                            }
+                        },
                         y: {
+                            position: 'left',
                             min: 0,
                             max: 100,
-                            grid: { color: '#f0f0f0' },
+                            grid: {
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
+                            border: { display: false },
                             ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
                                 callback: function(value) {
                                     if (value === 0) return 'Extreme Fear';
                                     if (value === 50) return 'Neutral';
