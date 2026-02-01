@@ -1243,13 +1243,11 @@
             }
         }
 
-        // Initialize tab from hash on page load
-        initTabFromHash();
-
         // Handle browser back/forward navigation
         window.addEventListener('hashchange', () => {
             initTabFromHash();
         });
+
         // Protocol configuration with revenue sharing info
         const protocols = [
             {
@@ -3138,6 +3136,12 @@
 
                 const coinData = await response.json();
 
+                // Ensure coinData is an array
+                if (!Array.isArray(coinData)) {
+                    console.error('RWA coinData is not an array:', coinData);
+                    throw new Error('Invalid response format from CoinGecko');
+                }
+
                 // Sort by FDV (descending)
                 const sortedTokens = rwaTokens.map(token => {
                     const data = coinData.find(c => c.id === token.coingeckoId);
@@ -3615,6 +3619,9 @@
 
         fetchData();
         setInterval(fetchData, 120000);
+
+        // Initialize tab from hash on page load (must be at end after all declarations)
+        initTabFromHash();
     </script>
 </body>
 </html>
