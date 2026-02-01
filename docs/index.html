@@ -957,6 +957,16 @@
                     <p>Market sentiment analysis</p>
                     <span class="coming-soon-badge">Coming soon</span>
                 </div>
+                <div class="home-nav-card coming-soon-card" onclick="switchToTab('price')">
+                    <h3>Price</h3>
+                    <p>Price charts and technical analysis</p>
+                    <span class="coming-soon-badge">Coming soon</span>
+                </div>
+                <div class="home-nav-card coming-soon-card" onclick="switchToTab('macro')">
+                    <h3>Macro</h3>
+                    <p>Macroeconomic indicators and market context</p>
+                    <span class="coming-soon-badge">Coming soon</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1134,6 +1144,14 @@
     <div class="tab-content" id="price">
         <div class="coming-soon">
             <h2>Price</h2>
+            <p>Coming soon...</p>
+        </div>
+    </div>
+
+    <!-- Macro Tab -->
+    <div class="tab-content" id="macro">
+        <div class="coming-soon">
+            <h2>Macro</h2>
             <p>Coming soon...</p>
         </div>
     </div>
@@ -1340,7 +1358,7 @@
         function initTabFromHash() {
             const hash = window.location.hash.slice(1); // Remove the # symbol
             if (hash) {
-                const validTabs = ['home', 'protocol-revenue', 'perpetual-dexs', 'prediction-markets', 'rwas', 'etfs', 'sentiment', 'price'];
+                const validTabs = ['home', 'protocol-revenue', 'perpetual-dexs', 'prediction-markets', 'rwas', 'etfs', 'sentiment', 'price', 'macro'];
                 if (validTabs.includes(hash)) {
                     switchToTab(hash);
                 }
