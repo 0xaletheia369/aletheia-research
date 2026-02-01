@@ -13,15 +13,16 @@ const FARSIDE_URLS = {
 };
 
 async function scrapeETFData(page, url, type) {
-    console.log(`Scraping ${type} ETF data from ${url}...`);
+    console.log(`\n========== Scraping ${type} ETF data ==========`);
+    console.log(`URL: ${url}`);
 
     try {
         await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
 
-        // Wait a bit for any JS to execute
-        await new Promise(r => setTimeout(r, 3000));
+        // Wait for page to fully render
+        await new Promise(r => setTimeout(r, 5000));
 
-        // Debug: log page title and check for Cloudflare
+        // Debug: log page title
         const title = await page.title();
         console.log(`Page title: ${title}`);
 
@@ -29,120 +30,136 @@ async function scrapeETFData(page, url, type) {
         const content = await page.content();
         if (content.includes('challenge-platform') || content.includes('cf-browser-verification')) {
             console.log('Cloudflare challenge detected, waiting longer...');
-            await new Promise(r => setTimeout(r, 10000));
+            await new Promise(r => setTimeout(r, 15000));
         }
 
-        // Try to find table
-        const hasTable = await page.$('table');
-        if (!hasTable) {
-            console.log('No table found on page');
-            // Debug: log a snippet of page content
-            const bodyText = await page.evaluate(() => document.body?.innerText?.substring(0, 500));
-            console.log('Page content preview:', bodyText);
-            return null;
-        }
+        // Extract data from the table with extensive debugging
+        const data = await page.evaluate((etfType) => {
+            const debugInfo = [];
 
-        // Extract data from the table
-        const data = await page.evaluate(() => {
             const tables = document.querySelectorAll('table');
-            // Find the largest table (most likely the data table)
+            debugInfo.push(`Found ${tables.length} tables on page`);
+
+            if (tables.length === 0) {
+                return { error: 'No tables found', debugInfo };
+            }
+
+            // Find the largest table
             let bestTable = null;
             let maxRows = 0;
-
-            tables.forEach(table => {
+            tables.forEach((table, idx) => {
                 const rows = table.querySelectorAll('tr');
+                debugInfo.push(`Table ${idx}: ${rows.length} rows`);
                 if (rows.length > maxRows) {
                     maxRows = rows.length;
                     bestTable = table;
                 }
             });
 
-            if (!bestTable) return null;
+            if (!bestTable) {
+                return { error: 'No suitable table found', debugInfo };
+            }
 
             const rows = bestTable.querySelectorAll('tr');
-            const headers = [];
-            const records = [];
+            debugInfo.push(`Using table with ${rows.length} rows`);
 
-            // Find header row (first row with th elements, or first row)
-            let headerRowIndex = 0;
+            // Log first 3 rows' HTML structure for debugging
             for (let i = 0; i < Math.min(3, rows.length); i++) {
-                if (rows[i].querySelectorAll('th').length > 0) {
+                const row = rows[i];
+                const ths = row.querySelectorAll('th').length;
+                const tds = row.querySelectorAll('td').length;
+                const cells = row.querySelectorAll('th, td');
+                const cellTexts = Array.from(cells).slice(0, 5).map(c => c.textContent.trim().substring(0, 20));
+                debugInfo.push(`Row ${i}: ${ths} th, ${tds} td, content: [${cellTexts.join(' | ')}]`);
+            }
+
+            // Determine header row - look for row with th elements or first row
+            let headerRowIndex = 0;
+            for (let i = 0; i < Math.min(5, rows.length); i++) {
+                const ths = rows[i].querySelectorAll('th').length;
+                if (ths > 2) { // Row with multiple th elements is likely headers
                     headerRowIndex = i;
                     break;
                 }
             }
+            debugInfo.push(`Header row index: ${headerRowIndex}`);
 
-            // Get headers - if empty, use column index as fallback
+            // Extract headers
+            const headers = [];
             const headerCells = rows[headerRowIndex]?.querySelectorAll('th, td');
             headerCells?.forEach((cell, idx) => {
-                const text = cell.textContent.trim();
-                // Use 'Date' for first column if empty, otherwise use index
-                headers.push(text || (idx === 0 ? 'Date' : `col${idx}`));
-            });
-
-            // Get data from remaining rows
-            for (let i = headerRowIndex + 1; i < rows.length; i++) {
-                // Try td first, then th (some tables use th for first column)
-                let cells = rows[i].querySelectorAll('td');
-                if (cells.length === 0) {
-                    cells = rows[i].querySelectorAll('th, td');
+                let text = cell.textContent.trim();
+                // If empty, generate a name
+                if (!text) {
+                    text = idx === 0 ? 'Date' : `ETF_${idx}`;
                 }
+                headers.push(text);
+            });
+            debugInfo.push(`Headers (${headers.length}): ${headers.slice(0, 6).join(', ')}`);
+
+            // Extract data rows
+            const records = [];
+            for (let i = headerRowIndex + 1; i < rows.length; i++) {
+                const row = rows[i];
+                const cells = row.querySelectorAll('th, td');
+
                 if (cells.length === 0) continue;
 
                 const record = {};
-                let hasData = false;
-                let hasDateLikeValue = false;
+                let hasNumericData = false;
 
                 cells.forEach((cell, index) => {
-                    const header = headers[index] || `col${index}`;
+                    const header = headers[index] || `col_${index}`;
                     let value = cell.textContent.trim();
 
-                    // Clean up the value - remove parentheses for negative numbers
+                    // Clean up negative numbers in parentheses
                     if (value.startsWith('(') && value.endsWith(')')) {
                         value = '-' + value.slice(1, -1);
                     }
 
-                    // Check if this looks like actual data (not empty or just whitespace)
-                    if (value && value.length > 0 && value !== '-') {
-                        hasData = true;
-                    }
-
-                    // Check if first column looks like a date (contains month name or numbers with separators)
-                    if (index === 0 && value) {
-                        const datePattern = /\d{1,2}\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
-                        const numericDate = /^\d{1,2}[\/-]\d{1,2}/;
-                        if (datePattern.test(value) || numericDate.test(value)) {
-                            hasDateLikeValue = true;
-                        }
+                    // Check if we have numeric data (ETF flows are numbers)
+                    if (index > 0 && /^-?[\d,.]+$/.test(value.replace(/\s/g, ''))) {
+                        hasNumericData = true;
                     }
 
                     record[header] = value;
                 });
 
-                // Only add if we have actual data and first column has meaningful content
-                const firstColValue = record[headers[0]];
-                // Skip if first column is empty, just dashes, or looks like a header/total row
-                const skipPatterns = /^(total|date|\s*-+\s*|)$/i;
-                if (hasData && firstColValue && firstColValue.length > 0 && !skipPatterns.test(firstColValue)) {
+                // Include row if it has a date-like first column OR has numeric data
+                const firstCol = record[headers[0]] || '';
+                const looksLikeDate = /\d/.test(firstCol) && /[a-zA-Z]/.test(firstCol); // Has both numbers and letters
+                const looksLikeNumericDate = /^\d{1,2}[\/-]\d{1,2}/.test(firstCol);
+                const isNotHeader = !/^(date|total)$/i.test(firstCol.trim());
+
+                if ((looksLikeDate || looksLikeNumericDate || hasNumericData) && isNotHeader && firstCol.length > 0) {
                     records.push(record);
                 }
             }
 
-            return { headers, records, debug: { totalRows: rows.length, headerRowIndex } };
-        });
+            debugInfo.push(`Parsed ${records.length} records`);
 
-        console.log(`Found ${data?.records?.length || 0} records with ${data?.headers?.length || 0} columns`);
-        if (data?.debug) {
-            console.log(`Debug: totalRows=${data.debug.totalRows}, headerRowIndex=${data.debug.headerRowIndex}`);
+            // Log a sample record
+            if (records.length > 0) {
+                const sample = records[0];
+                const sampleStr = Object.entries(sample).slice(0, 4).map(([k,v]) => `${k}:${v}`).join(', ');
+                debugInfo.push(`Sample record: ${sampleStr}`);
+            }
+
+            return { headers, records, debugInfo };
+        }, type);
+
+        // Log debug info
+        if (data.debugInfo) {
+            data.debugInfo.forEach(msg => console.log(`  ${msg}`));
         }
-        if (data?.headers) {
-            console.log(`Headers: ${data.headers.slice(0, 5).join(', ')}...`);
+
+        if (data.error) {
+            console.log(`Error: ${data.error}`);
+            return null;
         }
-        if (data?.records?.length === 0 && data?.debug?.totalRows > 1) {
-            // Log first few rows for debugging
-            console.log('Warning: Table has rows but no records parsed');
-        }
-        return data;
+
+        console.log(`Result: ${data.records?.length || 0} records with ${data.headers?.length || 0} columns`);
+        return { headers: data.headers, records: data.records };
 
     } catch (error) {
         console.error(`Error scraping ${type}:`, error.message);
@@ -167,11 +184,7 @@ async function main() {
     });
 
     const page = await browser.newPage();
-
-    // Set viewport
     await page.setViewport({ width: 1920, height: 1080 });
-
-    // Set extra headers
     await page.setExtraHTTPHeaders({
         'Accept-Language': 'en-US,en;q=0.9',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
@@ -184,27 +197,11 @@ async function main() {
         solana: null
     };
 
-    try {
-        // Scrape Bitcoin ETF data
-        results.bitcoin = await scrapeETFData(page, FARSIDE_URLS.bitcoin, 'Bitcoin');
-        console.log(`Bitcoin: ${results.bitcoin?.records?.length || 0} records`);
-
-        // Longer delay between requests
+    // Scrape each ETF type
+    for (const [type, url] of Object.entries(FARSIDE_URLS)) {
+        results[type] = await scrapeETFData(page, url, type.charAt(0).toUpperCase() + type.slice(1));
+        // Delay between requests
         await new Promise(r => setTimeout(r, 5000));
-
-        // Scrape Ethereum ETF data
-        results.ethereum = await scrapeETFData(page, FARSIDE_URLS.ethereum, 'Ethereum');
-        console.log(`Ethereum: ${results.ethereum?.records?.length || 0} records`);
-
-        // Longer delay between requests
-        await new Promise(r => setTimeout(r, 5000));
-
-        // Scrape Solana ETF data
-        results.solana = await scrapeETFData(page, FARSIDE_URLS.solana, 'Solana');
-        console.log(`Solana: ${results.solana?.records?.length || 0} records`);
-
-    } catch (error) {
-        console.error('Error scraping:', error.message);
     }
 
     await browser.close();
@@ -214,14 +211,19 @@ async function main() {
         const etfData = results[type];
         if (etfData?.records?.length > 0) {
             const records = etfData.records;
-            const totalHeader = etfData.headers.find(h => h.toLowerCase().includes('total'));
+            // Find the Total column (might be named differently)
+            const totalHeader = etfData.headers.find(h =>
+                h.toLowerCase().includes('total') ||
+                h.toLowerCase() === 'net'
+            ) || etfData.headers[etfData.headers.length - 1]; // Fallback to last column
 
             if (totalHeader) {
-                const last7Days = records.slice(0, 7);
+                // Get most recent records (data might be in reverse chronological order)
+                const recentRecords = records.slice(0, 7);
                 let weeklyFlow = 0;
 
-                last7Days.forEach(record => {
-                    const val = record[totalHeader]?.replace(/[,$]/g, '');
+                recentRecords.forEach(record => {
+                    const val = record[totalHeader]?.toString().replace(/[,$\s]/g, '');
                     if (val && !isNaN(parseFloat(val))) {
                         weeklyFlow += parseFloat(val);
                     }
@@ -240,13 +242,13 @@ async function main() {
     // Save to JSON file
     const outputPath = path.join(__dirname, '..', 'docs', 'data', 'etf-flows.json');
     fs.writeFileSync(outputPath, JSON.stringify(results, null, 2));
-    console.log(`Data saved to ${outputPath}`);
+    console.log(`\nData saved to ${outputPath}`);
 
-    // Also log summary
-    console.log('\n=== Summary ===');
-    console.log('Bitcoin:', results.bitcoinSummary);
-    console.log('Ethereum:', results.ethereumSummary);
-    console.log('Solana:', results.solanaSummary);
+    // Log summary
+    console.log('\n========== Summary ==========');
+    console.log('Bitcoin:', results.bitcoinSummary || 'No data');
+    console.log('Ethereum:', results.ethereumSummary || 'No data');
+    console.log('Solana:', results.solanaSummary || 'No data');
 }
 
 main().catch(console.error);
