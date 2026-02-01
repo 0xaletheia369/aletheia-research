@@ -4784,7 +4784,7 @@
             const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${FRED_API_KEY}&file_type=json&observation_start=${startDate}&observation_end=${endDate}`;
 
             try {
-                const response = await fetch(url);
+                const response = await fetch(proxyUrlCodeTabs(url));
                 if (!response.ok) throw new Error(`FRED API error: ${response.status}`);
                 const json = await response.json();
 
