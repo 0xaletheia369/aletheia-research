@@ -65,13 +65,25 @@ export default {
       const rawData = await apifyResponse.json();
 
       // Transform to our format
-      const trends = transformApifyData(rawData);
+      let trends = transformApifyData(rawData);
+      let source = 'apify';
+
+      // If we got too few results, merge with fallback data
+      if (trends.length < 5) {
+        console.log(`Only got ${trends.length} trends from Apify, merging with fallback`);
+        const fallback = getFallbackTrends();
+        // Add Apify trends first, then fill with fallback (avoiding duplicates)
+        const apifyHashtags = new Set(trends.map(t => t.hashtag.toLowerCase()));
+        const uniqueFallback = fallback.filter(t => !apifyHashtags.has(t.hashtag.toLowerCase()));
+        trends = [...trends, ...uniqueFallback].slice(0, 30);
+        source = 'apify+fallback';
+      }
 
       // Create response
       const responseData = {
         success: true,
         trends: trends,
-        source: 'apify',
+        source: source,
         timestamp: new Date().toISOString()
       };
 
