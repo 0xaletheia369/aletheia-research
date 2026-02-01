@@ -4,7 +4,8 @@ const path = require('path');
 
 const FARSIDE_URLS = {
     bitcoin: 'https://farside.co.uk/bitcoin-etf-flow-all-data/',
-    ethereum: 'https://farside.co.uk/ethereum-etf-flow-all-data/'
+    ethereum: 'https://farside.co.uk/ethereum-etf-flow-all-data/',
+    solana: 'https://farside.co.uk/sol/'
 };
 
 async function scrapeETFData(page, url, type) {
@@ -77,7 +78,8 @@ async function main() {
     const results = {
         lastUpdated: new Date().toISOString(),
         bitcoin: null,
-        ethereum: null
+        ethereum: null,
+        solana: null
     };
 
     try {
@@ -91,6 +93,13 @@ async function main() {
         // Scrape Ethereum ETF data
         results.ethereum = await scrapeETFData(page, FARSIDE_URLS.ethereum, 'Ethereum');
         console.log(`Ethereum: ${results.ethereum?.records?.length || 0} records`);
+
+        // Small delay between requests
+        await new Promise(r => setTimeout(r, 2000));
+
+        // Scrape Solana ETF data
+        results.solana = await scrapeETFData(page, FARSIDE_URLS.solana, 'Solana');
+        console.log(`Solana: ${results.solana?.records?.length || 0} records`);
 
     } catch (error) {
         console.error('Error scraping:', error.message);
@@ -148,6 +157,30 @@ async function main() {
         }
     }
 
+    if (results.solana?.records) {
+        const solRecords = results.solana.records;
+        const totalHeader = results.solana.headers.find(h => h.toLowerCase().includes('total'));
+
+        if (totalHeader && solRecords.length > 0) {
+            const last7Days = solRecords.slice(0, 7);
+            let weeklyFlow = 0;
+
+            last7Days.forEach(record => {
+                const val = record[totalHeader]?.replace(/[,$]/g, '');
+                if (val && !isNaN(parseFloat(val))) {
+                    weeklyFlow += parseFloat(val);
+                }
+            });
+
+            results.solanaSummary = {
+                latestDate: solRecords[0]?.[results.solana.headers[0]],
+                latestFlow: solRecords[0]?.[totalHeader],
+                weeklyFlow: weeklyFlow.toFixed(1),
+                totalRecords: solRecords.length
+            };
+        }
+    }
+
     // Save to JSON file
     const outputPath = path.join(__dirname, '..', 'docs', 'data', 'etf-flows.json');
     fs.writeFileSync(outputPath, JSON.stringify(results, null, 2));
@@ -157,6 +190,7 @@ async function main() {
     console.log('\n=== Summary ===');
     console.log('Bitcoin:', results.bitcoinSummary);
     console.log('Ethereum:', results.ethereumSummary);
+    console.log('Solana:', results.solanaSummary);
 }
 
 main().catch(console.error);

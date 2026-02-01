@@ -154,10 +154,16 @@
 
         .etf-summary-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .etf-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .etf-summary-card {
@@ -1099,6 +1105,8 @@
                         <button class="chart-tab active" data-etf-chart="bitcoin">Bitcoin ETFs</button>
                         <span class="chart-tab-divider">|</span>
                         <button class="chart-tab" data-etf-chart="ethereum">Ethereum ETFs</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-etf-chart="solana">Solana ETFs</button>
                     </div>
                     <p class="chart-subtitle" id="etfChartSubtitle">Daily net flows for US spot Bitcoin ETFs</p>
                 </div>
@@ -3794,6 +3802,7 @@
         function renderEtfSummary(data) {
             const btcSummary = data.bitcoinSummary;
             const ethSummary = data.ethereumSummary;
+            const solSummary = data.solanaSummary;
             const lastUpdated = new Date(data.lastUpdated).toLocaleDateString('en-GB', {
                 day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
@@ -3838,6 +3847,25 @@
                             <span class="etf-stat-value">${ethSummary?.latestDate || 'N/A'}</span>
                         </div>
                     </div>
+                    <div class="etf-summary-card">
+                        <h3>Solana ETFs</h3>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">Latest Daily Flow</span>
+                            <span class="etf-stat-value ${parseFloat(solSummary?.latestFlow?.replace(/[,$]/g, '') || 0) >= 0 ? 'positive' : 'negative'}">
+                                $${solSummary?.latestFlow || 'N/A'}M
+                            </span>
+                        </div>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">7-Day Net Flow</span>
+                            <span class="etf-stat-value ${parseFloat(solSummary?.weeklyFlow || 0) >= 0 ? 'positive' : 'negative'}">
+                                $${formatSwiss(parseFloat(solSummary?.weeklyFlow || 0), 1)}M
+                            </span>
+                        </div>
+                        <div class="etf-stat">
+                            <span class="etf-stat-label">Last Date</span>
+                            <span class="etf-stat-value">${solSummary?.latestDate || 'N/A'}</span>
+                        </div>
+                    </div>
                 </div>
                 <p class="etf-last-updated">Last updated: ${lastUpdated}</p>
             `;
@@ -3846,7 +3874,7 @@
 
         function renderEtfDashboard(data) {
             const type = currentEtfChartType;
-            const etfInfo = type === 'bitcoin' ? data.bitcoin : data.ethereum;
+            const etfInfo = type === 'bitcoin' ? data.bitcoin : (type === 'ethereum' ? data.ethereum : data.solana);
 
             if (!etfInfo || !etfInfo.headers || !etfInfo.records) {
                 document.getElementById('etfDashboard').innerHTML = '<p>No ETF breakdown data available.</p>';
@@ -3889,7 +3917,7 @@
             currentEtfChartDays = days;
             currentEtfChartType = type;
 
-            const etfInfo = type === 'bitcoin' ? etfData.bitcoin : etfData.ethereum;
+            const etfInfo = type === 'bitcoin' ? etfData.bitcoin : (type === 'ethereum' ? etfData.ethereum : etfData.solana);
 
             if (!etfInfo || !etfInfo.records) {
                 console.error('No ETF records available');
@@ -3898,7 +3926,8 @@
 
             // Update subtitle
             const subtitleEl = document.getElementById('etfChartSubtitle');
-            subtitleEl.textContent = `Daily net flows for US spot ${type === 'bitcoin' ? 'Bitcoin' : 'Ethereum'} ETFs`;
+            const typeName = type === 'bitcoin' ? 'Bitcoin' : (type === 'ethereum' ? 'Ethereum' : 'Solana');
+            subtitleEl.textContent = `Daily net flows for US spot ${typeName} ETFs`;
 
             // Get records for the time period
             const records = etfInfo.records.slice(0, days).reverse();
