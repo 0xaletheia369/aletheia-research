@@ -63,20 +63,33 @@ async function scrapeETFData(page, url, type) {
             const headers = [];
             const records = [];
 
-            // Get headers from first row
-            const headerCells = rows[0]?.querySelectorAll('th, td');
+            // Find header row (first row with th elements, or first row)
+            let headerRowIndex = 0;
+            for (let i = 0; i < Math.min(3, rows.length); i++) {
+                if (rows[i].querySelectorAll('th').length > 0) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+
+            // Get headers
+            const headerCells = rows[headerRowIndex]?.querySelectorAll('th, td');
             headerCells?.forEach(cell => {
                 headers.push(cell.textContent.trim());
             });
 
-            console.log('Found headers:', headers.length);
-
             // Get data from remaining rows
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].querySelectorAll('td');
+            for (let i = headerRowIndex + 1; i < rows.length; i++) {
+                // Try td first, then th (some tables use th for first column)
+                let cells = rows[i].querySelectorAll('td');
+                if (cells.length === 0) {
+                    cells = rows[i].querySelectorAll('th, td');
+                }
                 if (cells.length === 0) continue;
 
                 const record = {};
+                let hasData = false;
+
                 cells.forEach((cell, index) => {
                     const header = headers[index] || `col${index}`;
                     let value = cell.textContent.trim();
@@ -86,19 +99,34 @@ async function scrapeETFData(page, url, type) {
                         value = '-' + value.slice(1, -1);
                     }
 
+                    // Check if this looks like actual data (not empty or just whitespace)
+                    if (value && value.length > 0 && value !== '-') {
+                        hasData = true;
+                    }
+
                     record[header] = value;
                 });
 
-                // Only add if we have a date (first column should have content)
-                if (record[headers[0]] && record[headers[0]].length > 0) {
+                // Only add if we have actual data
+                if (hasData && record[headers[0]] && record[headers[0]].length > 0) {
                     records.push(record);
                 }
             }
 
-            return { headers, records };
+            return { headers, records, debug: { totalRows: rows.length, headerRowIndex } };
         });
 
         console.log(`Found ${data?.records?.length || 0} records with ${data?.headers?.length || 0} columns`);
+        if (data?.debug) {
+            console.log(`Debug: totalRows=${data.debug.totalRows}, headerRowIndex=${data.debug.headerRowIndex}`);
+        }
+        if (data?.headers) {
+            console.log(`Headers: ${data.headers.slice(0, 5).join(', ')}...`);
+        }
+        if (data?.records?.length === 0 && data?.debug?.totalRows > 1) {
+            // Log first few rows for debugging
+            console.log('Warning: Table has rows but no records parsed');
+        }
         return data;
 
     } catch (error) {
