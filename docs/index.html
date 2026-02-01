@@ -2300,10 +2300,14 @@
                     console.log('CoinGecko perp response status:', response.status);
                     if (response.ok) {
                         const data = await response.json();
-                        console.log('CoinGecko perp data received:', data.length, 'coins');
-                        data.forEach(coin => {
-                            coinDataMap[coin.id] = coin;
-                        });
+                        if (Array.isArray(data)) {
+                            console.log('CoinGecko perp data received:', data.length, 'coins');
+                            data.forEach(coin => {
+                                coinDataMap[coin.id] = coin;
+                            });
+                        } else {
+                            console.error('CoinGecko perp data is not an array:', typeof data);
+                        }
                     } else {
                         console.error('CoinGecko perp response not OK:', response.status);
                     }
