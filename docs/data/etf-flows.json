@@ -1,10 +1,11 @@
 {
-  "lastUpdated": "2026-02-01T00:56:56.597Z",
+  "lastUpdated": "2026-02-01T01:05:23.036Z",
   "bitcoin": {
     "headers": [
       "Fund\nETF Flows\n\n\tBitcoin\n\tEthereum\n\tSolana\n\n\nBasis\nBooks\nAbout\nLogin"
     ],
     "records": []
   },
-  "ethereum": null
+  "ethereum": null,
+  "solana": null
 }
