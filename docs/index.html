@@ -1105,8 +1105,6 @@
                         <button class="chart-tab active" data-etf-chart="total">Total</button>
                         <span class="chart-tab-divider">|</span>
                         <button class="chart-tab" data-etf-chart="flow-mcap">Flow to Market Cap</button>
-                        <span class="chart-tab-divider">|</span>
-                        <button class="chart-tab" data-etf-chart="aum-mcap">AUM to Market Cap</button>
                     </div>
                     <p class="chart-subtitle" id="etfChartSubtitle">Daily ETF flows by asset ($M)</p>
                 </div>
@@ -1121,13 +1119,6 @@
                 <canvas id="etfChart"></canvas>
             </div>
             <p class="chart-data-source">Data: Farside Investors (updated daily via GitHub Actions)</p>
-        </div>
-
-        <div class="etf-summary" id="etfSummary">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p>Loading ETF data...</p>
-            </div>
         </div>
     </div>
 
@@ -3775,14 +3766,29 @@
 
         async function fetchEtfMarketCaps() {
             try {
-                const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana';
-                const response = await fetchCoinGecko(url);
-                const data = await response.json();
-                etfMarketCaps = {
-                    bitcoin: data.find(c => c.id === 'bitcoin')?.market_cap,
-                    ethereum: data.find(c => c.id === 'ethereum')?.market_cap,
-                    solana: data.find(c => c.id === 'solana')?.market_cap
-                };
+                // Fetch historical market cap data for each coin (last 365 days)
+                const coins = ['bitcoin', 'ethereum', 'solana'];
+                const results = {};
+
+                for (const coin of coins) {
+                    const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=365`;
+                    const response = await fetchCoinGecko(url);
+                    const data = await response.json();
+
+                    // Convert to date -> market_cap map (using date string as key)
+                    const mcapMap = new Map();
+                    if (data.market_caps) {
+                        data.market_caps.forEach(([timestamp, mcap]) => {
+                            const date = new Date(timestamp);
+                            // Use ISO date string (YYYY-MM-DD) as key for consistent matching
+                            const dateKey = date.toISOString().split('T')[0];
+                            mcapMap.set(dateKey, mcap);
+                        });
+                    }
+                    results[coin] = mcapMap;
+                }
+
+                etfMarketCaps = results;
                 return etfMarketCaps;
             } catch (error) {
                 console.error('Error fetching market caps:', error);
@@ -3793,13 +3799,6 @@
         async function initEtfDashboard() {
             const data = await fetchEtfData();
             if (!data || !data.lastUpdated) {
-                document.getElementById('etfSummary').innerHTML = `
-                    <div class="coming-soon">
-                        <h2>ETF Data Not Available</h2>
-                        <p>Data will be available after the first GitHub Actions scrape runs.</p>
-                        <p>You can trigger it manually in the Actions tab of your repository.</p>
-                    </div>
-                `;
                 return;
             }
 
@@ -3807,81 +3806,7 @@
             fetchEtfMarketCaps();
 
             updateEtfChart(currentEtfChartDays, currentEtfChartType);
-            renderEtfSummary(data);
             setupEtfEventListeners();
-        }
-
-        function renderEtfSummary(data) {
-            const btcSummary = data.bitcoinSummary;
-            const ethSummary = data.ethereumSummary;
-            const solSummary = data.solanaSummary;
-            const lastUpdated = new Date(data.lastUpdated).toLocaleDateString('en-GB', {
-                day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-            });
-
-            let html = `
-                <div class="etf-summary-grid">
-                    <div class="etf-summary-card">
-                        <h3>Bitcoin ETFs</h3>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">Latest Daily Flow</span>
-                            <span class="etf-stat-value ${parseFloat(btcSummary?.latestFlow?.replace(/[,$]/g, '') || 0) >= 0 ? 'positive' : 'negative'}">
-                                $${btcSummary?.latestFlow || 'N/A'}M
-                            </span>
-                        </div>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">7-Day Net Flow</span>
-                            <span class="etf-stat-value ${parseFloat(btcSummary?.weeklyFlow || 0) >= 0 ? 'positive' : 'negative'}">
-                                $${formatSwiss(parseFloat(btcSummary?.weeklyFlow || 0), 1)}M
-                            </span>
-                        </div>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">Last Date</span>
-                            <span class="etf-stat-value">${btcSummary?.latestDate || 'N/A'}</span>
-                        </div>
-                    </div>
-                    <div class="etf-summary-card">
-                        <h3>Ethereum ETFs</h3>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">Latest Daily Flow</span>
-                            <span class="etf-stat-value ${parseFloat(ethSummary?.latestFlow?.replace(/[,$]/g, '') || 0) >= 0 ? 'positive' : 'negative'}">
-                                $${ethSummary?.latestFlow || 'N/A'}M
-                            </span>
-                        </div>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">7-Day Net Flow</span>
-                            <span class="etf-stat-value ${parseFloat(ethSummary?.weeklyFlow || 0) >= 0 ? 'positive' : 'negative'}">
-                                $${formatSwiss(parseFloat(ethSummary?.weeklyFlow || 0), 1)}M
-                            </span>
-                        </div>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">Last Date</span>
-                            <span class="etf-stat-value">${ethSummary?.latestDate || 'N/A'}</span>
-                        </div>
-                    </div>
-                    <div class="etf-summary-card">
-                        <h3>Solana ETFs</h3>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">Latest Daily Flow</span>
-                            <span class="etf-stat-value ${parseFloat(solSummary?.latestFlow?.replace(/[,$]/g, '') || 0) >= 0 ? 'positive' : 'negative'}">
-                                $${solSummary?.latestFlow || 'N/A'}M
-                            </span>
-                        </div>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">7-Day Net Flow</span>
-                            <span class="etf-stat-value ${parseFloat(solSummary?.weeklyFlow || 0) >= 0 ? 'positive' : 'negative'}">
-                                $${formatSwiss(parseFloat(solSummary?.weeklyFlow || 0), 1)}M
-                            </span>
-                        </div>
-                        <div class="etf-stat">
-                            <span class="etf-stat-label">Last Date</span>
-                            <span class="etf-stat-value">${solSummary?.latestDate || 'N/A'}</span>
-                        </div>
-                    </div>
-                </div>
-                <p class="etf-last-updated">Last updated: ${lastUpdated}</p>
-            `;
-            document.getElementById('etfSummary').innerHTML = html;
         }
 
         function getEtfFlowData(etfInfo, days) {
@@ -3909,23 +3834,20 @@
             const solMap = new Map(solData.labels.map((d, i) => [d, solData.values[i]]));
 
             // Align all datasets to the same dates and format labels
+            // Also create ISO date keys for market cap lookup
             const labels = sortedDates.map(d => {
                 const date = new Date(d);
                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+            const dateKeys = sortedDates.map(d => {
+                const date = new Date(d);
+                return date.toISOString().split('T')[0]; // YYYY-MM-DD format
             });
             const btcValues = sortedDates.map(d => btcMap.get(d) ?? null);
             const ethValues = sortedDates.map(d => ethMap.get(d) ?? null);
             const solValues = sortedDates.map(d => solMap.get(d) ?? null);
 
-            return { labels, btcValues, ethValues, solValues };
-        }
-
-        function calculateCumulativeAum(values) {
-            let cumulative = 0;
-            return values.map(v => {
-                if (v !== null) cumulative += v;
-                return cumulative;
-            });
+            return { labels, dateKeys, btcValues, ethValues, solValues };
         }
 
         function updateEtfChart(days, type) {
@@ -3996,10 +3918,23 @@
                     return;
                 }
 
-                // Convert flows to % of market cap: (flow_$M * 1e6) / market_cap * 100
-                const btcPct = aligned.btcValues.map(v => v !== null ? (v * 1e6) / etfMarketCaps.bitcoin * 100 : null);
-                const ethPct = aligned.ethValues.map(v => v !== null ? (v * 1e6) / etfMarketCaps.ethereum * 100 : null);
-                const solPct = aligned.solValues.map(v => v !== null ? (v * 1e6) / etfMarketCaps.solana * 100 : null);
+                // Convert flows to % of market cap using historical market cap for each day
+                // (flow_$M * 1e6) / market_cap_on_that_day * 100
+                const btcPct = aligned.btcValues.map((v, i) => {
+                    if (v === null) return null;
+                    const mcap = etfMarketCaps.bitcoin.get(aligned.dateKeys[i]);
+                    return mcap ? (v * 1e6) / mcap * 100 : null;
+                });
+                const ethPct = aligned.ethValues.map((v, i) => {
+                    if (v === null) return null;
+                    const mcap = etfMarketCaps.ethereum.get(aligned.dateKeys[i]);
+                    return mcap ? (v * 1e6) / mcap * 100 : null;
+                });
+                const solPct = aligned.solValues.map((v, i) => {
+                    if (v === null) return null;
+                    const mcap = etfMarketCaps.solana.get(aligned.dateKeys[i]);
+                    return mcap ? (v * 1e6) / mcap * 100 : null;
+                });
 
                 datasets = [
                     {
@@ -4030,62 +3965,6 @@
                     const val = context.raw;
                     if (val === null) return 'N/A';
                     return `${context.dataset.label}: ${val >= 0 ? '+' : ''}${formatSwiss(val, 4)}%`;
-                };
-
-            } else if (type === 'aum-mcap') {
-                subtitleEl.textContent = 'Cumulative AUM as % of market cap';
-                chartType = 'line';
-
-                if (!etfMarketCaps) {
-                    subtitleEl.textContent = 'Loading market cap data...';
-                    fetchEtfMarketCaps().then(() => updateEtfChart(days, type));
-                    return;
-                }
-
-                // Calculate cumulative AUM for each asset
-                const btcAum = calculateCumulativeAum(aligned.btcValues);
-                const ethAum = calculateCumulativeAum(aligned.ethValues);
-                const solAum = calculateCumulativeAum(aligned.solValues);
-
-                // Convert to % of market cap
-                const btcPct = btcAum.map(v => (v * 1e6) / etfMarketCaps.bitcoin * 100);
-                const ethPct = ethAum.map(v => (v * 1e6) / etfMarketCaps.ethereum * 100);
-                const solPct = solAum.map(v => (v * 1e6) / etfMarketCaps.solana * 100);
-
-                datasets = [
-                    {
-                        label: 'BTC',
-                        data: btcPct,
-                        borderColor: btcColor,
-                        backgroundColor: btcColor + '33',
-                        fill: false,
-                        tension: 0.3,
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'ETH',
-                        data: ethPct,
-                        borderColor: ethColor,
-                        backgroundColor: ethColor + '33',
-                        fill: false,
-                        tension: 0.3,
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'SOL',
-                        data: solPct,
-                        borderColor: solColor,
-                        backgroundColor: solColor + '33',
-                        fill: false,
-                        tension: 0.3,
-                        pointRadius: 0
-                    }
-                ];
-
-                yAxisCallback = (value) => formatSwiss(value, 2) + '%';
-                tooltipCallback = (context) => {
-                    const val = context.raw;
-                    return `${context.dataset.label}: ${formatSwiss(val, 2)}%`;
                 };
             }
 
