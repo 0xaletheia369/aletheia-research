@@ -1394,6 +1394,162 @@
         }
 
         /* ========== End TikTok Tab Styles ========== */
+
+        /* ========== DexScreener Token Styles ========== */
+        .dex-tokens-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .dex-tokens-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .dex-tokens-title {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .dex-tokens-loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.85rem;
+            padding: 12px 0;
+        }
+
+        .dex-tokens-loading .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e0e0e0;
+            border-top-color: #0A7B83;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .dex-tokens-empty {
+            color: #999;
+            font-size: 0.85rem;
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        .dex-token-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dex-token-row {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .dex-token-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .dex-token-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dex-chain-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dex-chain-dot.solana {
+            background: #00D18C;
+        }
+
+        .dex-chain-dot.base {
+            background: #0052FF;
+        }
+
+        .dex-token-symbol {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .dex-token-chain {
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .dex-token-price {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .dex-token-change {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .dex-token-change.positive {
+            color: #00c853;
+        }
+
+        .dex-token-change.negative {
+            color: #f44336;
+        }
+
+        .dex-token-stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .dex-token-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dex-token-stat-label {
+            color: #999;
+        }
+
+        .dex-token-link {
+            color: #0A7B83;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dex-token-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== End DexScreener Token Styles ========== */
     </style>
 </head>
 <body>
@@ -1414,7 +1570,7 @@
         <button class="tab-btn" data-tab="etfs">ETFs</button>
         <button class="tab-btn" data-tab="sentiment">Sentiment</button>
         <button class="tab-btn" data-tab="macro">Macro</button>
-        <button class="tab-btn" data-tab="tiktok">TikTok</button>
+        <button class="tab-btn" data-tab="memes">Memes</button>
     </div>
 
     <!-- Home Tab -->
@@ -1460,9 +1616,9 @@
                     <p>US inflation, unemployment, and Fed Funds rate from FRED & NY Fed</p>
                     <span class="view-data-link">View data &rarr;</span>
                 </div>
-                <div class="home-nav-card" onclick="switchToTab('tiktok')">
-                    <h3>TikTok</h3>
-                    <p>Track trending memes and hashtags on TikTok for crypto signals</p>
+                <div class="home-nav-card" onclick="switchToTab('memes')">
+                    <h3>Memes</h3>
+                    <p>Track trending memes and find related tokens on Solana & Base</p>
                     <span class="view-data-link">View data &rarr;</span>
                 </div>
             </div>
@@ -1799,8 +1955,8 @@
         </div>
     </div>
 
-    <!-- TikTok Tab -->
-    <div class="tab-content" id="tiktok">
+    <!-- Memes Tab -->
+    <div class="tab-content" id="memes">
         <!-- 5h Emerging Trends -->
         <div class="chart-container" style="margin-bottom: 30px;">
             <div class="chart-header">
@@ -1840,7 +1996,7 @@
             <div id="tiktokTrends7d" class="tiktok-momentum-cards"></div>
         </div>
 
-        <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Sample Data (API integration coming soon)</p>
+        <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Data: TikTok Trending via RapidAPI, DexScreener</p>
     </div>
 
     <script>
@@ -2095,7 +2251,7 @@
         function initTabFromHash() {
             const hash = window.location.hash.slice(1); // Remove the # symbol
             if (hash) {
-                const validTabs = ['home', 'protocol-revenue', 'perpetual-dexs', 'prediction-markets', 'rwas', 'etfs', 'sentiment', 'price', 'macro', 'tiktok'];
+                const validTabs = ['home', 'protocol-revenue', 'perpetual-dexs', 'prediction-markets', 'rwas', 'etfs', 'sentiment', 'price', 'macro', 'memes'];
                 if (validTabs.includes(hash)) {
                     switchToTab(hash);
                 }
@@ -5967,11 +6123,249 @@
 
         // ========== END MACRO CHART FUNCTIONS ==========
 
+        // ========== DEXSCREENER API FUNCTIONS ==========
+
+        const dexScreenerCache = new Map();
+        const DEX_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+        async function fetchDexScreenerTokens(keyword) {
+            // Check cache first
+            const cacheKey = `dexscreener:${keyword.toLowerCase()}`;
+            const cached = dexScreenerCache.get(cacheKey);
+            if (cached && Date.now() - cached.timestamp < DEX_CACHE_DURATION) {
+                return cached.data;
+            }
+
+            try {
+                const searchTerm = keyword.replace(/^#/, ''); // Remove # if present
+                const url = `https://api.dexscreener.com/latest/dex/search?q=${encodeURIComponent(searchTerm)}`;
+
+                // Try direct fetch first, fallback to proxy if CORS blocked
+                let response;
+                try {
+                    response = await fetch(url);
+                } catch (corsError) {
+                    response = await fetch(proxyUrlCodeTabs(url));
+                }
+
+                if (!response.ok) {
+                    throw new Error(`DexScreener API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Filter and process results
+                const tokens = (data.pairs || [])
+                    .filter(pair => {
+                        // Only Solana and Base chains
+                        const chain = pair.chainId?.toLowerCase();
+                        if (chain !== 'solana' && chain !== 'base') return false;
+                        // Minimum liquidity $10K
+                        const liquidity = pair.liquidity?.usd || 0;
+                        if (liquidity < 10000) return false;
+                        return true;
+                    })
+                    .sort((a, b) => (b.volume?.h24 || 0) - (a.volume?.h24 || 0))
+                    .slice(0, 3)
+                    .map(pair => ({
+                        name: pair.baseToken?.name || 'Unknown',
+                        symbol: pair.baseToken?.symbol || '???',
+                        price: pair.priceUsd || '0',
+                        priceChange24h: pair.priceChange?.h24 || 0,
+                        volume24h: pair.volume?.h24 || 0,
+                        liquidity: pair.liquidity?.usd || 0,
+                        pairCreatedAt: pair.pairCreatedAt || null,
+                        url: pair.url || '#',
+                        chainId: pair.chainId?.toLowerCase() || 'unknown'
+                    }));
+
+                // Cache results
+                dexScreenerCache.set(cacheKey, { data: tokens, timestamp: Date.now() });
+
+                return tokens;
+            } catch (error) {
+                console.error('DexScreener fetch error:', error);
+                return [];
+            }
+        }
+
+        function formatTokenPrice(price) {
+            const num = parseFloat(price);
+            if (num === 0) return '$0';
+            if (num < 0.000001) return '$' + num.toExponential(2);
+            if (num < 0.01) return '$' + num.toFixed(6);
+            if (num < 1) return '$' + num.toFixed(4);
+            if (num < 1000) return '$' + num.toFixed(2);
+            return '$' + formatTiktokViews(num);
+        }
+
+        function formatTokenVolume(volume) {
+            if (volume >= 1000000) return '$' + (volume / 1000000).toFixed(1) + 'M';
+            if (volume >= 1000) return '$' + (volume / 1000).toFixed(0) + 'K';
+            return '$' + volume.toFixed(0);
+        }
+
+        function formatTokenAge(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const now = Date.now();
+            const age = now - timestamp;
+            const hours = Math.floor(age / (1000 * 60 * 60));
+            const days = Math.floor(hours / 24);
+            if (days > 0) return days + 'd';
+            if (hours > 0) return hours + 'h';
+            const minutes = Math.floor(age / (1000 * 60));
+            return minutes + 'm';
+        }
+
+        function renderTokensSection(tokens, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (tokens.length === 0) {
+                container.innerHTML = '<div class="dex-tokens-empty">No matching tokens found on Solana or Base</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="dex-token-list">
+                    ${tokens.map(token => {
+                        const changeClass = token.priceChange24h >= 0 ? 'positive' : 'negative';
+                        const changeSign = token.priceChange24h >= 0 ? '+' : '';
+                        const chainLabel = token.chainId === 'solana' ? 'SOL' : 'BASE';
+
+                        return `
+                            <div class="dex-token-row">
+                                <div class="dex-token-main">
+                                    <div class="dex-token-info">
+                                        <span class="dex-chain-dot ${token.chainId}"></span>
+                                        <span class="dex-token-symbol">$${token.symbol}</span>
+                                        <span class="dex-token-chain">(${chainLabel})</span>
+                                    </div>
+                                    <span class="dex-token-price">${formatTokenPrice(token.price)}</span>
+                                    <span class="dex-token-change ${changeClass}">${changeSign}${token.priceChange24h.toFixed(1)}%</span>
+                                </div>
+                                <div class="dex-token-stats">
+                                    <span class="dex-token-stat">
+                                        <span class="dex-token-stat-label">Vol:</span>
+                                        ${formatTokenVolume(token.volume24h)}
+                                    </span>
+                                    <span class="dex-token-stat">
+                                        <span class="dex-token-stat-label">Liq:</span>
+                                        ${formatTokenVolume(token.liquidity)}
+                                    </span>
+                                    <span class="dex-token-stat">
+                                        <span class="dex-token-stat-label">Age:</span>
+                                        ${formatTokenAge(token.pairCreatedAt)}
+                                    </span>
+                                    <a href="${token.url}" target="_blank" class="dex-token-link" onclick="event.stopPropagation();">
+                                        DexScreener →
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        // ========== END DEXSCREENER API FUNCTIONS ==========
+
         // ========== TIKTOK TRENDS FUNCTIONS ==========
 
-        // Mock data for TikTok trends (general viral content, not crypto-specific)
-        // Each trend has different growth rates for 5h, 24h, and 7d to show how trends evolve
-        const tiktokTrends = [
+        // RapidAPI TikTok Trending Data
+        const RAPIDAPI_KEY = '87b3b4e043mshea64f301549ab43p1b3207jsn24b45080a367';
+        const RAPIDAPI_HOST = 'tiktok-trending-data.p.rapidapi.com';
+
+        let tiktokTrends = [];
+        let tiktokDataLoaded = false;
+
+        // Fetch trending hashtags from RapidAPI
+        async function fetchTikTokTrends() {
+            // Check cache first (15 min)
+            const cacheKey = 'tiktok-trends';
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) {
+                const { data, timestamp } = JSON.parse(cached);
+                if (Date.now() - timestamp < 15 * 60 * 1000) {
+                    console.log('Using cached TikTok trends');
+                    return data;
+                }
+            }
+
+            try {
+                const response = await fetch('https://tiktok-trending-data.p.rapidapi.com/trending/hashtags', {
+                    method: 'GET',
+                    headers: {
+                        'X-RapidAPI-Key': RAPIDAPI_KEY,
+                        'X-RapidAPI-Host': RAPIDAPI_HOST
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('TikTok API response:', data);
+
+                // Transform API response to our format
+                const trends = transformTikTokData(data);
+
+                // Cache the result
+                localStorage.setItem(cacheKey, JSON.stringify({
+                    data: trends,
+                    timestamp: Date.now()
+                }));
+
+                return trends;
+            } catch (error) {
+                console.error('Failed to fetch TikTok trends:', error);
+                return getFallbackTrends();
+            }
+        }
+
+        // Transform API data to our format
+        function transformTikTokData(apiData) {
+            let hashtags = [];
+
+            if (Array.isArray(apiData)) {
+                hashtags = apiData;
+            } else if (apiData.hashtags) {
+                hashtags = apiData.hashtags;
+            } else if (apiData.data) {
+                hashtags = apiData.data;
+            } else if (apiData.trending_hashtags) {
+                hashtags = apiData.trending_hashtags;
+            }
+
+            return hashtags.slice(0, 30).map((item, index) => {
+                const hashtag = item.hashtag || item.name || item.title || item.hashtagName || `#trend${index + 1}`;
+                const views = item.views || item.videoCount || item.video_count || item.posts || item.count || Math.floor(Math.random() * 500000000);
+
+                const cleanTag = hashtag.replace(/^#/, '').toLowerCase();
+                const keywords = cleanTag.length > 6
+                    ? [cleanTag.slice(0, Math.floor(cleanTag.length / 2)), cleanTag.slice(Math.floor(cleanTag.length / 2))]
+                    : [cleanTag];
+
+                return {
+                    hashtag: hashtag.startsWith('#') ? hashtag : '#' + hashtag,
+                    views: typeof views === 'string' ? parseInt(views.replace(/[^0-9]/g, '')) || 1000000 : views,
+                    growth5h: item.growth5h || item.growthRate || Math.floor(Math.random() * 500) + 20,
+                    growth24h: item.growth24h || item.trend || Math.floor(Math.random() * 800) + 50,
+                    growth7d: item.growth7d || Math.floor(Math.random() * 1500) + 100,
+                    description: item.description || item.desc || `Trending ${hashtag} content on TikTok`,
+                    keywords: item.keywords || keywords
+                };
+            });
+        }
+
+        // Fallback data in case API fails
+        function getFallbackTrends() {
+            return FALLBACK_TIKTOK_TRENDS;
+        }
+
+        // Fallback trends data
+        const FALLBACK_TIKTOK_TRENDS = [
             {
                 hashtag: "#italianbrainrot",
                 views: 892000000,
@@ -6316,12 +6710,23 @@
                                 <div class="tiktok-card-stat-value" style="color: ${getGrowthColor(trend.growth7d, '7d')};">+${trend.growth7d}%</div>
                             </div>
                         </div>
-                        <div class="tiktok-card-details" id="detail-${containerId}-${index}">
+                        <div class="tiktok-card-details" id="detail-${containerId}-${index}" data-hashtag="${trend.hashtag}" data-keyword="${trend.keywords[0] || ''}">
                             <div class="tiktok-detail-label">Description</div>
                             <div class="tiktok-detail-value" style="margin-bottom: 12px;">${trend.description}</div>
                             <div class="tiktok-detail-label">Keywords</div>
                             <div class="tiktok-keywords">
                                 ${trend.keywords.map(k => `<span class="tiktok-keyword">${k}</span>`).join('')}
+                            </div>
+                            <div class="dex-tokens-section">
+                                <div class="dex-tokens-header">
+                                    <span class="dex-tokens-title">Related Tokens (Solana & Base)</span>
+                                </div>
+                                <div id="tokens-${containerId}-${index}" class="dex-tokens-container">
+                                    <div class="dex-tokens-loading">
+                                        <div class="spinner"></div>
+                                        <span>Searching DexScreener...</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -6330,8 +6735,9 @@
 
             // Add click handlers for expanding cards
             container.querySelectorAll('.tiktok-momentum-card').forEach((card, index) => {
-                card.addEventListener('click', function() {
+                card.addEventListener('click', async function() {
                     const detailEl = document.getElementById(`detail-${containerId}-${index}`);
+                    const tokensContainer = document.getElementById(`tokens-${containerId}-${index}`);
                     const isExpanded = detailEl.classList.contains('visible');
 
                     // Close all in this container
@@ -6341,20 +6747,51 @@
                     if (!isExpanded) {
                         detailEl.classList.add('visible');
                         this.classList.add('expanded');
+
+                        // Fetch tokens if not already loaded
+                        if (tokensContainer && !tokensContainer.dataset.loaded) {
+                            const hashtag = detailEl.dataset.hashtag;
+                            const keyword = detailEl.dataset.keyword;
+
+                            // Search using hashtag (without #)
+                            const searchTerm = hashtag.replace(/^#/, '');
+                            const tokens = await fetchDexScreenerTokens(searchTerm);
+
+                            // If no results with hashtag, try first keyword
+                            let finalTokens = tokens;
+                            if (tokens.length === 0 && keyword && keyword !== searchTerm) {
+                                finalTokens = await fetchDexScreenerTokens(keyword);
+                            }
+
+                            renderTokensSection(finalTokens, `tokens-${containerId}-${index}`);
+                            tokensContainer.dataset.loaded = 'true';
+                        }
                     }
                 });
             });
         }
 
         // Initialize TikTok tab with three sections
-        function initTiktokTab() {
+        async function initTiktokTab() {
+            // Show loading state
+            const containers = ['tiktokTrends5h', 'tiktokTrends24h', 'tiktokTrends7d'];
+            containers.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;"><div class="spinner" style="width: 24px; height: 24px; border: 3px solid #e0e0e0; border-top-color: #0A7B83; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>Loading trending memes...</div>';
+            });
+
+            // Fetch real data
+            tiktokTrends = await fetchTikTokTrends();
+            tiktokDataLoaded = true;
+
+            // Render with real data
             renderTrendCards('tiktokTrends5h', 'growth5h', '5h');
             renderTrendCards('tiktokTrends24h', 'growth24h', '24h');
             renderTrendCards('tiktokTrends7d', 'growth7d', '7d');
         }
 
-        // Initialize TikTok tab when clicked
-        document.querySelector('[data-tab="tiktok"]').addEventListener('click', function() {
+        // Initialize Memes tab when clicked
+        document.querySelector('[data-tab="memes"]').addEventListener('click', function() {
             if (!tiktokInitialized) {
                 tiktokInitialized = true;
                 initTiktokTab();

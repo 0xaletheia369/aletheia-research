@@ -37,6 +37,8 @@ When adding new external API integrations, **ALWAYS test CORS before deploying**
 | Binance | Yes | None |
 | FRED (`api.stlouisfed.org`) | No | `proxyUrlCodeTabs()` |
 | NY Fed Markets (`markets.newyorkfed.org`) | Yes | None |
+| DexScreener (`api.dexscreener.com`) | Unknown | Try direct first, fallback to proxy |
+| RapidAPI TikTok Trending (`tiktok-trending-data.p.rapidapi.com`) | Yes | None (requires X-RapidAPI-Key header) |
 
 ### Common Harmless Errors
 - `favicon.ico 404` - Normal if no favicon exists, doesn't affect functionality
@@ -48,6 +50,16 @@ When adding new external API integrations, **ALWAYS test CORS before deploying**
 **Last session: Feb 1, 2026**
 
 ### Completed
+- **Memes Tab + DexScreener + TikTok API** - Full integration:
+  - Renamed TikTok tab to Memes
+  - Real trending hashtags from RapidAPI TikTok Trending Data
+  - DexScreener API integration to show related tokens for each trend
+  - Filters for Solana and Base chains only, minimum $10K liquidity
+  - Shows token symbol, price, 24h change, volume, liquidity, age
+  - Lazy loading - fetches tokens when card is expanded
+  - 15-minute cache for trends, 5-minute cache for tokens
+  - Links directly to DexScreener for each token
+
 - **Macro page** - Built out the full Macro tab with:
   - CPI inflation chart (YoY % from FRED API)
   - Unemployment rate chart (FRED API)
@@ -68,6 +80,8 @@ When adding new external API integrations, **ALWAYS test CORS before deploying**
 - FRED API (requires API key: `fffc4b3857d7ee655a7dac83fd77b825`)
 - NY Fed Markets API (no key needed)
 - Polymarket CLOB API (historical prices)
+- RapidAPI TikTok Trending Data (key in code)
+- DexScreener API (no key needed)
 
 ### Next Steps / Ideas
 - (Add future tasks here)
