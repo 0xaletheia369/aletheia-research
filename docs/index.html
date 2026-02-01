@@ -1129,13 +1129,6 @@
                 <p>Loading ETF data...</p>
             </div>
         </div>
-
-        <div class="dashboard" id="etfDashboard">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p>Loading ETF breakdown...</p>
-            </div>
-        </div>
     </div>
 
     <!-- Sentiment Tab -->
@@ -3807,7 +3800,6 @@
                         <p>You can trigger it manually in the Actions tab of your repository.</p>
                     </div>
                 `;
-                document.getElementById('etfDashboard').innerHTML = '';
                 return;
             }
 
@@ -3816,7 +3808,6 @@
 
             updateEtfChart(currentEtfChartDays, currentEtfChartType);
             renderEtfSummary(data);
-            renderEtfDashboard(data);
             setupEtfEventListeners();
         }
 
@@ -3893,45 +3884,6 @@
             document.getElementById('etfSummary').innerHTML = html;
         }
 
-        function renderEtfDashboard(data) {
-            const type = currentEtfChartType;
-            const etfInfo = type === 'bitcoin' ? data.bitcoin : (type === 'ethereum' ? data.ethereum : data.solana);
-
-            if (!etfInfo || !etfInfo.headers || !etfInfo.records) {
-                document.getElementById('etfDashboard').innerHTML = '<p>No ETF breakdown data available.</p>';
-                return;
-            }
-
-            // Get ETF names from headers (skip first column which is date and last which is Total)
-            const etfNames = etfInfo.headers.slice(1, -1);
-            const latestRecord = etfInfo.records[0];
-
-            let html = '<div class="metrics-grid">';
-
-            etfNames.forEach((etfName, index) => {
-                const flow = latestRecord[etfName] || '0';
-                const flowNum = parseFloat(flow.replace(/[,$]/g, '')) || 0;
-                const isPositive = flowNum >= 0;
-
-                html += `
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <span class="metric-name">${etfName}</span>
-                        </div>
-                        <div class="metric-value ${isPositive ? 'positive' : 'negative'}">
-                            $${formatSwiss(Math.abs(flowNum), 1)}M
-                            <span class="metric-change ${isPositive ? 'positive' : 'negative'}">
-                                ${isPositive ? '▲' : '▼'} ${isPositive ? 'Inflow' : 'Outflow'}
-                            </span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += '</div>';
-            document.getElementById('etfDashboard').innerHTML = html;
-        }
-
         function getEtfFlowData(etfInfo, days) {
             if (!etfInfo || !etfInfo.records) return { labels: [], values: [] };
             const records = etfInfo.records.slice(0, days).reverse();
@@ -3956,8 +3908,11 @@
             const ethMap = new Map(ethData.labels.map((d, i) => [d, ethData.values[i]]));
             const solMap = new Map(solData.labels.map((d, i) => [d, solData.values[i]]));
 
-            // Align all datasets to the same dates
-            const labels = sortedDates;
+            // Align all datasets to the same dates and format labels
+            const labels = sortedDates.map(d => {
+                const date = new Date(d);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
             const btcValues = sortedDates.map(d => btcMap.get(d) ?? null);
             const ethValues = sortedDates.map(d => ethMap.get(d) ?? null);
             const solValues = sortedDates.map(d => solMap.get(d) ?? null);
@@ -4151,23 +4106,33 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
                         legend: {
-                            display: true,
-                            position: 'top',
+                            position: 'right',
+                            align: 'start',
                             labels: {
-                                color: '#888',
                                 usePointStyle: true,
                                 pointStyle: 'rect',
+                                padding: 12,
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                },
+                                boxWidth: 12,
+                                boxHeight: 12,
                                 generateLabels: function(chart) {
                                     return chart.data.datasets.map((dataset, i) => {
                                         const meta = chart.getDatasetMeta(i);
                                         const isHidden = meta.hidden || dataset.hidden;
                                         return {
                                             text: dataset.label,
-                                            fillStyle: isHidden ? '#666666' : dataset.borderColor,
-                                            strokeStyle: isHidden ? '#666666' : dataset.borderColor,
-                                            fontColor: isHidden ? '#666666' : '#888888',
+                                            fillStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            strokeStyle: isHidden ? dataset.backgroundColor + '40' : dataset.backgroundColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
                                             hidden: false,
                                             lineCap: 'round',
                                             lineDash: [],
@@ -4192,40 +4157,56 @@
                             }
                         },
                         tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
                             callbacks: {
                                 label: tooltipCallback
                             }
                         }
                     },
                     scales: {
-                        y: {
-                            stacked: isStacked,
-                            beginAtZero: type !== 'aum-mcap',
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#888',
-                                callback: yAxisCallback
-                            }
-                        },
                         x: {
                             stacked: isStacked,
                             grid: {
                                 display: false
                             },
+                            border: {
+                                display: false
+                            },
                             ticks: {
-                                color: '#888',
-                                maxRotation: 45,
-                                minRotation: 45
+                                color: '#999999',
+                                font: {
+                                    size: 11
+                                },
+                                maxRotation: 0
+                            }
+                        },
+                        y: {
+                            stacked: isStacked,
+                            position: 'left',
+                            grid: {
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#999999',
+                                font: {
+                                    size: 11
+                                },
+                                callback: yAxisCallback
                             }
                         }
                     }
                 }
             });
-
-            // Update dashboard cards
-            renderEtfDashboard(etfData);
         }
 
         function setupEtfEventListeners() {
