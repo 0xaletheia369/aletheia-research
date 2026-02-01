@@ -920,7 +920,6 @@
         <button class="tab-btn" data-tab="rwas">RWAs</button>
         <button class="tab-btn" data-tab="etfs">ETFs</button>
         <button class="tab-btn" data-tab="sentiment">Sentiment</button>
-        <button class="tab-btn" data-tab="price">Price</button>
         <button class="tab-btn" data-tab="macro">Macro</button>
     </div>
 
@@ -957,20 +956,15 @@
                     <p>Track daily ETF flows and market cap ratios for BTC, ETH, and SOL</p>
                     <span class="view-data-link">View data &rarr;</span>
                 </div>
-                <div class="home-nav-card coming-soon-card" onclick="switchToTab('sentiment')">
+                <div class="home-nav-card" onclick="switchToTab('sentiment')">
                     <h3>Sentiment</h3>
-                    <p>Market sentiment analysis</p>
-                    <span class="coming-soon-badge">Coming soon</span>
+                    <p>Fear & Greed Index and ATH predictions from Polymarket</p>
+                    <span class="view-data-link">View data &rarr;</span>
                 </div>
-                <div class="home-nav-card coming-soon-card" onclick="switchToTab('price')">
-                    <h3>Price</h3>
-                    <p>Price charts and technical analysis</p>
-                    <span class="coming-soon-badge">Coming soon</span>
-                </div>
-                <div class="home-nav-card coming-soon-card" onclick="switchToTab('macro')">
+                <div class="home-nav-card" onclick="switchToTab('macro')">
                     <h3>Macro</h3>
-                    <p>Macroeconomic indicators and market context</p>
-                    <span class="coming-soon-badge">Coming soon</span>
+                    <p>US inflation, unemployment, and Fed Funds rate from FRED & NY Fed</p>
+                    <span class="view-data-link">View data &rarr;</span>
                 </div>
             </div>
         </div>
@@ -1208,14 +1202,6 @@
                 </div>
                 <p class="chart-data-source">Data: <a href="https://polymarket.com/event/solana-all-time-high-by" target="_blank" style="color: inherit;">Polymarket</a></p>
             </div>
-        </div>
-    </div>
-
-    <!-- Price Tab -->
-    <div class="tab-content" id="price">
-        <div class="coming-soon">
-            <h2>Price</h2>
-            <p>Coming soon...</p>
         </div>
     </div>
 
