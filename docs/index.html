@@ -3812,19 +3812,19 @@
         }
 
         async function fetchEtfMarketCaps() {
-            try {
-                // Fetch historical market cap data for each coin (last 365 days)
-                const coins = ['bitcoin', 'ethereum', 'solana'];
-                const results = {};
+            // Fetch historical market cap data for each coin (last 365 days)
+            const coins = ['bitcoin', 'ethereum', 'solana'];
+            const results = {};
 
-                for (const coin of coins) {
+            for (const coin of coins) {
+                try {
                     const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=365`;
                     const response = await fetchCoinGecko(url);
                     const data = await response.json();
 
                     // Convert to date -> market_cap map (using date string as key)
                     const mcapMap = new Map();
-                    if (data.market_caps) {
+                    if (data && data.market_caps && Array.isArray(data.market_caps)) {
                         data.market_caps.forEach(([timestamp, mcap]) => {
                             const date = new Date(timestamp);
                             // Use local date components to match ETF data date format
@@ -3834,16 +3834,19 @@
                             const dateKey = `${year}-${month}-${day}`;
                             mcapMap.set(dateKey, mcap);
                         });
+                        console.log(`Loaded ${mcapMap.size} market cap entries for ${coin}`);
+                    } else {
+                        console.warn(`No market cap data for ${coin}:`, data);
                     }
                     results[coin] = mcapMap;
+                } catch (error) {
+                    console.error(`Error fetching market cap for ${coin}:`, error);
+                    results[coin] = new Map(); // Empty map as fallback
                 }
-
-                etfMarketCaps = results;
-                return etfMarketCaps;
-            } catch (error) {
-                console.error('Error fetching market caps:', error);
-                return null;
             }
+
+            etfMarketCaps = results;
+            return etfMarketCaps;
         }
 
         async function initEtfDashboard() {
@@ -3980,6 +3983,14 @@
 
                 // Convert flows to % of market cap using historical market cap for each day
                 // (flow_$M * 1e6) / market_cap_on_that_day * 100
+                // Debug: log sample date keys and available market cap dates
+                if (aligned.dateKeys.length > 0) {
+                    console.log('Sample ETF dateKeys:', aligned.dateKeys.slice(0, 3));
+                    console.log('BTC mcap keys sample:', Array.from(etfMarketCaps.bitcoin?.keys() || []).slice(0, 3));
+                    console.log('ETH mcap keys sample:', Array.from(etfMarketCaps.ethereum?.keys() || []).slice(0, 3));
+                    console.log('SOL mcap keys sample:', Array.from(etfMarketCaps.solana?.keys() || []).slice(0, 3));
+                }
+
                 const btcPct = aligned.btcValues.map((v, i) => {
                     if (v === null) return null;
                     const mcap = etfMarketCaps.bitcoin?.get(aligned.dateKeys[i]);
