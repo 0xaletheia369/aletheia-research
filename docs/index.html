@@ -3924,10 +3924,10 @@
             let datasets = [];
             let yAxisCallback, tooltipCallback;
 
-            // Colors from FT palette: Orange (BTC), Blue (ETH), Teal (SOL)
-            const btcColor = ftColors[2]; // Orange
-            const ethColor = ftColors[3]; // Blue
-            const solColor = ftColors[0]; // Teal
+            // Colors from FT palette (first 3 colors): Teal, Crimson, Orange
+            const btcColor = ftColors[0]; // Teal
+            const ethColor = ftColors[1]; // Crimson
+            const solColor = ftColors[2]; // Orange
 
             if (type === 'total') {
                 subtitleEl.textContent = 'Daily ETF flows by asset ($M)';
