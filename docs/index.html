@@ -1221,9 +1221,74 @@
 
     <!-- Macro Tab -->
     <div class="tab-content" id="macro">
-        <div class="coming-soon">
-            <h2>Macro</h2>
-            <p>Coming soon...</p>
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-macro-chart="combined">Combined</button>
+                        <button class="chart-tab" data-macro-chart="inflation">Inflation (CPI)</button>
+                        <button class="chart-tab" data-macro-chart="unemployment">Unemployment</button>
+                    </div>
+                    <p class="chart-subtitle">US macroeconomic indicators (YoY % change for CPI, rate for unemployment)</p>
+                </div>
+                <div class="time-selector" id="macroTimeSelector">
+                    <button data-years="5">5Y</button>
+                    <button data-years="10" class="active">10Y</button>
+                    <button data-years="20">20Y</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="macroChart"></canvas>
+            </div>
+            <p class="chart-data-source">Data: <a href="https://fred.stlouisfed.org/" target="_blank" style="color: inherit;">FRED (Federal Reserve Economic Data)</a></p>
+        </div>
+
+        <!-- Current Values Cards -->
+        <div style="display: flex; gap: 20px; margin-top: 20px;">
+            <div class="chart-container" style="flex: 1;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Current Inflation</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 20px; text-align: center;">
+                    <div id="currentCpi" style="font-size: 3rem; font-weight: bold; color: #0d6aa8;">--</div>
+                    <div style="color: #666; margin-top: 8px;">YoY CPI Change</div>
+                    <div id="cpiDate" style="color: #999; font-size: 0.85rem; margin-top: 4px;"></div>
+                </div>
+            </div>
+
+            <div class="chart-container" style="flex: 1;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Current Unemployment</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 20px; text-align: center;">
+                    <div id="currentUnemployment" style="font-size: 3rem; font-weight: bold; color: #dc3545;">--</div>
+                    <div style="color: #666; margin-top: 8px;">Unemployment Rate</div>
+                    <div id="unemploymentDate" style="color: #999; font-size: 0.85rem; margin-top: 4px;"></div>
+                </div>
+            </div>
+
+            <div class="chart-container" style="flex: 1;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Fed Funds Rate</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 20px; text-align: center;">
+                    <div id="currentFedRate" style="font-size: 3rem; font-weight: bold; color: #28a745;">--</div>
+                    <div style="color: #666; margin-top: 8px;">Effective Fed Funds Rate</div>
+                    <div id="fedRateDate" style="color: #999; font-size: 0.85rem; margin-top: 4px;"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1253,6 +1318,13 @@
         let solAthChart = null;
         let etfData = null;
         let etfMarketCaps = null;
+        let macroChart = null;
+        let macroChartInitialized = false;
+        let currentMacroYears = 10;
+        let currentMacroChartType = 'combined';
+
+        // FRED API Key - Get your free key at: https://fred.stlouisfed.org/docs/api/api_key.html
+        const FRED_API_KEY = 'fffc4b3857d7ee655a7dac83fd77b825';
 
         // RWA tokens configuration (for dashboard cards below chart)
         const rwaTokens = [
@@ -4692,6 +4764,277 @@
                 });
             });
         }
+
+        // ========== MACRO CHART FUNCTIONS ==========
+
+        // Fetch FRED data for a given series
+        async function fetchFredSeries(seriesId, years = 10) {
+            if (FRED_API_KEY === 'YOUR_FRED_API_KEY_HERE') {
+                console.warn('FRED API key not configured. Get your free key at: https://fred.stlouisfed.org/docs/api/api_key.html');
+                return null;
+            }
+
+            const cacheKey = `fred:${seriesId}:${years}`;
+            const cached = getCachedData(cacheKey);
+            if (cached) return cached;
+
+            const endDate = new Date().toISOString().split('T')[0];
+            const startDate = new Date(Date.now() - years * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${FRED_API_KEY}&file_type=json&observation_start=${startDate}&observation_end=${endDate}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`FRED API error: ${response.status}`);
+                const json = await response.json();
+
+                const result = json.observations
+                    .filter(d => d.value !== '.')
+                    .map(d => ({
+                        date: d.date,
+                        value: parseFloat(d.value)
+                    }));
+
+                setCachedData(cacheKey, result);
+                return result;
+            } catch (e) {
+                console.error(`Failed to fetch FRED series ${seriesId}:`, e);
+                return null;
+            }
+        }
+
+        // Fetch all macro data
+        async function fetchMacroData(years = 10) {
+            const [cpiData, unemploymentData, fedRateData] = await Promise.all([
+                fetchFredSeries('CPIAUCSL', years),      // CPI for All Urban Consumers
+                fetchFredSeries('UNRATE', years),       // Civilian Unemployment Rate
+                fetchFredSeries('FEDFUNDS', years)      // Effective Federal Funds Rate
+            ]);
+
+            // Calculate YoY inflation from CPI
+            let inflationData = null;
+            if (cpiData && cpiData.length > 12) {
+                inflationData = [];
+                for (let i = 12; i < cpiData.length; i++) {
+                    const currentCpi = cpiData[i].value;
+                    const yearAgoCpi = cpiData[i - 12].value;
+                    const yoyChange = ((currentCpi - yearAgoCpi) / yearAgoCpi) * 100;
+                    inflationData.push({
+                        date: cpiData[i].date,
+                        value: yoyChange
+                    });
+                }
+            }
+
+            return { inflationData, unemploymentData, fedRateData };
+        }
+
+        // Render macro chart
+        function renderMacroChart(data, chartType = 'combined') {
+            const ctx = document.getElementById('macroChart').getContext('2d');
+            if (macroChart) macroChart.destroy();
+
+            const { inflationData, unemploymentData, fedRateData } = data;
+
+            if (!inflationData && !unemploymentData) {
+                // Show API key message
+                ctx.font = '16px system-ui';
+                ctx.fillStyle = '#666';
+                ctx.textAlign = 'center';
+                ctx.fillText('Configure your FRED API key to view macro data', ctx.canvas.width / 2, ctx.canvas.height / 2 - 10);
+                ctx.font = '12px system-ui';
+                ctx.fillText('Get your free key at: fred.stlouisfed.org/docs/api/api_key.html', ctx.canvas.width / 2, ctx.canvas.height / 2 + 15);
+                return;
+            }
+
+            const datasets = [];
+            let labels = [];
+
+            if ((chartType === 'combined' || chartType === 'inflation') && inflationData) {
+                labels = inflationData.map(d => d.date);
+                datasets.push({
+                    label: 'Inflation (CPI YoY)',
+                    data: inflationData.map(d => d.value),
+                    borderColor: '#0d6aa8',
+                    backgroundColor: 'rgba(13, 106, 168, 0.1)',
+                    fill: chartType !== 'combined',
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    yAxisID: 'y'
+                });
+            }
+
+            if ((chartType === 'combined' || chartType === 'unemployment') && unemploymentData) {
+                if (labels.length === 0) labels = unemploymentData.map(d => d.date);
+                datasets.push({
+                    label: 'Unemployment Rate',
+                    data: unemploymentData.map(d => d.value),
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    fill: chartType !== 'combined',
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    yAxisID: chartType === 'combined' ? 'y1' : 'y'
+                });
+            }
+
+            const scales = {
+                x: {
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: {
+                        color: '#999999',
+                        font: { size: 11 },
+                        maxRotation: 0,
+                        maxTicksLimit: 12
+                    }
+                },
+                y: {
+                    position: 'left',
+                    grid: {
+                        color: '#f0f0f0',
+                        drawBorder: false
+                    },
+                    border: { display: false },
+                    ticks: {
+                        color: chartType === 'combined' ? '#0d6aa8' : '#999999',
+                        font: { size: 11 },
+                        callback: function(value) {
+                            return value.toFixed(1) + '%';
+                        }
+                    },
+                    title: {
+                        display: chartType === 'combined',
+                        text: 'Inflation (%)',
+                        color: '#0d6aa8'
+                    }
+                }
+            };
+
+            if (chartType === 'combined') {
+                scales.y1 = {
+                    position: 'right',
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: {
+                        color: '#dc3545',
+                        font: { size: 11 },
+                        callback: function(value) {
+                            return value.toFixed(1) + '%';
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Unemployment (%)',
+                        color: '#dc3545'
+                    }
+                };
+            }
+
+            macroChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: chartType === 'combined',
+                            position: 'top',
+                            labels: { color: '#666' }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw.toFixed(2)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales
+                }
+            });
+
+            // Update current value cards
+            if (inflationData && inflationData.length > 0) {
+                const latest = inflationData[inflationData.length - 1];
+                document.getElementById('currentCpi').textContent = latest.value.toFixed(1) + '%';
+                document.getElementById('currentCpi').style.color = latest.value > 3 ? '#dc3545' : latest.value < 2 ? '#28a745' : '#0d6aa8';
+                document.getElementById('cpiDate').textContent = `As of ${latest.date}`;
+            }
+
+            if (unemploymentData && unemploymentData.length > 0) {
+                const latest = unemploymentData[unemploymentData.length - 1];
+                document.getElementById('currentUnemployment').textContent = latest.value.toFixed(1) + '%';
+                document.getElementById('currentUnemployment').style.color = latest.value > 5 ? '#dc3545' : latest.value < 4 ? '#28a745' : '#fd7e14';
+                document.getElementById('unemploymentDate').textContent = `As of ${latest.date}`;
+            }
+
+            if (fedRateData && fedRateData.length > 0) {
+                const latest = fedRateData[fedRateData.length - 1];
+                document.getElementById('currentFedRate').textContent = latest.value.toFixed(2) + '%';
+                document.getElementById('fedRateDate').textContent = `As of ${latest.date}`;
+            }
+        }
+
+        // Update macro chart
+        async function updateMacroChart(years = 10, chartType = 'combined') {
+            currentMacroYears = years;
+            currentMacroChartType = chartType;
+            try {
+                const data = await fetchMacroData(years);
+                renderMacroChart(data, chartType);
+            } catch (e) {
+                console.error('Failed to update macro chart:', e);
+            }
+        }
+
+        // Setup macro chart event listeners
+        function setupMacroEventListeners() {
+            // Time selector
+            document.querySelectorAll('#macroTimeSelector button').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    document.querySelectorAll('#macroTimeSelector button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const years = parseInt(this.dataset.years);
+                    await updateMacroChart(years, currentMacroChartType);
+                });
+            });
+
+            // Chart type tabs
+            document.querySelectorAll('[data-macro-chart]').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    document.querySelectorAll('[data-macro-chart]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const type = this.dataset.macroChart;
+                    await updateMacroChart(currentMacroYears, type);
+                });
+            });
+        }
+
+        // Initialize macro tab when clicked
+        document.querySelector('[data-tab="macro"]').addEventListener('click', async function() {
+            if (!macroChartInitialized) {
+                macroChartInitialized = true;
+                setupMacroEventListeners();
+                await updateMacroChart(currentMacroYears, currentMacroChartType);
+            }
+        });
+
+        // ========== END MACRO CHART FUNCTIONS ==========
 
         // Initialize tab from hash on page load (must be at end after all declarations)
         initTabFromHash();
