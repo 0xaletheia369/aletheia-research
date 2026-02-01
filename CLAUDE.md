@@ -28,7 +28,8 @@ When adding new external API integrations, **ALWAYS test CORS before deploying**
 **Known API CORS status:**
 | API | CORS | Proxy needed |
 |-----|------|--------------|
-| Polymarket (`gamma-api.polymarket.com`) | No | `proxyUrlCodeTabs()` |
+| Polymarket Gamma (`gamma-api.polymarket.com`) | No | `proxyUrlCodeTabs()` |
+| Polymarket CLOB (`clob.polymarket.com`) | Yes | None |
 | DefiLlama (`api.llama.fi`) | Yes | None |
 | Alternative.me (Fear & Greed) | Yes | None |
 | Mobula | Yes | None |

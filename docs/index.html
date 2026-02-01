@@ -1278,6 +1278,26 @@
                 </div>
             </div>
         </div>
+
+        <!-- Fed Decision Predictions Chart -->
+        <div class="chart-container" style="margin-top: 20px;">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" data-fed-meeting="march">March 18</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-fed-meeting="april">April 29</button>
+                        <span class="chart-tab-divider">|</span>
+                        <button class="chart-tab" data-fed-meeting="june">June 17</button>
+                    </div>
+                    <p class="chart-subtitle">FOMC rate decision probabilities from Polymarket</p>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="fedDecisionChart"></canvas>
+            </div>
+            <p class="chart-data-source">Data: <a href="https://polymarket.com/event/fed-decision-in-march-885" target="_blank" style="color: inherit;">Polymarket</a></p>
+        </div>
     </div>
 
     <script>
@@ -1313,6 +1333,44 @@
 
         // FRED API Key - Get your free key at: https://fred.stlouisfed.org/docs/api/api_key.html
         const FRED_API_KEY = 'fffc4b3857d7ee655a7dac83fd77b825';
+
+        let fedDecisionChart = null;
+        let currentFedMeeting = 'march';
+
+        // Fed Decision market token IDs (Yes tokens for each outcome)
+        const fedDecisionMarkets = {
+            march: {
+                slug: 'fed-decision-in-march-885',
+                date: 'March 18, 2026',
+                outcomes: {
+                    'No change': '102559817034631022221500208641784929295731053857601013029449249654006364919935',
+                    '25 bps decrease': '62938043365772447095885755955446362343142416536419862840923032141775380249586',
+                    '50+ bps decrease': '46553455570564517989191023458705371521436514261892866503067981558938998232024',
+                    '25+ bps increase': '54073086346734626735797775941991553522163760164405051969883391401961188364109'
+                }
+            },
+            april: {
+                slug: 'fed-decision-in-april',
+                date: 'April 29, 2026',
+                outcomes: {
+                    'No change': '63586620628756015058616403521099137018911742768824051367331188904593189743777',
+                    '25 bps decrease': '83479140651306794046790588004449066364152228067472874205697111967337978544729',
+                    '50+ bps decrease': '18690049947242812495755151360212639738977254879109748949267393375856311641700',
+                    '25+ bps increase': '9556122149160720922715284597610520228366807023831966638741974320131898296289'
+                }
+            },
+            june: {
+                slug: 'fed-decision-in-june-825',
+                date: 'June 17, 2026',
+                outcomes: {
+                    'No change': '30767812841387255642892182147223249245545002662653079696958384408588201824258',
+                    '25 bps decrease': '65193234666628291664907888364936366210889305490897648116746073820519263548476',
+                    '50+ bps decrease': '110884561568299698460551977852169332756450294345019257864587852438060900499251',
+                    '25+ bps increase': '54688507565884542490190759171719899637342914252863057837926715255559077706253',
+                    '50+ bps increase': '11019686559003253359318459636510036787281809199165975947920974072245914352862'
+                }
+            }
+        };
 
         // RWA tokens configuration (for dashboard cards below chart)
         const rwaTokens = [
@@ -5131,12 +5189,239 @@
             });
         }
 
+        // ========== FED DECISION CHART FUNCTIONS ==========
+
+        // Fetch historical prices from Polymarket CLOB API
+        async function fetchPolymarketPriceHistory(tokenId) {
+            const cacheKey = `polymarket-history:${tokenId}`;
+            const cached = getCachedData(cacheKey);
+            if (cached) return cached;
+
+            const url = `https://clob.polymarket.com/prices-history?market=${tokenId}&interval=all&fidelity=60`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Polymarket CLOB API error: ${response.status}`);
+                const json = await response.json();
+
+                const result = json.history.map(d => ({
+                    timestamp: d.t * 1000,
+                    price: d.p
+                }));
+
+                setCachedData(cacheKey, result);
+                return result;
+            } catch (e) {
+                console.error('Failed to fetch Polymarket price history:', e);
+                return [];
+            }
+        }
+
+        // Fetch all outcome histories for a Fed meeting
+        async function fetchFedDecisionData(meeting = 'march') {
+            const marketConfig = fedDecisionMarkets[meeting];
+            const outcomes = Object.entries(marketConfig.outcomes);
+
+            const historyPromises = outcomes.map(async ([name, tokenId]) => {
+                const history = await fetchPolymarketPriceHistory(tokenId);
+                return { name, history };
+            });
+
+            return Promise.all(historyPromises);
+        }
+
+        // Render Fed Decision chart
+        function renderFedDecisionChart(data, meeting) {
+            const ctx = document.getElementById('fedDecisionChart').getContext('2d');
+            if (fedDecisionChart) fedDecisionChart.destroy();
+
+            // FT colors for outcomes
+            const outcomeColors = {
+                'No change': ftColors[0],        // Teal
+                '25 bps decrease': ftColors[3],  // Blue
+                '50+ bps decrease': ftColors[4], // Purple
+                '25+ bps increase': ftColors[1], // Crimson
+                '50+ bps increase': ftColors[2]  // Orange
+            };
+
+            // Find common timestamps and align data
+            const allTimestamps = new Set();
+            data.forEach(d => d.history.forEach(h => allTimestamps.add(h.timestamp)));
+            const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
+
+            // Sample every N points for performance (show ~100 points max)
+            const sampleRate = Math.max(1, Math.floor(sortedTimestamps.length / 100));
+            const sampledTimestamps = sortedTimestamps.filter((_, i) => i % sampleRate === 0);
+
+            const labels = sampledTimestamps.map(ts =>
+                new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            );
+
+            const datasets = data.map(({ name, history }) => {
+                // Create a map for quick lookup
+                const priceMap = new Map(history.map(h => [h.timestamp, h.price]));
+
+                // For each sampled timestamp, find the closest price
+                const prices = sampledTimestamps.map(ts => {
+                    if (priceMap.has(ts)) return priceMap.get(ts) * 100;
+                    // Find closest timestamp
+                    let closest = null;
+                    let minDiff = Infinity;
+                    for (const [t, p] of priceMap) {
+                        const diff = Math.abs(t - ts);
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            closest = p;
+                        }
+                    }
+                    return closest !== null ? closest * 100 : null;
+                });
+
+                return {
+                    label: name,
+                    data: prices,
+                    borderColor: outcomeColors[name] || ftColors[5],
+                    backgroundColor: (outcomeColors[name] || ftColors[5]) + '1A',
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    borderWidth: 2
+                };
+            });
+
+            fedDecisionChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            align: 'start',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'rect',
+                                padding: 12,
+                                font: { size: 11, weight: '500' },
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                generateLabels: function(chart) {
+                                    return chart.data.datasets.map((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        const isHidden = meta.hidden || dataset.hidden;
+                                        return {
+                                            text: dataset.label,
+                                            fillStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            strokeStyle: isHidden ? dataset.borderColor + '40' : dataset.borderColor,
+                                            fontColor: isHidden ? '#aaaaaa' : '#333333',
+                                            hidden: false,
+                                            pointStyle: 'rect',
+                                            datasetIndex: i
+                                        };
+                                    });
+                                }
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const chart = legend.chart;
+                                const meta = chart.getDatasetMeta(index);
+                                meta.hidden = !meta.hidden;
+                                chart.update();
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#333333',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.raw === null) return null;
+                                    return `${context.dataset.label}: ${context.raw.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                maxRotation: 0,
+                                maxTicksLimit: 10
+                            }
+                        },
+                        y: {
+                            position: 'left',
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
+                            border: { display: false },
+                            ticks: {
+                                color: '#999999',
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update chart subtitle
+            const subtitle = document.querySelector('#macro .chart-container:last-child .chart-subtitle');
+            if (subtitle) {
+                subtitle.textContent = `FOMC ${fedDecisionMarkets[meeting].date} rate decision probabilities`;
+            }
+        }
+
+        // Update Fed Decision chart
+        async function updateFedDecisionChart(meeting = 'march') {
+            currentFedMeeting = meeting;
+            try {
+                const data = await fetchFedDecisionData(meeting);
+                renderFedDecisionChart(data, meeting);
+            } catch (e) {
+                console.error('Failed to update Fed Decision chart:', e);
+            }
+        }
+
+        // Setup Fed Decision chart event listeners
+        function setupFedDecisionEventListeners() {
+            document.querySelectorAll('[data-fed-meeting]').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    document.querySelectorAll('[data-fed-meeting]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const meeting = this.dataset.fedMeeting;
+                    await updateFedDecisionChart(meeting);
+                });
+            });
+        }
+
+        // ========== END FED DECISION CHART FUNCTIONS ==========
+
         // Initialize macro tab when clicked
         document.querySelector('[data-tab="macro"]').addEventListener('click', async function() {
             if (!macroChartInitialized) {
                 macroChartInitialized = true;
                 setupMacroEventListeners();
+                setupFedDecisionEventListeners();
                 await updateMacroChart(currentMacroYears, currentMacroChartType);
+                await updateFedDecisionChart(currentFedMeeting);
             }
         });
 
