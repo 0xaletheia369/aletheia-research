@@ -4007,6 +4007,16 @@
                     return mcap ? (v * 1e6) / mcap * 100 : null;
                 });
 
+                // Debug: count non-null values
+                console.log('Flow-mcap non-null counts:', {
+                    btc: btcPct.filter(v => v !== null).length,
+                    eth: ethPct.filter(v => v !== null).length,
+                    sol: solPct.filter(v => v !== null).length,
+                    total: aligned.dateKeys.length
+                });
+                console.log('ETH values sample:', aligned.ethValues.slice(0, 5));
+                console.log('ETH pct sample:', ethPct.slice(0, 5));
+
                 datasets = [
                     {
                         label: 'BTC',
