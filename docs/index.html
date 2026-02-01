@@ -1054,12 +1054,15 @@
         let predChartInitialized = false;
         let rwaChartInitialized = false;
         let rwaDashboardInitialized = false;
+        let currentPerpChartDays = 7;
+        let currentPerpChartType = 'volume';
         let currentPredChartDays = 7;
         let currentPredChartType = 'volume';
         let currentRwaChartDays = 365;
         let currentRwaChartType = 'tvl';
         let predChart = null;
         let rwaChart = null;
+        let perpChart = null;
 
         // RWA tokens configuration (for dashboard cards below chart)
         const rwaTokens = [
@@ -1400,6 +1403,14 @@
                 const response = await fetch(proxyUrlAllOrigins(url));
                 const text = await response.text();
                 if (text.startsWith('[') || text.startsWith('{')) {
+                    // Check if it's a wrapper object with contents property
+                    try {
+                        const parsed = JSON.parse(text);
+                        if (parsed.contents) {
+                            // It's wrapped, extract contents
+                            return new Response(parsed.contents, { status: 200 });
+                        }
+                    } catch (e) { /* not JSON or no contents, use as-is */ }
                     return new Response(text, { status: 200 });
                 }
             } catch (e) { /* ignore */ }
@@ -1536,9 +1547,6 @@
             ftColors[3], // Blue
             ftColors[4]  // Purple (Nado)
         ];
-
-        let currentPerpChartDays = 7;
-        let currentPerpChartType = 'volume'; // 'volume', 'oi', or 'fees'
 
         async function fetchHistoricalFees(days = 7) {
             const historicalData = [];
