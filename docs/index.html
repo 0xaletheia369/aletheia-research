@@ -1989,14 +1989,14 @@
             }
         }
 
-        // Polymarket ATH Predictions API
+        // Polymarket ATH Predictions API (always use proxy - no CORS headers)
         async function fetchPolymarketAth(slug) {
             const cacheKey = `polymarket:${slug}`;
             const cached = getCachedData(cacheKey);
             if (cached) return cached;
 
             const url = `https://gamma-api.polymarket.com/events/slug/${slug}`;
-            const response = await fetch(url);
+            const response = await fetch(proxyUrlAllOrigins(url));
             if (!response.ok) throw new Error(`Polymarket API error: ${response.status}`);
             const json = await response.json();
 
