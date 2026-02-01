@@ -1396,7 +1396,17 @@
 
         // Helper to fetch CoinGecko APIs (always use proxy due to CORS)
         async function fetchCoinGecko(url) {
-            // Try allorigins first, then codetabs
+            // Try codetabs first (more reliable), then allorigins
+            try {
+                const response = await fetch(proxyUrlCodeTabs(url));
+                if (response.ok) {
+                    return response;
+                }
+            } catch (e) {
+                console.log('Codetabs proxy failed, trying allorigins...');
+            }
+
+            // Fallback to allorigins
             try {
                 const response = await fetch(proxyUrlAllOrigins(url));
                 const text = await response.text();
@@ -1405,16 +1415,20 @@
                     try {
                         const parsed = JSON.parse(text);
                         if (parsed.contents) {
-                            // It's wrapped, extract contents
                             return new Response(parsed.contents, { status: 200 });
                         }
-                    } catch (e) { /* not JSON or no contents, use as-is */ }
+                        // If parsed is already an array, return as-is
+                        if (Array.isArray(parsed)) {
+                            return new Response(text, { status: 200 });
+                        }
+                    } catch (e) { /* parse error, use text as-is */ }
                     return new Response(text, { status: 200 });
                 }
-            } catch (e) { /* ignore */ }
+            } catch (e) {
+                console.error('All proxies failed for CoinGecko');
+            }
 
-            // Fallback to codetabs
-            return fetch(proxyUrlCodeTabs(url));
+            throw new Error('Failed to fetch from CoinGecko via proxy');
         }
 
         // Legacy aliases - proxyUrl only uses proxy when running from file://
