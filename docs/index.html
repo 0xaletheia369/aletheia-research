@@ -1138,9 +1138,24 @@
 
     <!-- Sentiment Tab -->
     <div class="tab-content" id="sentiment">
-        <div class="coming-soon">
-            <h2>Sentiment</h2>
-            <p>Coming soon...</p>
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title-section">
+                    <div class="chart-tabs">
+                        <button class="chart-tab active">Fear & Greed Index</button>
+                    </div>
+                    <p class="chart-subtitle">Crypto market sentiment (0 = Extreme Fear, 100 = Extreme Greed)</p>
+                </div>
+                <div class="time-selector" id="fgTimeSelector">
+                    <button data-days="30">1M</button>
+                    <button data-days="90">3M</button>
+                    <button data-days="365" class="active">1Y</button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="fearGreedChart"></canvas>
+            </div>
+            <p class="chart-data-source">Data: Alternative.me</p>
         </div>
     </div>
 
@@ -1179,6 +1194,8 @@
         let rwaChart = null;
         let perpChart = null;
         let etfChart = null;
+        let fearGreedChart = null;
+        let currentFearGreedDays = 365;
         let etfData = null;
         let etfMarketCaps = null;
 
@@ -1524,6 +1541,23 @@
         // Get your free API key from https://admin.mobula.io
         const MOBULA_API_KEY = '58764b68-44ca-4ac2-aee0-c3ca4a64c12c';
 
+        // Unified cache system for all API data (15-minute TTL)
+        const marketDataCache = new Map();
+        const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+
+        function getCachedData(key) {
+            const cached = marketDataCache.get(key);
+            if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+                console.log('Cache hit:', key);
+                return cached.data;
+            }
+            return null;
+        }
+
+        function setCachedData(key, data) {
+            marketDataCache.set(key, { data, timestamp: Date.now() });
+        }
+
         // Helper to fetch Mobula APIs with authentication
         async function fetchMobula(url) {
             const response = await fetch(url, {
@@ -1533,38 +1567,56 @@
             return response.json();
         }
 
-        // CoinGecko ID to Mobula asset name mapping
-        const mobulaAssetMap = {
-            'hyperliquid': 'Hyperliquid',
-            'aerodrome-finance': 'Aerodrome Finance',
-            'aave': 'Aave',
-            'uniswap': 'Uniswap',
-            'pump-fun': 'Pump.fun',
-            'jito-governance-token': 'Jito',
-            'raydium': 'Raydium',
-            'morpho': 'Morpho',
-            'meteora': 'Meteora',
-            'jupiter-exchange-solana': 'Jupiter',
-            'ethena': 'Ethena',
-            'wormhole': 'Wormhole',
-            'ethereum': 'Ethereum',
-            'solana': 'Solana',
-            'bitcoin': 'Bitcoin',
-            'ondo-finance': 'Ondo Finance',
-            'canton-network': 'Canton Network',
-            'lighter': 'Lighter'
+        // Unified symbol mapping: CoinGecko ID → { mobula, binance }
+        const symbolMap = {
+            'bitcoin': { mobula: 'Bitcoin', binance: 'BTC' },
+            'ethereum': { mobula: 'Ethereum', binance: 'ETH' },
+            'solana': { mobula: 'Solana', binance: 'SOL' },
+            'hyperliquid': { mobula: 'Hyperliquid', binance: 'HYPE' },
+            'aerodrome-finance': { mobula: 'Aerodrome Finance', binance: 'AERO' },
+            'aave': { mobula: 'Aave', binance: 'AAVE' },
+            'uniswap': { mobula: 'Uniswap', binance: 'UNI' },
+            'pump-fun': { mobula: 'Pump.fun', binance: null }, // Not on Binance
+            'jito-governance-token': { mobula: 'Jito', binance: 'JTO' },
+            'raydium': { mobula: 'Raydium', binance: 'RAY' },
+            'morpho': { mobula: 'Morpho', binance: 'MORPHO' },
+            'meteora': { mobula: 'Meteora', binance: null }, // Not on Binance
+            'jupiter-exchange-solana': { mobula: 'Jupiter', binance: 'JUP' },
+            'ethena': { mobula: 'Ethena', binance: 'ENA' },
+            'wormhole': { mobula: 'Wormhole', binance: 'W' },
+            'ondo-finance': { mobula: 'Ondo Finance', binance: 'ONDO' },
+            'canton-network': { mobula: 'Canton Network', binance: null }, // Not on Binance
+            'lighter': { mobula: 'Lighter', binance: null } // Not on Binance
         };
+
+        // Legacy compatibility: CoinGecko ID to Mobula asset name mapping
+        const mobulaAssetMap = Object.fromEntries(
+            Object.entries(symbolMap).map(([cgId, mapping]) => [cgId, mapping.mobula])
+        );
 
         // Convert CoinGecko ID to Mobula asset name
         function toMobulaAsset(coingeckoId) {
             return mobulaAssetMap[coingeckoId] || coingeckoId;
         }
 
-        // Fetch market data from Mobula with CoinGecko fallback
+        // Convert CoinGecko ID to Binance symbol (returns null if not available)
+        function toBinanceSymbol(coingeckoId) {
+            const mapping = symbolMap[coingeckoId];
+            return mapping ? mapping.binance : null;
+        }
+
+        // Fetch market data with cache and 3-tier fallback: Mobula → CoinGecko → Binance
         async function fetchMarketData(assets) {
+            const cacheKey = `market:${assets}`;
+
+            // Check cache first
+            const cached = getCachedData(cacheKey);
+            if (cached) return cached;
+
             // Convert CoinGecko IDs to Mobula asset names
             const mobulaAssets = assets.split(',').map(id => toMobulaAsset(id.trim())).join(',');
 
+            // Try Mobula first (primary)
             try {
                 const url = `https://api.mobula.io/api/1/market/multi-data?assets=${encodeURIComponent(mobulaAssets)}`;
                 const data = await fetchMobula(url);
@@ -1595,32 +1647,76 @@
                     }
                 }
                 console.log('Mobula market data received:', result.length, 'assets');
+                setCachedData(cacheKey, result);
                 return result;
             } catch (e) {
-                console.warn('Mobula failed, falling back to CoinGecko:', e.message);
-                return await fetchCoinGeckoFallback(assets);
+                console.warn('Mobula failed, trying CoinGecko:', e.message);
             }
+
+            // Fallback to CoinGecko (secondary)
+            try {
+                const result = await fetchCoinGeckoFallback(assets);
+                if (result && result.length > 0) {
+                    setCachedData(cacheKey, result);
+                    return result;
+                }
+            } catch (e) {
+                console.warn('CoinGecko failed, trying Binance:', e.message);
+            }
+
+            // Final fallback to Binance (tertiary - no monthly limits)
+            try {
+                const result = await fetchBinanceMarketData(assets);
+                if (result && result.length > 0) {
+                    setCachedData(cacheKey, result);
+                    return result;
+                }
+            } catch (e) {
+                console.error('All APIs failed:', e.message);
+            }
+
+            return [];
         }
 
-        // Fetch historical market cap data from Mobula
+        // Fetch historical market cap data with cache and fallback: Mobula → CoinGecko
         async function fetchHistoricalMarketCap(asset, days = 365) {
+            const cacheKey = `history:${asset}:${days}`;
+
+            // Check cache first
+            const cached = getCachedData(cacheKey);
+            if (cached) return cached;
+
             const mobulaAsset = toMobulaAsset(asset);
             const now = Date.now();
             const from = now - (days * 24 * 60 * 60 * 1000);
 
+            // Try Mobula first
             try {
                 const url = `https://api.mobula.io/api/1/market/history?asset=${encodeURIComponent(mobulaAsset)}&from=${from}&to=${now}`;
                 const data = await fetchMobula(url);
 
                 // Mobula returns: { data: { market_cap_history: [[timestamp, value], ...] } }
                 if (data && data.data && data.data.market_cap_history) {
-                    return data.data.market_cap_history;
+                    const result = data.data.market_cap_history;
+                    setCachedData(cacheKey, result);
+                    return result;
                 }
-                return [];
             } catch (e) {
-                console.warn(`Mobula historical data failed for ${asset}, falling back to CoinGecko:`, e.message);
-                return await fetchCoinGeckoHistoricalFallback(asset, days);
+                console.warn(`Mobula historical data failed for ${asset}, trying CoinGecko:`, e.message);
             }
+
+            // Fallback to CoinGecko
+            try {
+                const result = await fetchCoinGeckoHistoricalFallback(asset, days);
+                if (result && result.length > 0) {
+                    setCachedData(cacheKey, result);
+                    return result;
+                }
+            } catch (e) {
+                console.error(`All history APIs failed for ${asset}:`, e.message);
+            }
+
+            return [];
         }
 
         // CoinGecko fallback for market data
@@ -1657,6 +1753,169 @@
                 console.error('CoinGecko historical fallback also failed:', e);
             }
             return [];
+        }
+
+        // Binance API fallback for market data (no API key needed, unlimited requests)
+        async function fetchBinanceMarketData(assets) {
+            try {
+                // Convert CoinGecko IDs to Binance symbols
+                const assetList = assets.split(',').map(id => id.trim());
+                const binanceSymbols = assetList
+                    .map(id => toBinanceSymbol(id))
+                    .filter(s => s !== null)
+                    .map(s => `${s}USDT`);
+
+                if (binanceSymbols.length === 0) {
+                    throw new Error('No Binance-compatible symbols found');
+                }
+
+                const url = `https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(binanceSymbols)}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Binance API error: ${response.status}`);
+                const data = await response.json();
+
+                // Create reverse mapping from Binance symbols to CoinGecko IDs
+                const reverseMap = {};
+                for (const [cgId, mapping] of Object.entries(symbolMap)) {
+                    if (mapping.binance) {
+                        reverseMap[`${mapping.binance}USDT`] = cgId;
+                    }
+                }
+
+                // Transform Binance response to match CoinGecko format
+                const result = data.map(ticker => {
+                    const cgId = reverseMap[ticker.symbol] || ticker.symbol.replace('USDT', '').toLowerCase();
+                    return {
+                        id: cgId,
+                        name: ticker.symbol.replace('USDT', ''),
+                        symbol: ticker.symbol.replace('USDT', ''),
+                        image: '',
+                        current_price: parseFloat(ticker.lastPrice),
+                        market_cap: null, // Binance doesn't provide market cap
+                        total_volume: parseFloat(ticker.quoteVolume),
+                        fully_diluted_valuation: null, // Binance doesn't provide FDV
+                        price_change_percentage_24h: parseFloat(ticker.priceChangePercent)
+                    };
+                });
+
+                console.log('Binance market data received:', result.length, 'assets');
+                return result;
+            } catch (e) {
+                console.error('Binance fallback failed:', e.message);
+                throw e;
+            }
+        }
+
+        // Fear & Greed Index API
+        async function fetchFearGreedIndex(days = 365) {
+            const cacheKey = `feargreed:${days}`;
+            const cached = getCachedData(cacheKey);
+            if (cached) return cached;
+
+            const url = `https://api.alternative.me/fng/?limit=${days}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Fear & Greed API error: ${response.status}`);
+            const json = await response.json();
+
+            // Transform to chart-friendly format, reverse for chronological order
+            const result = json.data.reverse().map(d => ({
+                timestamp: parseInt(d.timestamp) * 1000,
+                value: parseInt(d.value),
+                classification: d.value_classification
+            }));
+
+            setCachedData(cacheKey, result);
+            return result;
+        }
+
+        function renderFearGreedChart(data) {
+            const ctx = document.getElementById('fearGreedChart').getContext('2d');
+
+            if (fearGreedChart) fearGreedChart.destroy();
+
+            const labels = data.map(d => new Date(d.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            const values = data.map(d => d.value);
+
+            // Color based on value
+            const getColor = (value) => {
+                if (value <= 24) return '#dc3545'; // Extreme Fear - red
+                if (value <= 49) return '#fd7e14'; // Fear - orange
+                if (value <= 54) return '#ffc107'; // Neutral - yellow
+                if (value <= 74) return '#90EE90'; // Greed - light green
+                return '#28a745'; // Extreme Greed - green
+            };
+
+            const pointColors = values.map(v => getColor(v));
+
+            fearGreedChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Fear & Greed Index',
+                        data: values,
+                        borderColor: '#0d6aa8',
+                        backgroundColor: 'rgba(13, 106, 168, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: pointColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#ffffff',
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#1a1a1a',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let classification = 'Neutral';
+                                    if (value <= 24) classification = 'Extreme Fear';
+                                    else if (value <= 49) classification = 'Fear';
+                                    else if (value <= 54) classification = 'Neutral';
+                                    else if (value <= 74) classification = 'Greed';
+                                    else classification = 'Extreme Greed';
+                                    return `${value} - ${classification}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: '#f0f0f0' },
+                            ticks: {
+                                callback: function(value) {
+                                    if (value === 0) return 'Extreme Fear';
+                                    if (value === 50) return 'Neutral';
+                                    if (value === 100) return 'Extreme Greed';
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        async function updateFearGreedChart(days = 365) {
+            currentFearGreedDays = days;
+            try {
+                const data = await fetchFearGreedIndex(days);
+                renderFearGreedChart(data);
+            } catch (e) {
+                console.error('Failed to fetch Fear & Greed data:', e);
+            }
         }
 
         // Legacy aliases - proxyUrl only uses proxy when running from file://
@@ -2131,6 +2390,24 @@
                     const chartType = this.dataset.predChart;
                     await updatePredChart(currentPredChartDays, chartType);
                 });
+            });
+
+            // Fear & Greed time selector
+            const fgTimeButtons = document.querySelectorAll('#fgTimeSelector button');
+            fgTimeButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    fgTimeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const days = parseInt(this.dataset.days);
+                    await updateFearGreedChart(days);
+                });
+            });
+
+            // Initialize Fear & Greed chart when Sentiment tab is clicked
+            document.querySelector('[data-tab="sentiment"]').addEventListener('click', async function() {
+                if (!fearGreedChart) {
+                    await updateFearGreedChart(currentFearGreedDays);
+                }
             });
         });
 
