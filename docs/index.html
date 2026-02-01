@@ -6279,8 +6279,8 @@
             // Sort by the specified growth key (highest first)
             const sortedTrends = [...tiktokTrends].sort((a, b) => b[sortKey] - a[sortKey]);
 
-            // Show top 10 for each timeframe
-            const topTrends = sortedTrends.slice(0, 10);
+            // Show top 8 for each timeframe
+            const topTrends = sortedTrends.slice(0, 8);
 
             container.innerHTML = topTrends.map((trend, index) => {
                 const growth = trend[sortKey];
