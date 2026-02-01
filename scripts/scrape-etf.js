@@ -1,6 +1,10 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
 const path = require('path');
+
+// Use stealth plugin to avoid detection
+puppeteer.use(StealthPlugin());
 
 const FARSIDE_URLS = {
     bitcoin: 'https://farside.co.uk/bitcoin-etf-flow-all-data/',
@@ -11,54 +15,96 @@ const FARSIDE_URLS = {
 async function scrapeETFData(page, url, type) {
     console.log(`Scraping ${type} ETF data from ${url}...`);
 
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+    try {
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
 
-    // Wait for the table to load
-    await page.waitForSelector('table', { timeout: 30000 });
+        // Wait a bit for any JS to execute
+        await new Promise(r => setTimeout(r, 3000));
 
-    // Extract data from the table
-    const data = await page.evaluate(() => {
-        const table = document.querySelector('table');
-        if (!table) return null;
+        // Debug: log page title and check for Cloudflare
+        const title = await page.title();
+        console.log(`Page title: ${title}`);
 
-        const rows = table.querySelectorAll('tr');
-        const headers = [];
-        const records = [];
-
-        // Get headers from first row
-        const headerCells = rows[0]?.querySelectorAll('th, td');
-        headerCells?.forEach(cell => {
-            headers.push(cell.textContent.trim());
-        });
-
-        // Get data from remaining rows
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].querySelectorAll('td');
-            if (cells.length === 0) continue;
-
-            const record = {};
-            cells.forEach((cell, index) => {
-                const header = headers[index] || `col${index}`;
-                let value = cell.textContent.trim();
-
-                // Clean up the value - remove parentheses for negative numbers
-                if (value.startsWith('(') && value.endsWith(')')) {
-                    value = '-' + value.slice(1, -1);
-                }
-
-                record[header] = value;
-            });
-
-            // Only add if we have a date
-            if (record[headers[0]]) {
-                records.push(record);
-            }
+        // Check if we hit a Cloudflare challenge
+        const content = await page.content();
+        if (content.includes('challenge-platform') || content.includes('cf-browser-verification')) {
+            console.log('Cloudflare challenge detected, waiting longer...');
+            await new Promise(r => setTimeout(r, 10000));
         }
 
-        return { headers, records };
-    });
+        // Try to find table
+        const hasTable = await page.$('table');
+        if (!hasTable) {
+            console.log('No table found on page');
+            // Debug: log a snippet of page content
+            const bodyText = await page.evaluate(() => document.body?.innerText?.substring(0, 500));
+            console.log('Page content preview:', bodyText);
+            return null;
+        }
 
-    return data;
+        // Extract data from the table
+        const data = await page.evaluate(() => {
+            const tables = document.querySelectorAll('table');
+            // Find the largest table (most likely the data table)
+            let bestTable = null;
+            let maxRows = 0;
+
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tr');
+                if (rows.length > maxRows) {
+                    maxRows = rows.length;
+                    bestTable = table;
+                }
+            });
+
+            if (!bestTable) return null;
+
+            const rows = bestTable.querySelectorAll('tr');
+            const headers = [];
+            const records = [];
+
+            // Get headers from first row
+            const headerCells = rows[0]?.querySelectorAll('th, td');
+            headerCells?.forEach(cell => {
+                headers.push(cell.textContent.trim());
+            });
+
+            console.log('Found headers:', headers.length);
+
+            // Get data from remaining rows
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].querySelectorAll('td');
+                if (cells.length === 0) continue;
+
+                const record = {};
+                cells.forEach((cell, index) => {
+                    const header = headers[index] || `col${index}`;
+                    let value = cell.textContent.trim();
+
+                    // Clean up the value - remove parentheses for negative numbers
+                    if (value.startsWith('(') && value.endsWith(')')) {
+                        value = '-' + value.slice(1, -1);
+                    }
+
+                    record[header] = value;
+                });
+
+                // Only add if we have a date (first column should have content)
+                if (record[headers[0]] && record[headers[0]].length > 0) {
+                    records.push(record);
+                }
+            }
+
+            return { headers, records };
+        });
+
+        console.log(`Found ${data?.records?.length || 0} records with ${data?.headers?.length || 0} columns`);
+        return data;
+
+    } catch (error) {
+        console.error(`Error scraping ${type}:`, error.message);
+        return null;
+    }
 }
 
 async function main() {
@@ -67,13 +113,26 @@ async function main() {
 
     const browser = await puppeteer.launch({
         headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--disable-gpu',
+            '--window-size=1920x1080'
+        ]
     });
 
     const page = await browser.newPage();
 
-    // Set a realistic user agent
-    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    // Set viewport
+    await page.setViewport({ width: 1920, height: 1080 });
+
+    // Set extra headers
+    await page.setExtraHTTPHeaders({
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+    });
 
     const results = {
         lastUpdated: new Date().toISOString(),
@@ -87,15 +146,15 @@ async function main() {
         results.bitcoin = await scrapeETFData(page, FARSIDE_URLS.bitcoin, 'Bitcoin');
         console.log(`Bitcoin: ${results.bitcoin?.records?.length || 0} records`);
 
-        // Small delay between requests
-        await new Promise(r => setTimeout(r, 2000));
+        // Longer delay between requests
+        await new Promise(r => setTimeout(r, 5000));
 
         // Scrape Ethereum ETF data
         results.ethereum = await scrapeETFData(page, FARSIDE_URLS.ethereum, 'Ethereum');
         console.log(`Ethereum: ${results.ethereum?.records?.length || 0} records`);
 
-        // Small delay between requests
-        await new Promise(r => setTimeout(r, 2000));
+        // Longer delay between requests
+        await new Promise(r => setTimeout(r, 5000));
 
         // Scrape Solana ETF data
         results.solana = await scrapeETFData(page, FARSIDE_URLS.solana, 'Solana');
@@ -107,79 +166,33 @@ async function main() {
 
     await browser.close();
 
-    // Calculate summary stats
-    if (results.bitcoin?.records) {
-        const btcRecords = results.bitcoin.records;
-        const totalHeader = results.bitcoin.headers.find(h => h.toLowerCase().includes('total'));
+    // Calculate summary stats for each ETF type
+    ['bitcoin', 'ethereum', 'solana'].forEach(type => {
+        const etfData = results[type];
+        if (etfData?.records?.length > 0) {
+            const records = etfData.records;
+            const totalHeader = etfData.headers.find(h => h.toLowerCase().includes('total'));
 
-        if (totalHeader && btcRecords.length > 0) {
-            // Get last 7 days of data
-            const last7Days = btcRecords.slice(0, 7);
-            let weeklyFlow = 0;
+            if (totalHeader) {
+                const last7Days = records.slice(0, 7);
+                let weeklyFlow = 0;
 
-            last7Days.forEach(record => {
-                const val = record[totalHeader]?.replace(/[,$]/g, '');
-                if (val && !isNaN(parseFloat(val))) {
-                    weeklyFlow += parseFloat(val);
-                }
-            });
+                last7Days.forEach(record => {
+                    const val = record[totalHeader]?.replace(/[,$]/g, '');
+                    if (val && !isNaN(parseFloat(val))) {
+                        weeklyFlow += parseFloat(val);
+                    }
+                });
 
-            results.bitcoinSummary = {
-                latestDate: btcRecords[0]?.[results.bitcoin.headers[0]],
-                latestFlow: btcRecords[0]?.[totalHeader],
-                weeklyFlow: weeklyFlow.toFixed(1),
-                totalRecords: btcRecords.length
-            };
+                results[`${type}Summary`] = {
+                    latestDate: records[0]?.[etfData.headers[0]],
+                    latestFlow: records[0]?.[totalHeader],
+                    weeklyFlow: weeklyFlow.toFixed(1),
+                    totalRecords: records.length
+                };
+            }
         }
-    }
-
-    if (results.ethereum?.records) {
-        const ethRecords = results.ethereum.records;
-        const totalHeader = results.ethereum.headers.find(h => h.toLowerCase().includes('total'));
-
-        if (totalHeader && ethRecords.length > 0) {
-            const last7Days = ethRecords.slice(0, 7);
-            let weeklyFlow = 0;
-
-            last7Days.forEach(record => {
-                const val = record[totalHeader]?.replace(/[,$]/g, '');
-                if (val && !isNaN(parseFloat(val))) {
-                    weeklyFlow += parseFloat(val);
-                }
-            });
-
-            results.ethereumSummary = {
-                latestDate: ethRecords[0]?.[results.ethereum.headers[0]],
-                latestFlow: ethRecords[0]?.[totalHeader],
-                weeklyFlow: weeklyFlow.toFixed(1),
-                totalRecords: ethRecords.length
-            };
-        }
-    }
-
-    if (results.solana?.records) {
-        const solRecords = results.solana.records;
-        const totalHeader = results.solana.headers.find(h => h.toLowerCase().includes('total'));
-
-        if (totalHeader && solRecords.length > 0) {
-            const last7Days = solRecords.slice(0, 7);
-            let weeklyFlow = 0;
-
-            last7Days.forEach(record => {
-                const val = record[totalHeader]?.replace(/[,$]/g, '');
-                if (val && !isNaN(parseFloat(val))) {
-                    weeklyFlow += parseFloat(val);
-                }
-            });
-
-            results.solanaSummary = {
-                latestDate: solRecords[0]?.[results.solana.headers[0]],
-                latestFlow: solRecords[0]?.[totalHeader],
-                weeklyFlow: weeklyFlow.toFixed(1),
-                totalRecords: solRecords.length
-            };
-        }
-    }
+    });
 
     // Save to JSON file
     const outputPath = path.join(__dirname, '..', 'docs', 'data', 'etf-flows.json');
