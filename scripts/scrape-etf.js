@@ -125,18 +125,26 @@ async function scrapeETFData(page, url, type) {
                     record[header] = value;
                 });
 
-                // Include row if it has a date-like first column OR has numeric data
+                // Include row only if first column looks like an actual date
                 const firstCol = record[headers[0]] || '';
-                const looksLikeDate = /\d/.test(firstCol) && /[a-zA-Z]/.test(firstCol); // Has both numbers and letters
-                const looksLikeNumericDate = /^\d{1,2}[\/-]\d{1,2}/.test(firstCol);
-                const isNotHeader = !/^(date|total)$/i.test(firstCol.trim());
 
-                if ((looksLikeDate || looksLikeNumericDate || hasNumericData) && isNotHeader && firstCol.length > 0) {
+                // Must have a number AND a month name (like "11 Jan 2024" or "23 Jul")
+                const dateWithMonth = /\d{1,2}\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
+                const isActualDate = dateWithMonth.test(firstCol);
+
+                // Skip rows that are clearly not dates
+                const skipWords = /^(seed|fee|total|date|nav|aum|\s*$)/i;
+                const shouldSkip = skipWords.test(firstCol.trim());
+
+                if (isActualDate && !shouldSkip) {
                     records.push(record);
                 }
             }
 
-            debugInfo.push(`Parsed ${records.length} records`);
+            // Reverse to get newest first (Farside shows oldest first)
+            records.reverse();
+
+            debugInfo.push(`Parsed ${records.length} records (reversed to newest-first)`);
 
             // Log a sample record
             if (records.length > 0) {
