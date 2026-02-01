@@ -29,22 +29,25 @@ export default {
     }
 
     try {
-      // Check cache first
+      // Check cache first (skip if ?nocache=1)
+      const skipCache = url.searchParams.get('nocache') === '1';
       const cache = caches.default;
-      const cacheKey = new Request('https://cache.local/tiktok-trends', { method: 'GET' });
-      let cachedResponse = await cache.match(cacheKey);
+      const cacheKey = new Request('https://cache.local/tiktok-trends-v2', { method: 'GET' });
 
-      if (cachedResponse) {
-        console.log('Returning cached data');
-        // Clone and add CORS headers
-        const data = await cachedResponse.json();
-        return new Response(JSON.stringify(data), {
-          headers: {
-            ...CORS_HEADERS,
-            'Content-Type': 'application/json',
-            'X-Cache': 'HIT'
-          }
-        });
+      if (!skipCache) {
+        let cachedResponse = await cache.match(cacheKey);
+
+        if (cachedResponse) {
+          console.log('Returning cached data');
+          const data = await cachedResponse.json();
+          return new Response(JSON.stringify(data), {
+            headers: {
+              ...CORS_HEADERS,
+              'Content-Type': 'application/json',
+              'X-Cache': 'HIT'
+            }
+          });
+        }
       }
 
       console.log('Cache miss, fetching from Apify');
