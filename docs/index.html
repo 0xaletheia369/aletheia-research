@@ -1436,6 +1436,13 @@
             border-color: #1da1f2;
         }
 
+        .source-badge.fourchan,
+        .source-badge.\34 chan {
+            background: #789922;
+            color: #fff;
+            border-color: #789922;
+        }
+
         .source-badge.multi-source {
             background: #9c27b0;
             color: #fff;
@@ -1526,6 +1533,310 @@
         }
 
         /* ========== End Multi-Source Trend Styles ========== */
+
+        /* ========== Layout Toggle Styles ========== */
+        .layout-toggle-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .layout-toggle-btn {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .layout-toggle-btn:hover {
+            border-color: #0A7B83;
+            color: #0A7B83;
+        }
+
+        .layout-toggle-btn.active {
+            background: #0A7B83;
+            color: #fff;
+            border-color: #0A7B83;
+        }
+
+        /* ========== TweetDeck Column Layout (Option 1) ========== */
+        .tweetdeck-layout {
+            display: none;
+        }
+
+        .tweetdeck-layout.active {
+            display: block;
+        }
+
+        .tweetdeck-columns {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 16px;
+        }
+
+        .tweetdeck-column {
+            flex: 0 0 280px;
+            min-width: 280px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .tweetdeck-column-header {
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+        }
+
+        .tweetdeck-column-header.tiktok { background: #fe2c55; }
+        .tweetdeck-column-header.google { background: #4285f4; }
+        .tweetdeck-column-header.reddit { background: #ff4500; }
+        .tweetdeck-column-header.twitter { background: #1da1f2; }
+        .tweetdeck-column-header.fourchan { background: #789922; }
+
+        .tweetdeck-column-content {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .tweetdeck-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .tweetdeck-card:hover {
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tweetdeck-card.tiktok { border-left-color: #fe2c55; }
+        .tweetdeck-card.google { border-left-color: #4285f4; }
+        .tweetdeck-card.reddit { border-left-color: #ff4500; }
+        .tweetdeck-card.twitter { border-left-color: #1da1f2; }
+        .tweetdeck-card.fourchan { border-left-color: #789922; }
+
+        .tweetdeck-card-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .tweetdeck-card-meta {
+            font-size: 0.75rem;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tweetdeck-card-score {
+            font-weight: 600;
+            color: #0A7B83;
+        }
+
+        /* ========== Color-Coded Unified Feed (Option 4) ========== */
+        .unified-layout {
+            display: none;
+        }
+
+        .unified-layout.active {
+            display: block;
+        }
+
+        .source-filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .source-filter-btn {
+            padding: 8px 14px;
+            border: 2px solid;
+            background: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .source-filter-btn.tiktok {
+            border-color: #fe2c55;
+            color: #fe2c55;
+        }
+        .source-filter-btn.tiktok.active,
+        .source-filter-btn.tiktok:hover {
+            background: #fe2c55;
+            color: #fff;
+        }
+
+        .source-filter-btn.google {
+            border-color: #4285f4;
+            color: #4285f4;
+        }
+        .source-filter-btn.google.active,
+        .source-filter-btn.google:hover {
+            background: #4285f4;
+            color: #fff;
+        }
+
+        .source-filter-btn.reddit {
+            border-color: #ff4500;
+            color: #ff4500;
+        }
+        .source-filter-btn.reddit.active,
+        .source-filter-btn.reddit:hover {
+            background: #ff4500;
+            color: #fff;
+        }
+
+        .source-filter-btn.twitter {
+            border-color: #1da1f2;
+            color: #1da1f2;
+        }
+        .source-filter-btn.twitter.active,
+        .source-filter-btn.twitter:hover {
+            background: #1da1f2;
+            color: #fff;
+        }
+
+        .source-filter-btn.fourchan {
+            border-color: #789922;
+            color: #789922;
+        }
+        .source-filter-btn.fourchan.active,
+        .source-filter-btn.fourchan:hover {
+            background: #789922;
+            color: #fff;
+        }
+
+        .source-filter-btn.all {
+            border-color: #0A7B83;
+            color: #0A7B83;
+        }
+        .source-filter-btn.all.active,
+        .source-filter-btn.all:hover {
+            background: #0A7B83;
+            color: #fff;
+        }
+
+        .unified-feed {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .unified-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 5px solid;
+            position: relative;
+        }
+
+        .unified-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .unified-card.tiktok { border-left-color: #fe2c55; }
+        .unified-card.google { border-left-color: #4285f4; }
+        .unified-card.reddit { border-left-color: #ff4500; }
+        .unified-card.twitter { border-left-color: #1da1f2; }
+        .unified-card.fourchan { border-left-color: #789922; }
+        .unified-card.multi-source {
+            border-left-color: #9c27b0;
+            border-left-width: 8px;
+        }
+
+        .unified-card-source-icon {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .unified-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .unified-card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .unified-card-category {
+            margin-left: 8px;
+        }
+
+        .unified-card-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .unified-card-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .unified-card-stat strong {
+            color: #0A7B83;
+        }
+
+        .unified-card.hidden {
+            display: none;
+        }
+
+        /* Responsive for columns */
+        @media (max-width: 768px) {
+            .tweetdeck-columns {
+                flex-direction: column;
+            }
+            .tweetdeck-column {
+                flex: 1 1 auto;
+                min-width: 100%;
+            }
+        }
+
+        /* ========== End Layout Styles ========== */
 
         /* ========== DexScreener Token Styles ========== */
         .dex-tokens-section {
@@ -2089,46 +2400,78 @@
 
     <!-- Memes Tab -->
     <div class="tab-content" id="memes">
-        <!-- 5h Emerging Trends -->
-        <div class="chart-container" style="margin-bottom: 30px;">
-            <div class="chart-header">
-                <div class="chart-title-section">
-                    <div class="chart-tabs">
-                        <button class="chart-tab active">Emerging (5h)</button>
-                    </div>
-                    <p class="chart-subtitle">Early signals - New trends gaining momentum in the last 5 hours</p>
-                </div>
-            </div>
-            <div id="tiktokTrends5h" class="tiktok-momentum-cards"></div>
+        <!-- Layout Toggle -->
+        <div class="layout-toggle-container">
+            <button class="layout-toggle-btn active" data-layout="columns">📊 Columns View</button>
+            <button class="layout-toggle-btn" data-layout="unified">🎨 Unified Feed</button>
+            <button class="layout-toggle-btn" data-layout="timeframe">⏱️ By Timeframe</button>
         </div>
 
-        <!-- 24h Hot Trends -->
-        <div class="chart-container" style="margin-bottom: 30px;">
-            <div class="chart-header">
-                <div class="chart-title-section">
-                    <div class="chart-tabs">
-                        <button class="chart-tab active">Hot Now (24h)</button>
-                    </div>
-                    <p class="chart-subtitle">What's trending in the last 24 hours</p>
-                </div>
+        <!-- Option 1: TweetDeck-style Columns -->
+        <div class="tweetdeck-layout active" id="columnsLayout">
+            <div class="tweetdeck-columns" id="tweetdeckColumns">
+                <!-- Columns will be populated by JS -->
             </div>
-            <div id="tiktokTrends24h" class="tiktok-momentum-cards"></div>
         </div>
 
-        <!-- 7d Weekly Winners -->
-        <div class="chart-container" style="margin-bottom: 30px;">
-            <div class="chart-header">
-                <div class="chart-title-section">
-                    <div class="chart-tabs">
-                        <button class="chart-tab active">Weekly Winners (7d)</button>
-                    </div>
-                    <p class="chart-subtitle">Top performing trends over the past week</p>
-                </div>
+        <!-- Option 4: Color-coded Unified Feed -->
+        <div class="unified-layout" id="unifiedLayout">
+            <div class="source-filter-bar">
+                <button class="source-filter-btn all active" data-source="all">🌐 All Sources</button>
+                <button class="source-filter-btn tiktok" data-source="tiktok">📱 TikTok</button>
+                <button class="source-filter-btn google" data-source="google">📈 Google</button>
+                <button class="source-filter-btn reddit" data-source="reddit">🤖 Reddit</button>
+                <button class="source-filter-btn twitter" data-source="twitter">🐦 Twitter</button>
+                <button class="source-filter-btn fourchan" data-source="4chan">🎭 4chan</button>
             </div>
-            <div id="tiktokTrends7d" class="tiktok-momentum-cards"></div>
+            <div class="unified-feed" id="unifiedFeed">
+                <!-- Cards will be populated by JS -->
+            </div>
         </div>
 
-        <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Data: TikTok Trends via Apify, Google Trends, DexScreener</p>
+        <!-- Original Timeframe Layout -->
+        <div class="timeframe-layout" id="timeframeLayout" style="display: none;">
+            <!-- 5h Emerging Trends -->
+            <div class="chart-container" style="margin-bottom: 30px;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Emerging (5h)</button>
+                        </div>
+                        <p class="chart-subtitle">Early signals - New trends gaining momentum in the last 5 hours</p>
+                    </div>
+                </div>
+                <div id="tiktokTrends5h" class="tiktok-momentum-cards"></div>
+            </div>
+
+            <!-- 24h Hot Trends -->
+            <div class="chart-container" style="margin-bottom: 30px;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Hot Now (24h)</button>
+                        </div>
+                        <p class="chart-subtitle">What's trending in the last 24 hours</p>
+                    </div>
+                </div>
+                <div id="tiktokTrends24h" class="tiktok-momentum-cards"></div>
+            </div>
+
+            <!-- 7d Weekly Winners -->
+            <div class="chart-container" style="margin-bottom: 30px;">
+                <div class="chart-header">
+                    <div class="chart-title-section">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">Weekly Winners (7d)</button>
+                        </div>
+                        <p class="chart-subtitle">Top performing trends over the past week</p>
+                    </div>
+                </div>
+                <div id="tiktokTrends7d" class="tiktok-momentum-cards"></div>
+            </div>
+        </div>
+
+        <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Data: TikTok, Google Trends, Reddit, Twitter, 4chan, DexScreener</p>
     </div>
 
     <script>
@@ -6858,7 +7201,17 @@
 
         // Initialize Memes tab with three sections (multi-source)
         async function initMemesTab() {
-            // Show loading state
+            // Show loading state in all layouts
+            const tweetdeckEl = document.getElementById('tweetdeckColumns');
+            const unifiedEl = document.getElementById('unifiedFeed');
+
+            if (tweetdeckEl) {
+                tweetdeckEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #666; width: 100%;"><div class="spinner" style="width: 24px; height: 24px; border: 3px solid #e0e0e0; border-top-color: #0A7B83; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>Loading trends from multiple sources...</div>';
+            }
+            if (unifiedEl) {
+                unifiedEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #666; width: 100%;"><div class="spinner" style="width: 24px; height: 24px; border: 3px solid #e0e0e0; border-top-color: #0A7B83; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>Loading trends...</div>';
+            }
+
             const containers = ['tiktokTrends5h', 'tiktokTrends24h', 'tiktokTrends7d'];
             containers.forEach(id => {
                 const el = document.getElementById(id);
@@ -6869,10 +7222,179 @@
             memeTrends = await fetchMemeTrends();
             memeDataLoaded = true;
 
-            // Render with real data
+            // Render all layouts
+            renderTweetDeckLayout();
+            renderUnifiedLayout();
             renderTrendCards('tiktokTrends5h', 'growth5h', '5h');
             renderTrendCards('tiktokTrends24h', 'growth24h', '24h');
             renderTrendCards('tiktokTrends7d', 'growth7d', '7d');
+
+            // Setup layout toggle handlers
+            setupLayoutToggle();
+            setupSourceFilters();
+        }
+
+        // Render TweetDeck-style columns (Option 1)
+        function renderTweetDeckLayout() {
+            const container = document.getElementById('tweetdeckColumns');
+            if (!container || !memeTrends) return;
+
+            const sources = ['tiktok', 'google', 'reddit', 'twitter', '4chan'];
+            const sourceNames = {
+                tiktok: 'TikTok',
+                google: 'Google Trends',
+                reddit: 'Reddit',
+                twitter: 'Twitter/X',
+                '4chan': '4chan'
+            };
+            const sourceIcons = {
+                tiktok: '📱',
+                google: '📈',
+                reddit: '🤖',
+                twitter: '🐦',
+                '4chan': '🎭'
+            };
+
+            // Group trends by primary source
+            const trendsBySource = {};
+            sources.forEach(s => trendsBySource[s] = []);
+
+            memeTrends.forEach(trend => {
+                const primarySource = trend.sources && trend.sources[0] ? trend.sources[0] : 'tiktok';
+                if (trendsBySource[primarySource]) {
+                    trendsBySource[primarySource].push(trend);
+                }
+            });
+
+            container.innerHTML = sources.map(source => {
+                const trends = trendsBySource[source] || [];
+                const cssClass = source === '4chan' ? 'fourchan' : source;
+
+                return `
+                    <div class="tweetdeck-column">
+                        <div class="tweetdeck-column-header ${cssClass}">
+                            ${sourceIcons[source]} ${sourceNames[source]}
+                            <span style="margin-left: auto; font-size: 0.8rem; opacity: 0.8;">${trends.length}</span>
+                        </div>
+                        <div class="tweetdeck-column-content">
+                            ${trends.length === 0 ? '<p style="text-align: center; color: #999; padding: 20px; font-size: 0.85rem;">No trends found</p>' :
+                              trends.slice(0, 15).map(trend => {
+                                const displayName = trend.displayName || trend.hashtag;
+                                const category = trend.category || 'unknown';
+                                const categoryIcon = CATEGORY_ICONS[category] || '';
+                                const score = trend.aggregateScore || 50;
+                                const isMultiSource = trend.sources && trend.sources.length >= 2;
+
+                                return `
+                                    <div class="tweetdeck-card ${cssClass}${isMultiSource ? ' multi-source' : ''}" data-hashtag="${trend.hashtag}">
+                                        <div class="tweetdeck-card-title">
+                                            ${displayName}
+                                            ${categoryIcon ? `<span style="margin-left: 4px;">${categoryIcon}</span>` : ''}
+                                        </div>
+                                        <div class="tweetdeck-card-meta">
+                                            <span>${trend.description ? trend.description.slice(0, 40) + '...' : ''}</span>
+                                            <span class="tweetdeck-card-score">${score}</span>
+                                        </div>
+                                        ${isMultiSource ? '<div style="font-size: 0.65rem; color: #9c27b0; margin-top: 4px;">✨ Multi-source</div>' : ''}
+                                    </div>
+                                `;
+                              }).join('')
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render unified color-coded feed (Option 4)
+        function renderUnifiedLayout() {
+            const container = document.getElementById('unifiedFeed');
+            if (!container || !memeTrends) return;
+
+            const sourceIcons = {
+                tiktok: '📱',
+                google: '📈',
+                reddit: '🤖',
+                twitter: '🐦',
+                '4chan': '🎭'
+            };
+
+            // Sort by aggregate score
+            const sortedTrends = [...memeTrends].sort((a, b) => (b.aggregateScore || 0) - (a.aggregateScore || 0));
+
+            container.innerHTML = sortedTrends.slice(0, 30).map(trend => {
+                const displayName = trend.displayName || trend.hashtag;
+                const primarySource = trend.sources && trend.sources[0] ? trend.sources[0] : 'tiktok';
+                const cssClass = primarySource === '4chan' ? 'fourchan' : primarySource;
+                const category = trend.category || 'unknown';
+                const categoryIcon = CATEGORY_ICONS[category] || '';
+                const categoryLabel = category !== 'unknown' ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+                const score = trend.aggregateScore || 50;
+                const isMultiSource = trend.sources && trend.sources.length >= 2;
+                const sourcesStr = (trend.sources || ['tiktok']).join(',');
+
+                return `
+                    <div class="unified-card ${cssClass}${isMultiSource ? ' multi-source' : ''}" data-sources="${sourcesStr}" data-hashtag="${trend.hashtag}">
+                        <span class="unified-card-source-icon">${sourceIcons[primarySource] || '📊'}</span>
+                        <div class="unified-card-header">
+                            <span class="unified-card-title">${displayName}</span>
+                            ${categoryIcon && categoryLabel ? `<span class="trend-category-tag ${category} unified-card-category">${categoryIcon} ${categoryLabel}</span>` : ''}
+                        </div>
+                        <p style="font-size: 0.85rem; color: #666; margin: 8px 0;">${trend.description || 'Trending content'}</p>
+                        <div class="unified-card-stats">
+                            <div class="unified-card-stat">
+                                <span>Score:</span>
+                                <strong>${score}/100</strong>
+                            </div>
+                            ${trend.views ? `<div class="unified-card-stat"><span>Views:</span><strong>${formatTiktokViews(trend.views)}</strong></div>` : ''}
+                            ${isMultiSource ? `<div class="unified-card-stat" style="color: #9c27b0;">✨ ${trend.sources.length} sources</div>` : ''}
+                        </div>
+                        ${isMultiSource ? `<div class="trend-source-badges" style="margin-top: 8px;">${trend.sources.map(s => `<span class="source-badge ${s === '4chan' ? 'fourchan' : s}" style="font-size: 0.65rem;">${sourceIcons[s] || ''} ${s}</span>`).join('')}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Setup layout toggle
+        function setupLayoutToggle() {
+            document.querySelectorAll('.layout-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const layout = this.dataset.layout;
+
+                    // Update active button
+                    document.querySelectorAll('.layout-toggle-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Show/hide layouts
+                    document.getElementById('columnsLayout').classList.toggle('active', layout === 'columns');
+                    document.getElementById('unifiedLayout').classList.toggle('active', layout === 'unified');
+                    document.getElementById('timeframeLayout').style.display = layout === 'timeframe' ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Setup source filters for unified layout
+        function setupSourceFilters() {
+            document.querySelectorAll('.source-filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const source = this.dataset.source;
+
+                    // Update active button
+                    document.querySelectorAll('.source-filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Filter cards
+                    document.querySelectorAll('.unified-card').forEach(card => {
+                        const cardSources = card.dataset.sources.split(',');
+                        if (source === 'all') {
+                            card.classList.remove('hidden');
+                        } else {
+                            const normalizedSource = source === '4chan' ? '4chan' : source;
+                            card.classList.toggle('hidden', !cardSources.includes(normalizedSource));
+                        }
+                    });
+                });
+            });
         }
 
         // Initialize Memes tab when clicked
