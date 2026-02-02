@@ -403,15 +403,17 @@ async function fetchRedditTrends() {
         const ageHours = (Date.now() / 1000 - trend.createdUtc) / 3600;
         const scorePerHour = trend.score / Math.max(1, ageHours);
         const growth24h = Math.min(1000, Math.round(scorePerHour * 10));
+        // Estimate 7d growth based on rank position and activity
+        const growth7d = Math.min(2000, Math.round(growth24h * (1 + (20 - index) * 0.1)));
 
         return {
           hashtag: `#${trend.normalizedTitle}`,
           displayName: trend.title.slice(0, 50) + (trend.title.length > 50 ? '...' : ''),
           views: trend.score * 100, // Rough estimate: 100 views per upvote
           videoCount: trend.numComments,
-          growth5h: Math.round(growth24h / 5),
+          growth5h: Math.round(growth24h / 4),
           growth24h: growth24h,
-          growth7d: 0,
+          growth7d: growth7d,
           description: `Trending on r/${trend.subreddits.join(', r/')} with ${trend.score.toLocaleString()} upvotes`,
           keywords: keywords,
           rank: index + 1,
@@ -555,14 +557,19 @@ async function fetchTwitterTrends() {
       const cleanName = trend.name.replace(/^[#$]/, '').toLowerCase();
       const keywords = cleanName.split(/\s+/).filter(w => w.length > 2);
 
+      // Estimate growth based on rank position (higher rank = more recent/active)
+      const growth24h = Math.max(100, 250 - index * 6);
+      const growth5h = Math.round(growth24h / 3);
+      const growth7d = Math.round(growth24h * 1.5);
+
       return {
         hashtag: trend.isHashtag ? trend.name : `#${cleanName.replace(/\s+/g, '')}`,
         displayName: trend.name,
         views: 0, // Twitter doesn't provide view counts via this method
         videoCount: 0,
-        growth5h: 0,
-        growth24h: Math.max(100, 200 - index * 5), // Estimate: higher rank = more growth
-        growth7d: 0,
+        growth5h: growth5h,
+        growth24h: growth24h,
+        growth7d: growth7d,
         description: `Trending on X: ${trend.name}`,
         keywords: keywords.length > 0 ? keywords : [cleanName],
         rank: index + 1,
