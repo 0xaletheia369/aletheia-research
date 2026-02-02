@@ -3,10 +3,19 @@
  *
  * Aggregates trends from multiple sources:
  * - TikTok (via Apify)
- * - Google Trends (free API)
+ * - Google Trends (free RSS feed)
+ * - Reddit (free JSON API)
  *
- * Future sources: Reddit, Twitter/X, 4chan
+ * Future sources: Twitter/X, 4chan
  */
+
+// Reddit subreddits to monitor for meme trends
+const REDDIT_SUBREDDITS = [
+  'memes',           // General meme culture
+  'CryptoCurrency',  // Crypto community
+  'CryptoMoonShots', // Early memecoin signals
+  'wallstreetbets'   // Retail trading memes
+];
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -63,7 +72,7 @@ export default {
       // Check cache first (skip if ?nocache=1)
       const skipCache = url.searchParams.get('nocache') === '1';
       const cache = caches.default;
-      const cacheKey = new Request('https://cache.local/meme-trends-v1', { method: 'GET' });
+      const cacheKey = new Request('https://cache.local/meme-trends-v2', { method: 'GET' });
 
       if (!skipCache) {
         let cachedResponse = await cache.match(cacheKey);
@@ -84,17 +93,19 @@ export default {
       console.log('Cache miss, fetching from all sources');
 
       // Fetch from all sources in parallel
-      const [tiktokTrends, googleTrends] = await Promise.all([
+      const [tiktokTrends, googleTrends, redditTrends] = await Promise.all([
         fetchTikTokTrends(env),
-        fetchGoogleTrends()
+        fetchGoogleTrends(),
+        fetchRedditTrends()
       ]);
 
       // Normalize and merge trends
       const normalizedTiktok = tiktokTrends.map(t => normalizeTrend(t, 'tiktok'));
       const normalizedGoogle = googleTrends.map(t => normalizeTrend(t, 'google'));
+      const normalizedReddit = redditTrends.map(t => normalizeTrend(t, 'reddit'));
 
       // Merge and score all trends
-      const aggregatedTrends = mergeAndScore([...normalizedTiktok, ...normalizedGoogle]);
+      const aggregatedTrends = mergeAndScore([...normalizedTiktok, ...normalizedGoogle, ...normalizedReddit]);
 
       // Create response
       const responseData = {
@@ -103,7 +114,8 @@ export default {
         count: aggregatedTrends.length,
         sources: {
           tiktok: normalizedTiktok.length,
-          google: normalizedGoogle.length
+          google: normalizedGoogle.length,
+          reddit: normalizedReddit.length
         },
         timestamp: new Date().toISOString()
       };
@@ -326,6 +338,158 @@ async function fetchGoogleTrends() {
   }
 }
 
+// ========== REDDIT FUNCTIONS ==========
+
+async function fetchRedditTrends() {
+  try {
+    // Fetch hot posts from multiple subreddits in parallel
+    const subredditResults = await Promise.all(
+      REDDIT_SUBREDDITS.map(sub => fetchSubredditPosts(sub))
+    );
+
+    // Flatten and combine results
+    const allPosts = subredditResults.flat();
+
+    // Group by title/topic to find cross-posted trends
+    const trendMap = new Map();
+
+    for (const post of allPosts) {
+      // Normalize the title for grouping
+      const normalizedTitle = normalizeRedditTitle(post.title);
+
+      if (trendMap.has(normalizedTitle)) {
+        const existing = trendMap.get(normalizedTitle);
+        existing.score += post.score;
+        existing.numComments += post.numComments;
+        existing.subreddits.push(post.subreddit);
+        if (post.score > existing.topPost.score) {
+          existing.topPost = post;
+        }
+      } else {
+        trendMap.set(normalizedTitle, {
+          title: post.title,
+          normalizedTitle: normalizedTitle,
+          score: post.score,
+          numComments: post.numComments,
+          subreddits: [post.subreddit],
+          topPost: post,
+          createdUtc: post.createdUtc
+        });
+      }
+    }
+
+    // Convert to array and sort by combined score
+    const trends = Array.from(trendMap.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 20)
+      .map((trend, index) => {
+        const post = trend.topPost;
+
+        // Extract keywords from title
+        const keywords = extractKeywords(trend.title);
+
+        // Calculate growth estimate based on score and age
+        const ageHours = (Date.now() / 1000 - trend.createdUtc) / 3600;
+        const scorePerHour = trend.score / Math.max(1, ageHours);
+        const growth24h = Math.min(1000, Math.round(scorePerHour * 10));
+
+        return {
+          hashtag: `#${trend.normalizedTitle}`,
+          displayName: trend.title.slice(0, 50) + (trend.title.length > 50 ? '...' : ''),
+          views: trend.score * 100, // Rough estimate: 100 views per upvote
+          videoCount: trend.numComments,
+          growth5h: Math.round(growth24h / 5),
+          growth24h: growth24h,
+          growth7d: 0,
+          description: `Trending on r/${trend.subreddits.join(', r/')} with ${trend.score.toLocaleString()} upvotes`,
+          keywords: keywords,
+          rank: index + 1,
+          rankDiff: 0,
+          industry: null,
+          url: `https://reddit.com${post.permalink}`,
+          subreddits: trend.subreddits,
+          redditScore: trend.score,
+          numComments: trend.numComments
+        };
+      });
+
+    console.log(`Parsed ${trends.length} Reddit trends from ${REDDIT_SUBREDDITS.length} subreddits`);
+    return trends;
+  } catch (error) {
+    console.error('Reddit fetch error:', error);
+    return [];
+  }
+}
+
+async function fetchSubredditPosts(subreddit) {
+  try {
+    // Use Reddit's JSON API (no auth needed for public data)
+    const url = `https://www.reddit.com/r/${subreddit}/hot.json?limit=25`;
+
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'MemeAggregator/1.0'
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`Reddit API error for r/${subreddit}:`, response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.data?.children) {
+      return [];
+    }
+
+    return data.data.children
+      .filter(child => child.kind === 't3') // Only posts (t3)
+      .map(child => child.data)
+      .filter(post => {
+        // Filter out stickied posts and very low score posts
+        if (post.stickied) return false;
+        if (post.score < 100) return false;
+        return true;
+      })
+      .map(post => ({
+        title: post.title,
+        score: post.score,
+        numComments: post.num_comments,
+        subreddit: post.subreddit,
+        permalink: post.permalink,
+        createdUtc: post.created_utc,
+        url: post.url,
+        isVideo: post.is_video,
+        thumbnail: post.thumbnail
+      }));
+  } catch (error) {
+    console.error(`Error fetching r/${subreddit}:`, error);
+    return [];
+  }
+}
+
+function normalizeRedditTitle(title) {
+  // Extract the main topic from a Reddit title
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '') // Remove punctuation
+    .replace(/\s+/g, '')     // Remove spaces
+    .slice(0, 30);           // Limit length for grouping
+}
+
+function extractKeywords(title) {
+  // Extract meaningful keywords from Reddit title
+  const stopWords = new Set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'shall', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'my', 'your', 'his', 'her', 'its', 'our', 'their', 'what', 'which', 'who', 'whom', 'when', 'where', 'why', 'how', 'all', 'each', 'every', 'both', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 'just', 'also', 'now', 'here', 'there', 'then', 'once', 'if', 'me', 'im', 'ive', 'dont', 'cant', 'wont', 'isnt', 'arent', 'wasnt', 'werent', 'hasnt', 'havent', 'hadnt', 'doesnt', 'didnt', 'wouldnt', 'couldnt', 'shouldnt', 'mustnt', 'lets', 'thats', 'whos', 'whats', 'heres', 'theres', 'wheres', 'whens', 'whys', 'hows', 'because', 'as', 'until', 'while', 'although', 'though', 'after', 'before', 'when', 'whenever', 'where', 'wherever', 'whether', 'however', 'therefore', 'otherwise']);
+
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '')
+    .split(/\s+/)
+    .filter(word => word.length > 2 && !stopWords.has(word))
+    .slice(0, 5);
+}
+
 // ========== NORMALIZATION & SCORING FUNCTIONS ==========
 
 function normalizeTrend(trend, source) {
@@ -349,6 +513,15 @@ function normalizeTrend(trend, source) {
   } else if (source === 'google') {
     // Score based on rank (top rank = higher score)
     sourceScore = Math.max(0, 100 - (trend.rank * 4));
+  } else if (source === 'reddit') {
+    // Score based on Reddit score (upvotes) and cross-posting
+    const redditScore = trend.redditScore || 0;
+    const subredditCount = trend.subreddits?.length || 1;
+    // Base score from upvotes (log scale)
+    sourceScore = Math.min(100, Math.log10(redditScore + 1) * 20);
+    // Boost for cross-posting to multiple subreddits
+    sourceScore *= (1 + (subredditCount - 1) * 0.2);
+    sourceScore = Math.min(100, sourceScore);
   }
 
   return {
