@@ -1836,6 +1836,130 @@
             }
         }
 
+        /* ========== Trend Modal Styles ========== */
+        .trend-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .trend-modal-overlay.active {
+            display: flex;
+        }
+
+        .trend-modal {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .trend-modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+            line-height: 1;
+            padding: 4px;
+        }
+
+        .trend-modal-close:hover {
+            color: #333;
+        }
+
+        .trend-modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .trend-modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 8px 0;
+        }
+
+        .trend-modal-source {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .trend-modal-source.tiktok { background: #fe2c55; }
+        .trend-modal-source.google { background: #4285f4; }
+        .trend-modal-source.reddit { background: #ff4500; }
+        .trend-modal-source.twitter { background: #1da1f2; }
+        .trend-modal-source.fourchan { background: #789922; }
+
+        .trend-modal-body {
+            padding: 20px 24px 24px;
+        }
+
+        .trend-modal-info {
+            margin-bottom: 20px;
+        }
+
+        .trend-modal-info p {
+            margin: 8px 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .trend-modal-info strong {
+            color: #333;
+        }
+
+        .trend-modal-links {
+            margin-bottom: 20px;
+        }
+
+        .trend-modal-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+
+        .trend-modal-links a:hover {
+            background: #e0e0e0;
+        }
+
+        .trend-modal-tokens h3 {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
         /* ========== End Layout Styles ========== */
 
         /* ========== DexScreener Token Styles ========== */
@@ -2400,78 +2524,36 @@
 
     <!-- Memes Tab -->
     <div class="tab-content" id="memes">
-        <!-- Layout Toggle -->
-        <div class="layout-toggle-container">
-            <button class="layout-toggle-btn active" data-layout="columns">📊 Columns View</button>
-            <button class="layout-toggle-btn" data-layout="unified">🎨 Unified Feed</button>
-            <button class="layout-toggle-btn" data-layout="timeframe">⏱️ By Timeframe</button>
-        </div>
-
-        <!-- Option 1: TweetDeck-style Columns -->
-        <div class="tweetdeck-layout active" id="columnsLayout">
-            <div class="tweetdeck-columns" id="tweetdeckColumns">
-                <!-- Columns will be populated by JS -->
-            </div>
-        </div>
-
-        <!-- Option 4: Color-coded Unified Feed -->
-        <div class="unified-layout" id="unifiedLayout">
-            <div class="source-filter-bar">
-                <button class="source-filter-btn all active" data-source="all">🌐 All Sources</button>
-                <button class="source-filter-btn tiktok" data-source="tiktok">📱 TikTok</button>
-                <button class="source-filter-btn google" data-source="google">📈 Google</button>
-                <button class="source-filter-btn reddit" data-source="reddit">🤖 Reddit</button>
-                <button class="source-filter-btn twitter" data-source="twitter">🐦 Twitter</button>
-                <button class="source-filter-btn fourchan" data-source="4chan">🎭 4chan</button>
-            </div>
-            <div class="unified-feed" id="unifiedFeed">
-                <!-- Cards will be populated by JS -->
-            </div>
-        </div>
-
-        <!-- Original Timeframe Layout -->
-        <div class="timeframe-layout" id="timeframeLayout" style="display: none;">
-            <!-- 5h Emerging Trends -->
-            <div class="chart-container" style="margin-bottom: 30px;">
-                <div class="chart-header">
-                    <div class="chart-title-section">
-                        <div class="chart-tabs">
-                            <button class="chart-tab active">Emerging (5h)</button>
-                        </div>
-                        <p class="chart-subtitle">Early signals - New trends gaining momentum in the last 5 hours</p>
-                    </div>
-                </div>
-                <div id="tiktokTrends5h" class="tiktok-momentum-cards"></div>
-            </div>
-
-            <!-- 24h Hot Trends -->
-            <div class="chart-container" style="margin-bottom: 30px;">
-                <div class="chart-header">
-                    <div class="chart-title-section">
-                        <div class="chart-tabs">
-                            <button class="chart-tab active">Hot Now (24h)</button>
-                        </div>
-                        <p class="chart-subtitle">What's trending in the last 24 hours</p>
-                    </div>
-                </div>
-                <div id="tiktokTrends24h" class="tiktok-momentum-cards"></div>
-            </div>
-
-            <!-- 7d Weekly Winners -->
-            <div class="chart-container" style="margin-bottom: 30px;">
-                <div class="chart-header">
-                    <div class="chart-title-section">
-                        <div class="chart-tabs">
-                            <button class="chart-tab active">Weekly Winners (7d)</button>
-                        </div>
-                        <p class="chart-subtitle">Top performing trends over the past week</p>
-                    </div>
-                </div>
-                <div id="tiktokTrends7d" class="tiktok-momentum-cards"></div>
-            </div>
+        <!-- TweetDeck-style Columns -->
+        <div class="tweetdeck-columns" id="tweetdeckColumns">
+            <!-- Columns will be populated by JS -->
         </div>
 
         <p class="chart-data-source" style="text-align: center; margin-top: 20px;">Data: TikTok, Google Trends, Reddit, Twitter, 4chan, DexScreener</p>
+    </div>
+
+    <!-- Trend Detail Modal -->
+    <div class="trend-modal-overlay" id="trendModal">
+        <div class="trend-modal">
+            <button class="trend-modal-close" onclick="closeTrendModal()">&times;</button>
+            <div class="trend-modal-header">
+                <h2 class="trend-modal-title" id="modalTitle"></h2>
+                <span class="trend-modal-source" id="modalSource"></span>
+            </div>
+            <div class="trend-modal-body">
+                <div class="trend-modal-info" id="modalInfo"></div>
+                <div class="trend-modal-links" id="modalLinks"></div>
+                <div class="trend-modal-tokens">
+                    <h3>Related Tokens (Solana & Base)</h3>
+                    <div id="modalTokens" class="dex-token-list">
+                        <div class="dex-tokens-loading">
+                            <div class="spinner"></div>
+                            <span>Searching DexScreener...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -7199,42 +7281,26 @@
             });
         }
 
-        // Initialize Memes tab with three sections (multi-source)
+        // Initialize Memes tab (columns view only)
         async function initMemesTab() {
-            // Show loading state in all layouts
             const tweetdeckEl = document.getElementById('tweetdeckColumns');
-            const unifiedEl = document.getElementById('unifiedFeed');
 
             if (tweetdeckEl) {
                 tweetdeckEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #666; width: 100%;"><div class="spinner" style="width: 24px; height: 24px; border: 3px solid #e0e0e0; border-top-color: #0A7B83; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>Loading trends from multiple sources...</div>';
             }
-            if (unifiedEl) {
-                unifiedEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #666; width: 100%;"><div class="spinner" style="width: 24px; height: 24px; border: 3px solid #e0e0e0; border-top-color: #0A7B83; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>Loading trends...</div>';
-            }
-
-            const containers = ['tiktokTrends5h', 'tiktokTrends24h', 'tiktokTrends7d'];
-            containers.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;"><div class="spinner" style="width: 24px; height: 24px; border: 3px solid #e0e0e0; border-top-color: #0A7B83; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px;"></div>Loading trends from multiple sources...</div>';
-            });
 
             // Fetch real data from multi-source aggregator
             memeTrends = await fetchMemeTrends();
             memeDataLoaded = true;
 
-            // Render all layouts
+            // Render columns layout
             renderTweetDeckLayout();
-            renderUnifiedLayout();
-            renderTrendCards('tiktokTrends5h', 'growth5h', '5h');
-            renderTrendCards('tiktokTrends24h', 'growth24h', '24h');
-            renderTrendCards('tiktokTrends7d', 'growth7d', '7d');
-
-            // Setup layout toggle handlers
-            setupLayoutToggle();
-            setupSourceFilters();
         }
 
-        // Render TweetDeck-style columns (Option 1)
+        // Store trends data for modal access
+        let trendsDataMap = {};
+
+        // Render TweetDeck-style columns
         function renderTweetDeckLayout() {
             const container = document.getElementById('tweetdeckColumns');
             if (!container || !memeTrends) return;
@@ -7255,15 +7321,17 @@
                 '4chan': '🎭'
             };
 
-            // Group trends by primary source
+            // Group trends by primary source and store in map
             const trendsBySource = {};
             sources.forEach(s => trendsBySource[s] = []);
 
-            memeTrends.forEach(trend => {
+            memeTrends.forEach((trend, idx) => {
                 const primarySource = trend.sources && trend.sources[0] ? trend.sources[0] : 'tiktok';
                 if (trendsBySource[primarySource]) {
                     trendsBySource[primarySource].push(trend);
                 }
+                // Store trend data for modal
+                trendsDataMap[trend.hashtag] = trend;
             });
 
             container.innerHTML = sources.map(source => {
@@ -7278,7 +7346,7 @@
                         </div>
                         <div class="tweetdeck-column-content">
                             ${trends.length === 0 ? '<p style="text-align: center; color: #999; padding: 20px; font-size: 0.85rem;">No trends found</p>' :
-                              trends.slice(0, 15).map(trend => {
+                              trends.slice(0, 20).map(trend => {
                                 const displayName = trend.displayName || trend.hashtag;
                                 const category = trend.category || 'unknown';
                                 const categoryIcon = CATEGORY_ICONS[category] || '';
@@ -7286,7 +7354,9 @@
                                 const isMultiSource = trend.sources && trend.sources.length >= 2;
 
                                 return `
-                                    <div class="tweetdeck-card ${cssClass}${isMultiSource ? ' multi-source' : ''}" data-hashtag="${trend.hashtag}">
+                                    <div class="tweetdeck-card ${cssClass}${isMultiSource ? ' multi-source' : ''}"
+                                         data-hashtag="${trend.hashtag}"
+                                         onclick="openTrendModal('${trend.hashtag.replace(/'/g, "\\'")}')">
                                         <div class="tweetdeck-card-title">
                                             ${displayName}
                                             ${categoryIcon ? `<span style="margin-left: 4px;">${categoryIcon}</span>` : ''}
@@ -7305,6 +7375,95 @@
                 `;
             }).join('');
         }
+
+        // Open trend detail modal
+        async function openTrendModal(hashtag) {
+            const trend = trendsDataMap[hashtag];
+            if (!trend) return;
+
+            const modal = document.getElementById('trendModal');
+            const titleEl = document.getElementById('modalTitle');
+            const sourceEl = document.getElementById('modalSource');
+            const infoEl = document.getElementById('modalInfo');
+            const linksEl = document.getElementById('modalLinks');
+            const tokensEl = document.getElementById('modalTokens');
+
+            const displayName = trend.displayName || trend.hashtag;
+            const primarySource = trend.sources && trend.sources[0] ? trend.sources[0] : 'tiktok';
+            const cssClass = primarySource === '4chan' ? 'fourchan' : primarySource;
+            const category = trend.category || 'unknown';
+            const categoryLabel = category !== 'unknown' ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+
+            // Set title and source
+            titleEl.textContent = displayName;
+            sourceEl.className = 'trend-modal-source ' + cssClass;
+            sourceEl.textContent = SOURCE_ICONS[primarySource] + ' ' + primarySource;
+
+            // Set info
+            let infoHtml = '';
+            if (trend.description) {
+                infoHtml += `<p><strong>Description:</strong> ${trend.description}</p>`;
+            }
+            if (categoryLabel) {
+                infoHtml += `<p><strong>Category:</strong> ${CATEGORY_ICONS[category] || ''} ${categoryLabel}</p>`;
+            }
+            if (trend.aggregateScore) {
+                infoHtml += `<p><strong>Score:</strong> ${trend.aggregateScore}/100</p>`;
+            }
+            if (trend.views) {
+                infoHtml += `<p><strong>Views:</strong> ${formatTiktokViews(trend.views)}</p>`;
+            }
+            if (trend.sources && trend.sources.length > 1) {
+                infoHtml += `<p><strong>Sources:</strong> ${trend.sources.map(s => SOURCE_ICONS[s] + ' ' + s).join(', ')}</p>`;
+            }
+            if (trend.keywords && trend.keywords.length > 0) {
+                infoHtml += `<p><strong>Keywords:</strong> ${trend.keywords.join(', ')}</p>`;
+            }
+            infoEl.innerHTML = infoHtml;
+
+            // Set links
+            let linksHtml = '';
+            const searchTerm = hashtag.replace(/^#/, '');
+            if (primarySource === 'tiktok') {
+                linksHtml += `<a href="https://www.tiktok.com/tag/${searchTerm}" target="_blank">📱 View on TikTok</a>`;
+            }
+            if (primarySource === 'google' || trend.sources?.includes('google')) {
+                linksHtml += `<a href="https://trends.google.com/trends/explore?q=${encodeURIComponent(searchTerm)}" target="_blank">📈 Google Trends</a>`;
+            }
+            if (primarySource === 'reddit' || trend.sources?.includes('reddit')) {
+                linksHtml += `<a href="https://www.reddit.com/search/?q=${encodeURIComponent(searchTerm)}" target="_blank">🤖 Search Reddit</a>`;
+            }
+            if (primarySource === 'twitter' || trend.sources?.includes('twitter')) {
+                linksHtml += `<a href="https://twitter.com/search?q=${encodeURIComponent(searchTerm)}" target="_blank">🐦 Search X/Twitter</a>`;
+            }
+            linksHtml += `<a href="https://knowyourmeme.com/search?q=${encodeURIComponent(searchTerm)}" target="_blank">🔍 Know Your Meme</a>`;
+            linksEl.innerHTML = linksHtml;
+
+            // Show loading for tokens
+            tokensEl.innerHTML = `<div class="dex-tokens-loading"><div class="spinner"></div><span>Searching DexScreener...</span></div>`;
+
+            // Show modal
+            modal.classList.add('active');
+
+            // Fetch tokens
+            const tokens = await fetchDexScreenerTokens(searchTerm, '24h');
+            renderTokensSection(tokens, 'modalTokens', '24h');
+        }
+
+        // Close trend modal
+        function closeTrendModal() {
+            document.getElementById('trendModal').classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('trendModal')?.addEventListener('click', function(e) {
+            if (e.target === this) closeTrendModal();
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeTrendModal();
+        });
 
         // Render unified color-coded feed (Option 4)
         function renderUnifiedLayout() {
