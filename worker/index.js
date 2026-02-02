@@ -647,12 +647,14 @@ async function fetch4chanTrends() {
 
 async function fetchBoardCatalog(board) {
   try {
-    const url = `https://a.4cdn.org/${board}/catalog.json`;
+    // Use codetabs proxy to bypass 4chan blocking Cloudflare Workers
+    const directUrl = `https://a.4cdn.org/${board}/catalog.json`;
+    const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(directUrl)}`;
 
-    const response = await fetch(url);
+    const response = await fetch(proxyUrl);
 
     if (!response.ok) {
-      console.log(`4chan API returned ${response.status} for /${board}/ - may be blocked from Cloudflare`);
+      console.log(`4chan proxy returned ${response.status} for /${board}/`);
       return [];
     }
 
