@@ -242,71 +242,84 @@ function transformTikTokData(data) {
 
 async function fetchGoogleTrends() {
   try {
-    // Fetch daily trends from Google Trends API
-    const response = await fetch('https://trends.google.com/trends/api/dailytrends?geo=US&hl=en-US');
+    // Fetch daily trends from Google Trends RSS feed
+    const response = await fetch('https://trends.google.com/trending/rss?geo=US');
 
     if (!response.ok) {
-      console.error('Google Trends API error:', response.status);
+      console.error('Google Trends RSS error:', response.status);
       return [];
     }
 
-    let text = await response.text();
-    // Remove JSONP prefix that Google adds
-    text = text.replace(/^\)\]\}',\n/, '');
+    const text = await response.text();
 
-    const data = JSON.parse(text);
+    // Parse RSS XML manually (Cloudflare Workers don't have DOMParser)
+    const items = [];
+    const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+    let match;
 
-    if (!data.default?.trendingSearchesDays?.[0]?.trendingSearches) {
-      console.log('No Google trends data found');
-      return [];
-    }
+    while ((match = itemRegex.exec(text)) !== null && items.length < 20) {
+      const itemXml = match[1];
 
-    const trends = data.default.trendingSearchesDays[0].trendingSearches;
+      // Extract title
+      const titleMatch = itemXml.match(/<title>([^<]*)<\/title>/);
+      const title = titleMatch ? titleMatch[1].trim() : '';
 
-    return trends.slice(0, 20).map((item, index) => {
-      const title = item.title?.query || item.title || '';
-      const traffic = item.formattedTraffic || '10K+';
+      if (!title) continue;
 
-      // Parse traffic string to number (e.g., "500K+" -> 500000)
+      // Extract traffic estimate
+      const trafficMatch = itemXml.match(/<ht:approx_traffic>([^<]*)<\/ht:approx_traffic>/);
+      const traffic = trafficMatch ? trafficMatch[1] : '1K+';
+
+      // Parse traffic string to number
       let viewCount = 0;
-      const trafficMatch = traffic.match(/(\d+)(K|M|B)?/i);
-      if (trafficMatch) {
-        viewCount = parseInt(trafficMatch[1]);
-        if (trafficMatch[2]) {
+      const trafficNumMatch = traffic.match(/(\d+)(K|M|B)?/i);
+      if (trafficNumMatch) {
+        viewCount = parseInt(trafficNumMatch[1]);
+        if (trafficNumMatch[2]) {
           const multiplier = { 'K': 1000, 'M': 1000000, 'B': 1000000000 };
-          viewCount *= multiplier[trafficMatch[2].toUpperCase()] || 1;
+          viewCount *= multiplier[trafficNumMatch[2].toUpperCase()] || 1;
         }
       }
 
-      // Get related articles for description
-      const articles = item.articles || [];
-      const description = articles[0]?.title || `Trending on Google: ${title}`;
+      // Extract news item title for description
+      const newsMatch = itemXml.match(/<ht:news_item_title>([^<]*)<\/ht:news_item_title>/);
+      const newsTitle = newsMatch ? newsMatch[1].replace(/&apos;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&') : '';
 
-      // Get related queries for keywords
-      const relatedQueries = item.relatedQueries?.map(q => q.query?.toLowerCase()) || [];
-      const keywords = [title.toLowerCase(), ...relatedQueries].slice(0, 5);
+      // Extract news URL
+      const newsUrlMatch = itemXml.match(/<ht:news_item_url>([^<]*)<\/ht:news_item_url>/);
+      const newsUrl = newsUrlMatch ? newsUrlMatch[1] : '';
 
-      return {
+      // Extract news source
+      const newsSourceMatch = itemXml.match(/<ht:news_item_source>([^<]*)<\/ht:news_item_source>/);
+      const newsSource = newsSourceMatch ? newsSourceMatch[1] : '';
+
+      const description = newsTitle || `Trending on Google: ${title}`;
+      const keywords = title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+
+      items.push({
         hashtag: `#${title.replace(/\s+/g, '').toLowerCase()}`,
         displayName: title,
         views: viewCount,
         videoCount: 0,
-        growth5h: 0, // Google doesn't provide granular growth data
-        growth24h: Math.floor(Math.random() * 200) + 50, // Estimate based on being in daily trends
+        growth5h: 0,
+        growth24h: Math.min(500, Math.floor(viewCount / 1000) + 50), // Estimate based on traffic
         growth7d: 0,
         description: description,
-        keywords: keywords,
-        rank: index + 1,
+        keywords: keywords.slice(0, 5),
+        rank: items.length + 1,
         rankDiff: 0,
         industry: null,
         url: `https://trends.google.com/trends/explore?q=${encodeURIComponent(title)}&geo=US`,
-        articles: articles.slice(0, 3).map(a => ({
-          title: a.title,
-          url: a.url,
-          source: a.source
-        }))
-      };
-    });
+        articles: newsTitle ? [{
+          title: newsTitle,
+          url: newsUrl,
+          source: newsSource
+        }] : []
+      });
+    }
+
+    console.log(`Parsed ${items.length} Google Trends from RSS`);
+    return items;
   } catch (error) {
     console.error('Google Trends fetch error:', error);
     return [];
