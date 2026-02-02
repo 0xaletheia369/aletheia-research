@@ -6252,9 +6252,16 @@
         const dexScreenerCache = new Map();
         const DEX_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-        async function fetchDexScreenerTokens(keyword) {
-            // Check cache first
-            const cacheKey = `dexscreener:${keyword.toLowerCase()}`;
+        // Max age in milliseconds for each timeframe
+        const TIMEFRAME_MAX_AGE = {
+            '5h': 5 * 60 * 60 * 1000,           // 5 hours
+            '24h': 24 * 60 * 60 * 1000,         // 24 hours
+            '7d': 7 * 24 * 60 * 60 * 1000       // 7 days
+        };
+
+        async function fetchDexScreenerTokens(keyword, timeframe = null) {
+            // Check cache first (include timeframe in cache key)
+            const cacheKey = `dexscreener:${keyword.toLowerCase()}:${timeframe || 'all'}`;
             const cached = dexScreenerCache.get(cacheKey);
             if (cached && Date.now() - cached.timestamp < DEX_CACHE_DURATION) {
                 return cached.data;
@@ -6277,6 +6284,8 @@
                 }
 
                 const data = await response.json();
+                const now = Date.now();
+                const maxAge = timeframe ? TIMEFRAME_MAX_AGE[timeframe] : null;
 
                 // Filter and process results
                 const tokens = (data.pairs || [])
@@ -6287,6 +6296,11 @@
                         // Minimum liquidity $10K
                         const liquidity = pair.liquidity?.usd || 0;
                         if (liquidity < 10000) return false;
+                        // Filter by token age if timeframe specified
+                        if (maxAge && pair.pairCreatedAt) {
+                            const tokenAge = now - pair.pairCreatedAt;
+                            if (tokenAge > maxAge) return false;
+                        }
                         return true;
                     })
                     .sort((a, b) => (b.volume?.h24 || 0) - (a.volume?.h24 || 0))
@@ -6341,12 +6355,13 @@
             return minutes + 'm';
         }
 
-        function renderTokensSection(tokens, containerId) {
+        function renderTokensSection(tokens, containerId, timeframe = null) {
             const container = document.getElementById(containerId);
             if (!container) return;
 
             if (tokens.length === 0) {
-                container.innerHTML = '<div class="dex-tokens-empty">No matching tokens found on Solana or Base</div>';
+                const timeframeText = timeframe ? ` launched in the last ${timeframe}` : '';
+                container.innerHTML = `<div class="dex-tokens-empty">No matching tokens${timeframeText} found on Solana or Base</div>`;
                 return;
             }
 
@@ -6770,7 +6785,7 @@
                                 <div class="tiktok-card-stat-value" style="color: ${getGrowthColor(trend.growth7d || 0, '7d')};">+${trend.growth7d || 0}%</div>
                             </div>
                         </div>
-                        <div class="tiktok-card-details" id="detail-${containerId}-${index}" data-hashtag="${trend.hashtag}" data-keyword="${(trend.keywords && trend.keywords[0]) || ''}">
+                        <div class="tiktok-card-details" id="detail-${containerId}-${index}" data-hashtag="${trend.hashtag}" data-keyword="${(trend.keywords && trend.keywords[0]) || ''}" data-timeframe="${timeframeLabel}">
                             <div class="tiktok-detail-label">Description</div>
                             <div class="tiktok-detail-value" style="margin-bottom: 12px;">${trend.description || 'Trending content'}</div>
                             <div class="tiktok-detail-label">Keywords</div>
@@ -6813,18 +6828,19 @@
                         if (tokensContainer && !tokensContainer.dataset.loaded) {
                             const hashtag = detailEl.dataset.hashtag;
                             const keyword = detailEl.dataset.keyword;
+                            const timeframe = detailEl.dataset.timeframe; // '5h', '24h', or '7d'
 
-                            // Search using hashtag (without #)
+                            // Search using hashtag (without #), filter by token age
                             const searchTerm = hashtag.replace(/^#/, '');
-                            const tokens = await fetchDexScreenerTokens(searchTerm);
+                            const tokens = await fetchDexScreenerTokens(searchTerm, timeframe);
 
                             // If no results with hashtag, try first keyword
                             let finalTokens = tokens;
                             if (tokens.length === 0 && keyword && keyword !== searchTerm) {
-                                finalTokens = await fetchDexScreenerTokens(keyword);
+                                finalTokens = await fetchDexScreenerTokens(keyword, timeframe);
                             }
 
-                            renderTokensSection(finalTokens, `tokens-${containerId}-${index}`);
+                            renderTokensSection(finalTokens, `tokens-${containerId}-${index}`, timeframe);
                             tokensContainer.dataset.loaded = 'true';
                         }
                     }
