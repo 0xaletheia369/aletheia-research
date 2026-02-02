@@ -1534,7 +1534,43 @@
 
         /* ========== End Multi-Source Trend Styles ========== */
 
-        /* ========== Layout Toggle Styles ========== */
+        /* ========== Timeframe Toggle Styles ========== */
+        .timeframe-toggle-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+        }
+
+        .timeframe-toggle-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .timeframe-toggle-btn:hover {
+            border-color: #0A7B83;
+            color: #0A7B83;
+            transform: translateY(-1px);
+        }
+
+        .timeframe-toggle-btn.active {
+            background: #0A7B83;
+            color: #fff;
+            border-color: #0A7B83;
+            box-shadow: 0 4px 12px rgba(10, 123, 131, 0.3);
+        }
+
+        /* ========== Layout Toggle Styles (deprecated) ========== */
         .layout-toggle-container {
             display: flex;
             justify-content: center;
@@ -2524,6 +2560,13 @@
 
     <!-- Memes Tab -->
     <div class="tab-content" id="memes">
+        <!-- Timeframe Toggle -->
+        <div class="timeframe-toggle-container">
+            <button class="timeframe-toggle-btn active" data-timeframe="5h">⚡ 5h Emerging</button>
+            <button class="timeframe-toggle-btn" data-timeframe="24h">🔥 24h Hot</button>
+            <button class="timeframe-toggle-btn" data-timeframe="7d">🏆 7d Winners</button>
+        </div>
+
         <!-- TweetDeck-style Columns -->
         <div class="tweetdeck-columns" id="tweetdeckColumns">
             <!-- Columns will be populated by JS -->
@@ -7293,12 +7336,14 @@
             memeTrends = await fetchMemeTrends();
             memeDataLoaded = true;
 
-            // Render columns layout
+            // Render columns layout and setup timeframe toggle
             renderTweetDeckLayout();
+            setupTimeframeToggle();
         }
 
         // Store trends data for modal access
         let trendsDataMap = {};
+        let currentTimeframe = '5h'; // Default timeframe
 
         // Render TweetDeck-style columns
         function renderTweetDeckLayout() {
@@ -7321,6 +7366,9 @@
                 '4chan': '🎭'
             };
 
+            // Get sort key based on current timeframe
+            const sortKey = `growth${currentTimeframe}`;
+
             // Group trends by primary source and store in map
             const trendsBySource = {};
             sources.forEach(s => trendsBySource[s] = []);
@@ -7332,6 +7380,15 @@
                 }
                 // Store trend data for modal
                 trendsDataMap[trend.hashtag] = trend;
+            });
+
+            // Sort each source's trends by the current timeframe growth
+            sources.forEach(source => {
+                trendsBySource[source].sort((a, b) => {
+                    const aGrowth = a[sortKey] || 0;
+                    const bGrowth = b[sortKey] || 0;
+                    return bGrowth - aGrowth;
+                });
             });
 
             container.innerHTML = sources.map(source => {
@@ -7350,7 +7407,8 @@
                                 const displayName = trend.displayName || trend.hashtag;
                                 const category = trend.category || 'unknown';
                                 const categoryIcon = CATEGORY_ICONS[category] || '';
-                                const score = trend.aggregateScore || 50;
+                                const growth = trend[sortKey] || 0;
+                                const growthColor = getGrowthColor(growth, currentTimeframe);
                                 const isMultiSource = trend.sources && trend.sources.length >= 2;
 
                                 return `
@@ -7362,8 +7420,8 @@
                                             ${categoryIcon ? `<span style="margin-left: 4px;">${categoryIcon}</span>` : ''}
                                         </div>
                                         <div class="tweetdeck-card-meta">
-                                            <span>${trend.description ? trend.description.slice(0, 40) + '...' : ''}</span>
-                                            <span class="tweetdeck-card-score">${score}</span>
+                                            <span style="color: ${growthColor}; font-weight: 600;">+${growth}%</span>
+                                            <span class="tweetdeck-card-score">${trend.aggregateScore || 50}</span>
                                         </div>
                                         ${isMultiSource ? '<div style="font-size: 0.65rem; color: #9c27b0; margin-top: 4px;">✨ Multi-source</div>' : ''}
                                     </div>
@@ -7374,6 +7432,23 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // Setup timeframe toggle handlers
+        function setupTimeframeToggle() {
+            document.querySelectorAll('.timeframe-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const timeframe = this.dataset.timeframe;
+                    currentTimeframe = timeframe;
+
+                    // Update active button
+                    document.querySelectorAll('.timeframe-toggle-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Re-render columns with new sort
+                    renderTweetDeckLayout();
+                });
+            });
         }
 
         // Open trend detail modal
