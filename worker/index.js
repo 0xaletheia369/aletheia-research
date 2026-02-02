@@ -2,12 +2,13 @@
  * Cloudflare Worker: Multi-Source Meme Trend Aggregator
  *
  * Aggregates trends from multiple sources:
- * - TikTok (via Apify)
+ * - TikTok (via Apify) - ~$5/mo
  * - Google Trends (free RSS feed)
  * - Reddit (free JSON API)
  * - Twitter/X (via trends24.in scraping)
+ * - 4chan /biz/ (free official API)
  *
- * Future sources: 4chan
+ * Plus Know Your Meme enrichment for top trends
  */
 
 // Reddit subreddits to monitor for meme trends
@@ -73,7 +74,7 @@ export default {
       // Check cache first (skip if ?nocache=1)
       const skipCache = url.searchParams.get('nocache') === '1';
       const cache = caches.default;
-      const cacheKey = new Request('https://cache.local/meme-trends-v3', { method: 'GET' });
+      const cacheKey = new Request('https://cache.local/meme-trends-v4', { method: 'GET' });
 
       if (!skipCache) {
         let cachedResponse = await cache.match(cacheKey);
@@ -94,11 +95,12 @@ export default {
       console.log('Cache miss, fetching from all sources');
 
       // Fetch from all sources in parallel
-      const [tiktokTrends, googleTrends, redditTrends, twitterTrends] = await Promise.all([
+      const [tiktokTrends, googleTrends, redditTrends, twitterTrends, chanTrends] = await Promise.all([
         fetchTikTokTrends(env),
         fetchGoogleTrends(),
         fetchRedditTrends(),
-        fetchTwitterTrends()
+        fetchTwitterTrends(),
+        fetch4chanTrends()
       ]);
 
       // Normalize and merge trends
@@ -106,9 +108,13 @@ export default {
       const normalizedGoogle = googleTrends.map(t => normalizeTrend(t, 'google'));
       const normalizedReddit = redditTrends.map(t => normalizeTrend(t, 'reddit'));
       const normalizedTwitter = twitterTrends.map(t => normalizeTrend(t, 'twitter'));
+      const normalizedChan = chanTrends.map(t => normalizeTrend(t, '4chan'));
 
       // Merge and score all trends
-      const aggregatedTrends = mergeAndScore([...normalizedTiktok, ...normalizedGoogle, ...normalizedReddit, ...normalizedTwitter]);
+      let aggregatedTrends = mergeAndScore([...normalizedTiktok, ...normalizedGoogle, ...normalizedReddit, ...normalizedTwitter, ...normalizedChan]);
+
+      // Enrich top trends with Know Your Meme data (optional enhancement)
+      aggregatedTrends = await enrichWithKnowYourMeme(aggregatedTrends);
 
       // Create response
       const responseData = {
@@ -119,7 +125,8 @@ export default {
           tiktok: normalizedTiktok.length,
           google: normalizedGoogle.length,
           reddit: normalizedReddit.length,
-          twitter: normalizedTwitter.length
+          twitter: normalizedTwitter.length,
+          '4chan': normalizedChan.length
         },
         timestamp: new Date().toISOString()
       };
@@ -273,7 +280,7 @@ async function fetchGoogleTrends() {
     const itemRegex = /<item>([\s\S]*?)<\/item>/g;
     let match;
 
-    while ((match = itemRegex.exec(text)) !== null && items.length < 20) {
+    while ((match = itemRegex.exec(text)) !== null && items.length < 30) {
       const itemXml = match[1];
 
       // Extract title
@@ -575,6 +582,190 @@ async function fetchTwitterTrends() {
   }
 }
 
+// ========== 4CHAN FUNCTIONS ==========
+
+// Boards to monitor for meme/crypto trends
+const CHAN_BOARDS = ['biz']; // /biz/ - Business & Finance (crypto discussion)
+
+async function fetch4chanTrends() {
+  try {
+    const allThreads = [];
+
+    // Fetch catalog from each board
+    for (const board of CHAN_BOARDS) {
+      const threads = await fetchBoardCatalog(board);
+      allThreads.push(...threads);
+    }
+
+    // Sort by reply count (most active threads)
+    allThreads.sort((a, b) => b.replies - a.replies);
+
+    // Take top 20 most active threads
+    const topThreads = allThreads.slice(0, 20);
+
+    // Convert to trend format
+    const trends = topThreads.map((thread, index) => {
+      // Extract topic from subject or first part of comment
+      const topic = thread.sub || extractTopicFromComment(thread.com) || `Thread ${thread.no}`;
+      const cleanTopic = topic.replace(/<[^>]*>/g, '').trim(); // Remove HTML tags
+
+      // Extract keywords
+      const keywords = cleanTopic
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .split(/\s+/)
+        .filter(w => w.length > 2)
+        .slice(0, 5);
+
+      return {
+        hashtag: `#${cleanTopic.replace(/\s+/g, '').toLowerCase().slice(0, 30)}`,
+        displayName: cleanTopic.slice(0, 50) + (cleanTopic.length > 50 ? '...' : ''),
+        views: thread.replies * 50, // Estimate: 50 views per reply
+        videoCount: thread.images || 0,
+        growth5h: 0,
+        growth24h: Math.min(500, thread.replies * 2), // Estimate growth from activity
+        growth7d: 0,
+        description: `Active thread on /biz/ with ${thread.replies} replies`,
+        keywords: keywords.length > 0 ? keywords : ['4chan', 'biz'],
+        rank: index + 1,
+        rankDiff: 0,
+        industry: 'crypto',
+        url: `https://boards.4channel.org/${thread.board}/thread/${thread.no}`,
+        chanReplies: thread.replies,
+        chanImages: thread.images || 0,
+        board: thread.board
+      };
+    });
+
+    console.log(`Parsed ${trends.length} 4chan trends from ${CHAN_BOARDS.length} boards`);
+    return trends;
+  } catch (error) {
+    console.error('4chan fetch error:', error);
+    return [];
+  }
+}
+
+async function fetchBoardCatalog(board) {
+  try {
+    const url = `https://a.4cdn.org/${board}/catalog.json`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      console.log(`4chan API returned ${response.status} for /${board}/ - may be blocked from Cloudflare`);
+      return [];
+    }
+
+    const pages = await response.json();
+
+    // Flatten all threads from all pages
+    const threads = [];
+    for (const page of pages) {
+      for (const thread of page.threads) {
+        threads.push({
+          ...thread,
+          board: board
+        });
+      }
+    }
+
+    return threads;
+  } catch (error) {
+    console.error(`Error fetching /${board}/:`, error);
+    return [];
+  }
+}
+
+function extractTopicFromComment(comment) {
+  if (!comment) return null;
+
+  // Remove HTML tags and get first line
+  const text = comment
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&gt;/g, '>')
+    .replace(/&lt;/g, '<')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .trim();
+
+  // Get first sentence or first 50 chars
+  const firstSentence = text.split(/[.!?]/)[0];
+  return firstSentence.slice(0, 50);
+}
+
+// ========== KNOW YOUR MEME FUNCTIONS ==========
+
+async function enrichWithKnowYourMeme(trends) {
+  // Enrich top trends with Know Your Meme data
+  // Only check top 10 to avoid rate limiting
+  const enrichedTrends = [...trends];
+
+  for (let i = 0; i < Math.min(10, enrichedTrends.length); i++) {
+    const trend = enrichedTrends[i];
+    const memeData = await checkKnowYourMeme(trend.name || trend.displayName);
+
+    if (memeData) {
+      trend.memeStatus = memeData.status;
+      trend.memeOrigin = memeData.origin;
+      trend.memeYear = memeData.year;
+
+      // Boost score for confirmed memes
+      if (memeData.status === 'confirmed') {
+        trend.aggregateScore = Math.min(100, trend.aggregateScore * 1.2);
+      }
+    }
+  }
+
+  return enrichedTrends;
+}
+
+async function checkKnowYourMeme(term) {
+  try {
+    // Search Know Your Meme
+    const searchTerm = term.replace(/^#/, '').replace(/[^\w\s]/g, '');
+    const url = `https://knowyourmeme.com/search?q=${encodeURIComponent(searchTerm)}`;
+
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; MemeAggregator/1.0)'
+      }
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const html = await response.text();
+
+    // Check if this is a confirmed meme
+    // Look for status indicators in search results
+    const isConfirmed = html.includes('Confirmed') || html.includes('confirmed');
+    const isSubmission = html.includes('Submission') || html.includes('submission');
+
+    // Try to extract origin year
+    const yearMatch = html.match(/Origin<\/dt>\s*<dd[^>]*>(\d{4})/);
+    const year = yearMatch ? parseInt(yearMatch[1]) : null;
+
+    // Try to extract origin platform
+    const originMatch = html.match(/Origin<\/dt>\s*<dd[^>]*>([^<]+)/);
+    const origin = originMatch ? originMatch[1].trim() : null;
+
+    if (isConfirmed || isSubmission) {
+      return {
+        status: isConfirmed ? 'confirmed' : 'submission',
+        origin: origin,
+        year: year
+      };
+    }
+
+    return null;
+  } catch (error) {
+    // Silently fail - KYM enrichment is optional
+    return null;
+  }
+}
+
 // ========== NORMALIZATION & SCORING FUNCTIONS ==========
 
 function normalizeTrend(trend, source) {
@@ -613,6 +804,13 @@ function normalizeTrend(trend, source) {
     // Boost for cashtags (crypto-related) and hashtags
     if (trend.isCashtag) sourceScore *= 1.3;
     if (trend.isHashtag) sourceScore *= 1.1;
+    sourceScore = Math.min(100, sourceScore);
+  } else if (source === '4chan') {
+    // Score based on reply count (activity level)
+    const replies = trend.chanReplies || 0;
+    sourceScore = Math.min(100, Math.log10(replies + 1) * 30);
+    // Boost for threads with images (more engaging)
+    if (trend.chanImages > 10) sourceScore *= 1.2;
     sourceScore = Math.min(100, sourceScore);
   }
 
