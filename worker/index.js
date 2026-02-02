@@ -5,8 +5,9 @@
  * - TikTok (via Apify)
  * - Google Trends (free RSS feed)
  * - Reddit (free JSON API)
+ * - Twitter/X (via trends24.in scraping)
  *
- * Future sources: Twitter/X, 4chan
+ * Future sources: 4chan
  */
 
 // Reddit subreddits to monitor for meme trends
@@ -72,7 +73,7 @@ export default {
       // Check cache first (skip if ?nocache=1)
       const skipCache = url.searchParams.get('nocache') === '1';
       const cache = caches.default;
-      const cacheKey = new Request('https://cache.local/meme-trends-v2', { method: 'GET' });
+      const cacheKey = new Request('https://cache.local/meme-trends-v3', { method: 'GET' });
 
       if (!skipCache) {
         let cachedResponse = await cache.match(cacheKey);
@@ -93,19 +94,21 @@ export default {
       console.log('Cache miss, fetching from all sources');
 
       // Fetch from all sources in parallel
-      const [tiktokTrends, googleTrends, redditTrends] = await Promise.all([
+      const [tiktokTrends, googleTrends, redditTrends, twitterTrends] = await Promise.all([
         fetchTikTokTrends(env),
         fetchGoogleTrends(),
-        fetchRedditTrends()
+        fetchRedditTrends(),
+        fetchTwitterTrends()
       ]);
 
       // Normalize and merge trends
       const normalizedTiktok = tiktokTrends.map(t => normalizeTrend(t, 'tiktok'));
       const normalizedGoogle = googleTrends.map(t => normalizeTrend(t, 'google'));
       const normalizedReddit = redditTrends.map(t => normalizeTrend(t, 'reddit'));
+      const normalizedTwitter = twitterTrends.map(t => normalizeTrend(t, 'twitter'));
 
       // Merge and score all trends
-      const aggregatedTrends = mergeAndScore([...normalizedTiktok, ...normalizedGoogle, ...normalizedReddit]);
+      const aggregatedTrends = mergeAndScore([...normalizedTiktok, ...normalizedGoogle, ...normalizedReddit, ...normalizedTwitter]);
 
       // Create response
       const responseData = {
@@ -115,7 +118,8 @@ export default {
         sources: {
           tiktok: normalizedTiktok.length,
           google: normalizedGoogle.length,
-          reddit: normalizedReddit.length
+          reddit: normalizedReddit.length,
+          twitter: normalizedTwitter.length
         },
         timestamp: new Date().toISOString()
       };
@@ -490,6 +494,87 @@ function extractKeywords(title) {
     .slice(0, 5);
 }
 
+// ========== TWITTER/X FUNCTIONS ==========
+
+async function fetchTwitterTrends() {
+  try {
+    // Scrape trends from trends24.in (aggregates Twitter/X trending topics)
+    const response = await fetch('https://trends24.in/united-states/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; MemeAggregator/1.0)'
+      }
+    });
+
+    if (!response.ok) {
+      console.error('Trends24 error:', response.status);
+      return [];
+    }
+
+    const html = await response.text();
+
+    // Parse trend links from HTML
+    // Format: <a href="https://twitter.com/search?q=TREND" class=trend-link>TREND</a>
+    const trendRegex = /<a\s+href="https:\/\/twitter\.com\/search\?q=([^"]+)"\s+class=trend-link>([^<]+)<\/a>/g;
+    const trends = new Map(); // Use Map to dedupe
+
+    let match;
+    while ((match = trendRegex.exec(html)) !== null) {
+      const encodedQuery = match[1];
+      const trendName = match[2].trim();
+
+      // Skip if already seen (trends24 shows multiple time periods)
+      if (trends.has(trendName.toLowerCase())) continue;
+
+      // Decode URL-encoded query
+      const decodedQuery = decodeURIComponent(encodedQuery);
+
+      // Determine if it's a hashtag, cashtag, or regular trend
+      const isHashtag = trendName.startsWith('#');
+      const isCashtag = trendName.startsWith('$');
+
+      trends.set(trendName.toLowerCase(), {
+        name: trendName,
+        query: decodedQuery,
+        isHashtag,
+        isCashtag
+      });
+
+      // Limit to top 30 unique trends
+      if (trends.size >= 30) break;
+    }
+
+    // Convert to array and format
+    const trendArray = Array.from(trends.values()).map((trend, index) => {
+      const cleanName = trend.name.replace(/^[#$]/, '').toLowerCase();
+      const keywords = cleanName.split(/\s+/).filter(w => w.length > 2);
+
+      return {
+        hashtag: trend.isHashtag ? trend.name : `#${cleanName.replace(/\s+/g, '')}`,
+        displayName: trend.name,
+        views: 0, // Twitter doesn't provide view counts via this method
+        videoCount: 0,
+        growth5h: 0,
+        growth24h: Math.max(100, 200 - index * 5), // Estimate: higher rank = more growth
+        growth7d: 0,
+        description: `Trending on X: ${trend.name}`,
+        keywords: keywords.length > 0 ? keywords : [cleanName],
+        rank: index + 1,
+        rankDiff: 0,
+        industry: null,
+        url: `https://twitter.com/search?q=${encodeURIComponent(trend.query)}`,
+        isHashtag: trend.isHashtag,
+        isCashtag: trend.isCashtag
+      };
+    });
+
+    console.log(`Parsed ${trendArray.length} Twitter trends from trends24.in`);
+    return trendArray;
+  } catch (error) {
+    console.error('Twitter trends fetch error:', error);
+    return [];
+  }
+}
+
 // ========== NORMALIZATION & SCORING FUNCTIONS ==========
 
 function normalizeTrend(trend, source) {
@@ -521,6 +606,13 @@ function normalizeTrend(trend, source) {
     sourceScore = Math.min(100, Math.log10(redditScore + 1) * 20);
     // Boost for cross-posting to multiple subreddits
     sourceScore *= (1 + (subredditCount - 1) * 0.2);
+    sourceScore = Math.min(100, sourceScore);
+  } else if (source === 'twitter') {
+    // Score based on rank (top trends score higher)
+    sourceScore = Math.max(0, 100 - (trend.rank * 3));
+    // Boost for cashtags (crypto-related) and hashtags
+    if (trend.isCashtag) sourceScore *= 1.3;
+    if (trend.isHashtag) sourceScore *= 1.1;
     sourceScore = Math.min(100, sourceScore);
   }
 
