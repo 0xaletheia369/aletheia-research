@@ -3255,6 +3255,46 @@
             return [];
         }
 
+        // Direct CoinGecko fetch for ETF market caps (CoinGecko has CORS support)
+        // Uses exponential backoff for rate limits
+        async function fetchHistoricalMarketCapDirect(coin, days, retryCount = 0) {
+            const cacheKey = `mcap_direct:${coin}:${days}`;
+            const cached = getCachedData(cacheKey);
+            if (cached) {
+                console.log(`Using cached market cap for ${coin}`);
+                return cached;
+            }
+
+            const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=${days}`;
+            try {
+                const response = await fetch(url);
+
+                // Handle rate limiting
+                if (response.status === 429) {
+                    if (retryCount < 3) {
+                        const delay = Math.pow(2, retryCount) * 5000; // 5s, 10s, 20s
+                        console.warn(`CoinGecko rate limited for ${coin}, retrying in ${delay/1000}s...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        return fetchHistoricalMarketCapDirect(coin, days, retryCount + 1);
+                    }
+                    console.error(`CoinGecko rate limit exceeded for ${coin} after ${retryCount} retries`);
+                    return [];
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.market_caps && data.market_caps.length > 0) {
+                        console.log(`CoinGecko direct succeeded for ${coin} - ${data.market_caps.length} entries`);
+                        setCachedData(cacheKey, data.market_caps);
+                        return data.market_caps;
+                    }
+                }
+            } catch (e) {
+                console.error(`CoinGecko direct failed for ${coin}:`, e.message);
+            }
+            return [];
+        }
+
         // Binance API fallback for market data (no API key needed, unlimited requests)
         async function fetchBinanceMarketData(assets) {
             try {
@@ -5772,18 +5812,18 @@
         }
 
         async function fetchEtfMarketCaps() {
-            // Fetch historical market cap data for each coin (last 365 days)
-            // Uses CoinGecko with rate limit handling
+            // Fetch historical market cap data for each coin (last 90 days)
+            // Uses CoinGecko directly (no proxy) with rate limit handling
             const coins = ['bitcoin', 'ethereum', 'solana'];
             const results = {};
 
             for (const coin of coins) {
                 try {
-                    // Add delay between requests to avoid CoinGecko rate limiting
+                    // Add 4s delay between requests to avoid CoinGecko rate limiting (free tier: ~10-30 req/min)
                     if (coin !== 'bitcoin') {
-                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        await new Promise(resolve => setTimeout(resolve, 4000));
                     }
-                    const marketCaps = await fetchHistoricalMarketCap(coin, 365);
+                    const marketCaps = await fetchHistoricalMarketCapDirect(coin, 90);
 
                     // Convert to date -> market_cap map (using date string as key)
                     const mcapMap = new Map();
