@@ -3227,20 +3227,30 @@
             return [];
         }
 
-        // CoinGecko fallback for historical data
-        async function fetchCoinGeckoHistoricalFallback(coin, days) {
+        // CoinGecko fallback for historical data with retry on rate limit
+        async function fetchCoinGeckoHistoricalFallback(coin, days, retryCount = 0) {
             const url = `https://api.coingecko.com/api/v3/coins/${coin}/market_chart?vs_currency=usd&days=${days}`;
             try {
                 const response = await fetch(proxyUrlCodeTabs(url));
                 if (response.ok) {
                     const data = await response.json();
+                    // Check for rate limit error in response body
+                    if (data && data.status && data.status.error_code === 429) {
+                        if (retryCount < 3) {
+                            console.warn(`CoinGecko rate limited for ${coin}, retrying in 5s...`);
+                            await new Promise(resolve => setTimeout(resolve, 5000));
+                            return fetchCoinGeckoHistoricalFallback(coin, days, retryCount + 1);
+                        }
+                        console.error(`CoinGecko rate limit exceeded for ${coin} after retries`);
+                        return [];
+                    }
                     if (data && data.market_caps) {
-                        console.log('CoinGecko historical fallback succeeded for', coin);
+                        console.log('CoinGecko historical succeeded for', coin, '- entries:', data.market_caps.length);
                         return data.market_caps;
                     }
                 }
             } catch (e) {
-                console.error('CoinGecko historical fallback also failed:', e);
+                console.error('CoinGecko historical failed:', e);
             }
             return [];
         }
@@ -5763,12 +5773,16 @@
 
         async function fetchEtfMarketCaps() {
             // Fetch historical market cap data for each coin (last 365 days)
-            // Uses Mobula API with CoinGecko fallback
+            // Uses CoinGecko with rate limit handling
             const coins = ['bitcoin', 'ethereum', 'solana'];
             const results = {};
 
             for (const coin of coins) {
                 try {
+                    // Add delay between requests to avoid CoinGecko rate limiting
+                    if (coin !== 'bitcoin') {
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                    }
                     const marketCaps = await fetchHistoricalMarketCap(coin, 365);
 
                     // Convert to date -> market_cap map (using date string as key)
