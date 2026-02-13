@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-12T08:07:42.377Z",
+  "lastUpdated": "2026-02-13T08:07:04.019Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -17,6 +17,21 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "12 Feb 2026",
+        "IBIT": "-157.6",
+        "FBTC": "-104.1",
+        "BITB": "-7.8",
+        "ARKB": "-31.5",
+        "BTCO": "-6.8",
+        "EZBC": "-3.8",
+        "BRRR": "-2.8",
+        "HODL": "-3.2",
+        "BTCW": "0.0",
+        "GBTC": "-59.1",
+        "BTC": "-33.5",
+        "Total": "-410.2"
+      },
       {
         "Date": "11 Feb 2026",
         "IBIT": "-73.4",
@@ -8120,6 +8135,18 @@
     ],
     "records": [
       {
+        "Date": "12 Feb 2026",
+        "Blackrock": "-29.0",
+        "Fidelity": "-43.5",
+        "Bitwise": "-6.2",
+        "21 Shares": "-2.9",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "-18.1",
+        "Total": "-113.1"
+      },
+      {
         "Date": "11 Feb 2026",
         "Blackrock": "-29.4",
         "Fidelity": "-67.1",
@@ -12946,6 +12973,16 @@
     ],
     "records": [
       {
+        "Date": "12 Feb 2026",
+        "ETF_1": "2.1",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.3",
+        "ETF_5": "0.0",
+        "ETF_6": "0.3",
+        "Total": "2.7"
+      },
+      {
         "Date": "11 Feb 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -13078,21 +13115,21 @@
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "11 Feb 2026",
-    "latestFlow": "-276.3",
-    "weeklyFlow": "-844.8",
-    "totalRecords": 539
+    "latestDate": "12 Feb 2026",
+    "latestFlow": "-410.2",
+    "weeklyFlow": "-983.0",
+    "totalRecords": 540
   },
   "ethereumSummary": {
-    "latestDate": "11 Feb 2026",
-    "latestFlow": "-129.1",
-    "weeklyFlow": "-221.2",
-    "totalRecords": 401
+    "latestDate": "12 Feb 2026",
+    "latestFlow": "-113.1",
+    "weeklyFlow": "-348.3",
+    "totalRecords": 402
   },
   "solanaSummary": {
-    "latestDate": "11 Feb 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "-6.4",
-    "totalRecords": 13
+    "latestDate": "12 Feb 2026",
+    "latestFlow": "2.7",
+    "weeklyFlow": "-4.6",
+    "totalRecords": 14
   }
 }
