@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-15T07:56:18.835Z",
+  "lastUpdated": "2026-02-16T08:09:54.187Z",
   "bitcoin": null,
   "ethereum": {
     "headers": [
@@ -4995,16 +4995,6 @@
         "ETF_5": "1.1",
         "ETF_6": "-0.9",
         "Total": "6.7"
-      },
-      {
-        "Date": "27 Jan 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "3.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "-1.1",
-        "Total": "1.9"
       }
     ]
   },
@@ -5018,6 +5008,6 @@
     "latestDate": "13 Feb 2026",
     "latestFlow": "1.5",
     "weeklyFlow": "3.6",
-    "totalRecords": 14
+    "totalRecords": 13
   }
 }
