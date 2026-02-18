@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-02-17T08:09:13.277Z",
+  "lastUpdated": "2026-02-18T08:07:33.820Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -17,6 +17,21 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "17 Feb 2026",
+        "IBIT": "-119.7",
+        "FBTC": "5.9",
+        "BITB": "-10.3",
+        "ARKB": "-8.3",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "GBTC": "-8.5",
+        "BTC": "36.0",
+        "Total": "-104.9"
+      },
       {
         "Date": "13 Feb 2026",
         "IBIT": "-9.4",
@@ -8150,6 +8165,18 @@
     ],
     "records": [
       {
+        "Date": "17 Feb 2026",
+        "Blackrock": "22.9",
+        "Fidelity": "14.4",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "11.3",
+        "Total": "48.6"
+      },
+      {
         "Date": "13 Feb 2026",
         "Blackrock": "-9.3",
         "Fidelity": "2.0",
@@ -13000,6 +13027,16 @@
     ],
     "records": [
       {
+        "Date": "17 Feb 2026",
+        "ETF_1": "1.7",
+        "ETF_2": "0.0",
+        "ETF_3": "0.5",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "2.2"
+      },
+      {
         "Date": "13 Feb 2026",
         "ETF_1": "1.7",
         "ETF_2": "-0.6",
@@ -13108,35 +13145,25 @@
         "ETF_5": "0.0",
         "ETF_6": "-2.2",
         "Total": "-11.3"
-      },
-      {
-        "Date": "29 Jan 2026",
-        "ETF_1": "-0.9",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "-1.3",
-        "Total": "-2.2"
       }
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "13 Feb 2026",
-    "latestFlow": "15.1",
-    "weeklyFlow": "-423.0",
-    "totalRecords": 541
+    "latestDate": "17 Feb 2026",
+    "latestFlow": "-104.9",
+    "weeklyFlow": "-93.8",
+    "totalRecords": 542
   },
   "ethereumSummary": {
-    "latestDate": "13 Feb 2026",
-    "latestFlow": "10.2",
-    "weeklyFlow": "-258.7",
-    "totalRecords": 403
+    "latestDate": "17 Feb 2026",
+    "latestFlow": "48.6",
+    "weeklyFlow": "-129.3",
+    "totalRecords": 404
   },
   "solanaSummary": {
-    "latestDate": "13 Feb 2026",
-    "latestFlow": "1.5",
-    "weeklyFlow": "3.6",
+    "latestDate": "17 Feb 2026",
+    "latestFlow": "2.2",
+    "weeklyFlow": "2.9",
     "totalRecords": 12
   }
 }
