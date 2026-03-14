@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-10T07:02:31.796Z",
+  "lastUpdated": "2026-03-14T06:59:45.234Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -17,6 +17,66 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "13 Mar 2026",
+        "IBIT": "143.6",
+        "FBTC": "23.2",
+        "BITB": "3.1",
+        "ARKB": "2.4",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "8.1",
+        "BTCW": "0.0",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "180.4"
+      },
+      {
+        "Date": "12 Mar 2026",
+        "IBIT": "46.1",
+        "FBTC": "15.3",
+        "BITB": "-5.7",
+        "ARKB": "3.0",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "GBTC": "-9.9",
+        "BTC": "5.0",
+        "Total": "53.8"
+      },
+      {
+        "Date": "11 Mar 2026",
+        "IBIT": "115.3",
+        "FBTC": "15.4",
+        "BITB": "0.0",
+        "ARKB": "0.0",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "-4.5",
+        "BTCW": "0.0",
+        "GBTC": "-16.0",
+        "BTC": "5.0",
+        "Total": "115.2"
+      },
+      {
+        "Date": "10 Mar 2026",
+        "IBIT": "185.8",
+        "FBTC": "33.5",
+        "BITB": "16.4",
+        "ARKB": "4.1",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "-4.1",
+        "HODL": "5.9",
+        "BTCW": "0.0",
+        "GBTC": "0.0",
+        "BTC": "5.3",
+        "Total": "246.9"
+      },
       {
         "Date": "09 Mar 2026",
         "IBIT": "109.3",
@@ -8363,6 +8423,7 @@
     "headers": [
       "Date",
       "Blackrock",
+      "Blackrock",
       "Fidelity",
       "Bitwise",
       "21 Shares",
@@ -8375,8 +8436,56 @@
     ],
     "records": [
       {
+        "Date": "13 Mar 2026",
+        "Blackrock": "2.2",
+        "Fidelity": "-7.9",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "0.0",
+        "Total": "26.7"
+      },
+      {
+        "Date": "12 Mar 2026",
+        "Blackrock": "43.5",
+        "Fidelity": "52.0",
+        "Bitwise": "0.9",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.8",
+        "Grayscale": "0.0",
+        "Total": "115.9"
+      },
+      {
+        "Date": "11 Mar 2026",
+        "Blackrock": "0.0",
+        "Fidelity": "19.1",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "19.1",
+        "Total": "57.0"
+      },
+      {
+        "Date": "10 Mar 2026",
+        "Blackrock": "-",
+        "Fidelity": "10.7",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "1.9",
+        "Total": "12.6"
+      },
+      {
         "Date": "09 Mar 2026",
-        "Blackrock": "-55.1",
+        "Blackrock": "-",
         "Fidelity": "16.2",
         "Bitwise": "0.0",
         "21 Shares": "1.0",
@@ -8388,7 +8497,7 @@
       },
       {
         "Date": "06 Mar 2026",
-        "Blackrock": "-4.8",
+        "Blackrock": "-",
         "Fidelity": "-67.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8400,7 +8509,7 @@
       },
       {
         "Date": "05 Mar 2026",
-        "Blackrock": "30.3",
+        "Blackrock": "-",
         "Fidelity": "-115.0",
         "Bitwise": "-3.6",
         "21 Shares": "-5.2",
@@ -8412,7 +8521,7 @@
       },
       {
         "Date": "04 Mar 2026",
-        "Blackrock": "39.3",
+        "Blackrock": "-",
         "Fidelity": "30.3",
         "Bitwise": "8.9",
         "21 Shares": "0.0",
@@ -8424,7 +8533,7 @@
       },
       {
         "Date": "03 Mar 2026",
-        "Blackrock": "41.9",
+        "Blackrock": "-",
         "Fidelity": "-66.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8436,7 +8545,7 @@
       },
       {
         "Date": "02 Mar 2026",
-        "Blackrock": "26.5",
+        "Blackrock": "-",
         "Fidelity": "1.0",
         "Bitwise": "2.2",
         "21 Shares": "0.0",
@@ -8448,7 +8557,7 @@
       },
       {
         "Date": "27 Feb 2026",
-        "Blackrock": "-43.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8460,7 +8569,7 @@
       },
       {
         "Date": "26 Feb 2026",
-        "Blackrock": "15.3",
+        "Blackrock": "-",
         "Fidelity": "-19.2",
         "Bitwise": "0.0",
         "21 Shares": "7.6",
@@ -8472,7 +8581,7 @@
       },
       {
         "Date": "25 Feb 2026",
-        "Blackrock": "31.3",
+        "Blackrock": "-",
         "Fidelity": "61.9",
         "Bitwise": "1.5",
         "21 Shares": "0.0",
@@ -8484,7 +8593,7 @@
       },
       {
         "Date": "24 Feb 2026",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-1.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8496,7 +8605,7 @@
       },
       {
         "Date": "23 Feb 2026",
-        "Blackrock": "-45.4",
+        "Blackrock": "-",
         "Fidelity": "-1.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8508,7 +8617,7 @@
       },
       {
         "Date": "20 Feb 2026",
-        "Blackrock": "1.8",
+        "Blackrock": "-",
         "Fidelity": "-2.5",
         "Bitwise": "0.0",
         "21 Shares": "0.7",
@@ -8520,7 +8629,7 @@
       },
       {
         "Date": "19 Feb 2026",
-        "Blackrock": "-96.8",
+        "Blackrock": "-",
         "Fidelity": "-11.6",
         "Bitwise": "-3.3",
         "21 Shares": "0.0",
@@ -8532,7 +8641,7 @@
       },
       {
         "Date": "18 Feb 2026",
-        "Blackrock": "-29.9",
+        "Blackrock": "-",
         "Fidelity": "-8.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8544,7 +8653,7 @@
       },
       {
         "Date": "17 Feb 2026",
-        "Blackrock": "22.9",
+        "Blackrock": "-",
         "Fidelity": "14.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8556,7 +8665,7 @@
       },
       {
         "Date": "13 Feb 2026",
-        "Blackrock": "-9.3",
+        "Blackrock": "-",
         "Fidelity": "2.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8568,7 +8677,7 @@
       },
       {
         "Date": "12 Feb 2026",
-        "Blackrock": "-29.0",
+        "Blackrock": "-",
         "Fidelity": "-43.5",
         "Bitwise": "-6.2",
         "21 Shares": "-2.9",
@@ -8580,7 +8689,7 @@
       },
       {
         "Date": "11 Feb 2026",
-        "Blackrock": "-29.4",
+        "Blackrock": "-",
         "Fidelity": "-67.1",
         "Bitwise": "-16.7",
         "21 Shares": "0.0",
@@ -8592,7 +8701,7 @@
       },
       {
         "Date": "10 Feb 2026",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8604,7 +8713,7 @@
       },
       {
         "Date": "09 Feb 2026",
-        "Blackrock": "-45.0",
+        "Blackrock": "-",
         "Fidelity": "67.3",
         "Bitwise": "-9.9",
         "21 Shares": "0.0",
@@ -8616,7 +8725,7 @@
       },
       {
         "Date": "06 Feb 2026",
-        "Blackrock": "-45.4",
+        "Blackrock": "-",
         "Fidelity": "4.6",
         "Bitwise": "11.8",
         "21 Shares": "0.0",
@@ -8628,7 +8737,7 @@
       },
       {
         "Date": "05 Feb 2026",
-        "Blackrock": "-8.5",
+        "Blackrock": "-",
         "Fidelity": "-55.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8640,7 +8749,7 @@
       },
       {
         "Date": "04 Feb 2026",
-        "Blackrock": "-58.9",
+        "Blackrock": "-",
         "Fidelity": "-20.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8652,7 +8761,7 @@
       },
       {
         "Date": "03 Feb 2026",
-        "Blackrock": "42.9",
+        "Blackrock": "-",
         "Fidelity": "-54.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8664,7 +8773,7 @@
       },
       {
         "Date": "02 Feb 2026",
-        "Blackrock": "-82.1",
+        "Blackrock": "-",
         "Fidelity": "66.6",
         "Bitwise": "5.0",
         "21 Shares": "0.0",
@@ -8676,7 +8785,7 @@
       },
       {
         "Date": "30 Jan 2026",
-        "Blackrock": "-157.2",
+        "Blackrock": "-",
         "Fidelity": "-95.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8688,7 +8797,7 @@
       },
       {
         "Date": "29 Jan 2026",
-        "Blackrock": "-54.9",
+        "Blackrock": "-",
         "Fidelity": "-59.2",
         "Bitwise": "-2.0",
         "21 Shares": "0.0",
@@ -8700,7 +8809,7 @@
       },
       {
         "Date": "28 Jan 2026",
-        "Blackrock": "27.3",
+        "Blackrock": "-",
         "Fidelity": "0.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8712,7 +8821,7 @@
       },
       {
         "Date": "27 Jan 2026",
-        "Blackrock": "-59.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8724,7 +8833,7 @@
       },
       {
         "Date": "26 Jan 2026",
-        "Blackrock": "-20.2",
+        "Blackrock": "-",
         "Fidelity": "137.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8736,7 +8845,7 @@
       },
       {
         "Date": "23 Jan 2026",
-        "Blackrock": "-44.5",
+        "Blackrock": "-",
         "Fidelity": "4.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8748,7 +8857,7 @@
       },
       {
         "Date": "22 Jan 2026",
-        "Blackrock": "-44.4",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-15.2",
         "21 Shares": "0.0",
@@ -8760,7 +8869,7 @@
       },
       {
         "Date": "21 Jan 2026",
-        "Blackrock": "-250.3",
+        "Blackrock": "-",
         "Fidelity": "-30.9",
         "Bitwise": "0.0",
         "21 Shares": "-",
@@ -8772,7 +8881,7 @@
       },
       {
         "Date": "20 Jan 2026",
-        "Blackrock": "-92.3",
+        "Blackrock": "-",
         "Fidelity": "-51.5",
         "Bitwise": "-31.1",
         "21 Shares": "0.0",
@@ -8784,7 +8893,7 @@
       },
       {
         "Date": "16 Jan 2026",
-        "Blackrock": "14.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8796,7 +8905,7 @@
       },
       {
         "Date": "15 Jan 2026",
-        "Blackrock": "149.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8808,7 +8917,7 @@
       },
       {
         "Date": "14 Jan 2026",
-        "Blackrock": "81.6",
+        "Blackrock": "-",
         "Fidelity": "5.9",
         "Bitwise": "8.0",
         "21 Shares": "0.0",
@@ -8820,7 +8929,7 @@
       },
       {
         "Date": "13 Jan 2026",
-        "Blackrock": "53.3",
+        "Blackrock": "-",
         "Fidelity": "14.4",
         "Bitwise": "23.0",
         "21 Shares": "0.0",
@@ -8832,7 +8941,7 @@
       },
       {
         "Date": "12 Jan 2026",
-        "Blackrock": "-79.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "5.0",
@@ -8844,7 +8953,7 @@
       },
       {
         "Date": "09 Jan 2026",
-        "Blackrock": "-83.8",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8856,7 +8965,7 @@
       },
       {
         "Date": "08 Jan 2026",
-        "Blackrock": "-107.7",
+        "Blackrock": "-",
         "Fidelity": "-4.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8868,7 +8977,7 @@
       },
       {
         "Date": "07 Jan 2026",
-        "Blackrock": "-6.6",
+        "Blackrock": "-",
         "Fidelity": "-13.3",
         "Bitwise": "-11.2",
         "21 Shares": "0.0",
@@ -8880,7 +8989,7 @@
       },
       {
         "Date": "06 Jan 2026",
-        "Blackrock": "198.8",
+        "Blackrock": "-",
         "Fidelity": "-1.6",
         "Bitwise": "1.4",
         "21 Shares": "1.6",
@@ -8892,7 +9001,7 @@
       },
       {
         "Date": "05 Jan 2026",
-        "Blackrock": "102.9",
+        "Blackrock": "-",
         "Fidelity": "21.8",
         "Bitwise": "19.7",
         "21 Shares": "0.0",
@@ -8904,7 +9013,7 @@
       },
       {
         "Date": "02 Jan 2026",
-        "Blackrock": "47.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "19.0",
         "21 Shares": "0.0",
@@ -8916,7 +9025,7 @@
       },
       {
         "Date": "31 Dec 2025",
-        "Blackrock": "-21.5",
+        "Blackrock": "-",
         "Fidelity": "-2.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8928,7 +9037,7 @@
       },
       {
         "Date": "30 Dec 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "3.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8940,7 +9049,7 @@
       },
       {
         "Date": "29 Dec 2025",
-        "Blackrock": "-13.3",
+        "Blackrock": "-",
         "Fidelity": "3.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8952,7 +9061,7 @@
       },
       {
         "Date": "26 Dec 2025",
-        "Blackrock": "-22.1",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8964,7 +9073,7 @@
       },
       {
         "Date": "24 Dec 2025",
-        "Blackrock": "-22.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -8976,7 +9085,7 @@
       },
       {
         "Date": "23 Dec 2025",
-        "Blackrock": "-25.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-14.0",
         "21 Shares": "0.0",
@@ -8988,7 +9097,7 @@
       },
       {
         "Date": "22 Dec 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9000,7 +9109,7 @@
       },
       {
         "Date": "19 Dec 2025",
-        "Blackrock": "-75.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9012,7 +9121,7 @@
       },
       {
         "Date": "18 Dec 2025",
-        "Blackrock": "-102.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9024,7 +9133,7 @@
       },
       {
         "Date": "17 Dec 2025",
-        "Blackrock": "-19.6",
+        "Blackrock": "-",
         "Fidelity": "-2.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9036,7 +9145,7 @@
       },
       {
         "Date": "16 Dec 2025",
-        "Blackrock": "-221.3",
+        "Blackrock": "-",
         "Fidelity": "-2.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9048,7 +9157,7 @@
       },
       {
         "Date": "15 Dec 2025",
-        "Blackrock": "-139.1",
+        "Blackrock": "-",
         "Fidelity": "-11.0",
         "Bitwise": "-13.0",
         "21 Shares": "0.0",
@@ -9060,7 +9169,7 @@
       },
       {
         "Date": "12 Dec 2025",
-        "Blackrock": "23.2",
+        "Blackrock": "-",
         "Fidelity": "-6.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9072,7 +9181,7 @@
       },
       {
         "Date": "11 Dec 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-3.2",
         "Bitwise": "0.0",
         "21 Shares": "2.1",
@@ -9084,7 +9193,7 @@
       },
       {
         "Date": "10 Dec 2025",
-        "Blackrock": "56.5",
+        "Blackrock": "-",
         "Fidelity": "-6.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9096,7 +9205,7 @@
       },
       {
         "Date": "09 Dec 2025",
-        "Blackrock": "35.3",
+        "Blackrock": "-",
         "Fidelity": "51.5",
         "Bitwise": "17.9",
         "21 Shares": "1.7",
@@ -9108,7 +9217,7 @@
       },
       {
         "Date": "08 Dec 2025",
-        "Blackrock": "23.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9120,7 +9229,7 @@
       },
       {
         "Date": "05 Dec 2025",
-        "Blackrock": "-75.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9132,7 +9241,7 @@
       },
       {
         "Date": "04 Dec 2025",
-        "Blackrock": "28.4",
+        "Blackrock": "-",
         "Fidelity": "-17.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9144,7 +9253,7 @@
       },
       {
         "Date": "03 Dec 2025",
-        "Blackrock": "53.0",
+        "Blackrock": "-",
         "Fidelity": "34.4",
         "Bitwise": "4.5",
         "21 Shares": "0.0",
@@ -9156,7 +9265,7 @@
       },
       {
         "Date": "02 Dec 2025",
-        "Blackrock": "-88.7",
+        "Blackrock": "-",
         "Fidelity": "50.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9168,7 +9277,7 @@
       },
       {
         "Date": "01 Dec 2025",
-        "Blackrock": "26.7",
+        "Blackrock": "-",
         "Fidelity": "-31.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9180,7 +9289,7 @@
       },
       {
         "Date": "28 Nov 2025",
-        "Blackrock": "68.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9192,7 +9301,7 @@
       },
       {
         "Date": "26 Nov 2025",
-        "Blackrock": "50.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "4.3",
         "21 Shares": "0.0",
@@ -9204,7 +9313,7 @@
       },
       {
         "Date": "25 Nov 2025",
-        "Blackrock": "46.1",
+        "Blackrock": "-",
         "Fidelity": "47.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9216,7 +9325,7 @@
       },
       {
         "Date": "24 Nov 2025",
-        "Blackrock": "92.6",
+        "Blackrock": "-",
         "Fidelity": "-2.2",
         "Bitwise": "-4.3",
         "21 Shares": "0.7",
@@ -9228,7 +9337,7 @@
       },
       {
         "Date": "21 Nov 2025",
-        "Blackrock": "-53.7",
+        "Blackrock": "-",
         "Fidelity": "95.4",
         "Bitwise": "6.3",
         "21 Shares": "0.0",
@@ -9240,7 +9349,7 @@
       },
       {
         "Date": "20 Nov 2025",
-        "Blackrock": "-122.6",
+        "Blackrock": "-",
         "Fidelity": "-90.5",
         "Bitwise": "-11.2",
         "21 Shares": "0.0",
@@ -9252,7 +9361,7 @@
       },
       {
         "Date": "19 Nov 2025",
-        "Blackrock": "-24.6",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9264,7 +9373,7 @@
       },
       {
         "Date": "18 Nov 2025",
-        "Blackrock": "-165.1",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "19.1",
         "21 Shares": "0.0",
@@ -9276,7 +9385,7 @@
       },
       {
         "Date": "17 Nov 2025",
-        "Blackrock": "-193.0",
+        "Blackrock": "-",
         "Fidelity": "-3.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9288,7 +9397,7 @@
       },
       {
         "Date": "14 Nov 2025",
-        "Blackrock": "-173.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9300,7 +9409,7 @@
       },
       {
         "Date": "13 Nov 2025",
-        "Blackrock": "-137.3",
+        "Blackrock": "-",
         "Fidelity": "-14.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9312,7 +9421,7 @@
       },
       {
         "Date": "12 Nov 2025",
-        "Blackrock": "-91.0",
+        "Blackrock": "-",
         "Fidelity": "-19.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9324,7 +9433,7 @@
       },
       {
         "Date": "11 Nov 2025",
-        "Blackrock": "-19.8",
+        "Blackrock": "-",
         "Fidelity": "-3.4",
         "Bitwise": "-4.4",
         "21 Shares": "0.0",
@@ -9336,7 +9445,7 @@
       },
       {
         "Date": "10 Nov 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9348,7 +9457,7 @@
       },
       {
         "Date": "07 Nov 2025",
-        "Blackrock": "34.4",
+        "Blackrock": "-",
         "Fidelity": "-72.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9360,7 +9469,7 @@
       },
       {
         "Date": "06 Nov 2025",
-        "Blackrock": "8.0",
+        "Blackrock": "-",
         "Fidelity": "4.9",
         "Bitwise": "3.1",
         "21 Shares": "0.0",
@@ -9372,7 +9481,7 @@
       },
       {
         "Date": "05 Nov 2025",
-        "Blackrock": "-146.6",
+        "Blackrock": "-",
         "Fidelity": "3.5",
         "Bitwise": "0.0",
         "21 Shares": "0.5",
@@ -9384,7 +9493,7 @@
       },
       {
         "Date": "04 Nov 2025",
-        "Blackrock": "-111.1",
+        "Blackrock": "-",
         "Fidelity": "-19.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9396,7 +9505,7 @@
       },
       {
         "Date": "03 Nov 2025",
-        "Blackrock": "-81.7",
+        "Blackrock": "-",
         "Fidelity": "-25.1",
         "Bitwise": "-6.2",
         "21 Shares": "0.0",
@@ -9408,7 +9517,7 @@
       },
       {
         "Date": "31 Oct 2025",
-        "Blackrock": "-38.6",
+        "Blackrock": "-",
         "Fidelity": "-27.1",
         "Bitwise": "-6.7",
         "21 Shares": "0.0",
@@ -9420,7 +9529,7 @@
       },
       {
         "Date": "30 Oct 2025",
-        "Blackrock": "-118.0",
+        "Blackrock": "-",
         "Fidelity": "-18.5",
         "Bitwise": "-31.1",
         "21 Shares": "-3.2",
@@ -9432,7 +9541,7 @@
       },
       {
         "Date": "29 Oct 2025",
-        "Blackrock": "21.4",
+        "Blackrock": "-",
         "Fidelity": "-69.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9444,7 +9553,7 @@
       },
       {
         "Date": "28 Oct 2025",
-        "Blackrock": "76.4",
+        "Blackrock": "-",
         "Fidelity": "99.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9456,7 +9565,7 @@
       },
       {
         "Date": "27 Oct 2025",
-        "Blackrock": "72.5",
+        "Blackrock": "-",
         "Fidelity": "11.5",
         "Bitwise": "22.6",
         "21 Shares": "0.0",
@@ -9468,7 +9577,7 @@
       },
       {
         "Date": "24 Oct 2025",
-        "Blackrock": "-101.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9480,7 +9589,7 @@
       },
       {
         "Date": "23 Oct 2025",
-        "Blackrock": "-23.4",
+        "Blackrock": "-",
         "Fidelity": "-77.0",
         "Bitwise": "-8.8",
         "21 Shares": "0.0",
@@ -9492,7 +9601,7 @@
       },
       {
         "Date": "22 Oct 2025",
-        "Blackrock": "110.7",
+        "Blackrock": "-",
         "Fidelity": "-49.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9504,7 +9613,7 @@
       },
       {
         "Date": "21 Oct 2025",
-        "Blackrock": "42.5",
+        "Blackrock": "-",
         "Fidelity": "59.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9516,7 +9625,7 @@
       },
       {
         "Date": "20 Oct 2025",
-        "Blackrock": "-117.9",
+        "Blackrock": "-",
         "Fidelity": "-27.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9528,7 +9637,7 @@
       },
       {
         "Date": "17 Oct 2025",
-        "Blackrock": "-146.1",
+        "Blackrock": "-",
         "Fidelity": "-30.6",
         "Bitwise": "-20.6",
         "21 Shares": "0.0",
@@ -9540,7 +9649,7 @@
       },
       {
         "Date": "16 Oct 2025",
-        "Blackrock": "46.9",
+        "Blackrock": "-",
         "Fidelity": "-11.6",
         "Bitwise": "-15.8",
         "21 Shares": "0.0",
@@ -9552,7 +9661,7 @@
       },
       {
         "Date": "15 Oct 2025",
-        "Blackrock": "164.3",
+        "Blackrock": "-",
         "Fidelity": "1.0",
         "Bitwise": "12.3",
         "21 Shares": "-8.0",
@@ -9564,7 +9673,7 @@
       },
       {
         "Date": "14 Oct 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "154.6",
         "Bitwise": "13.3",
         "21 Shares": "0.0",
@@ -9576,7 +9685,7 @@
       },
       {
         "Date": "13 Oct 2025",
-        "Blackrock": "-310.1",
+        "Blackrock": "-",
         "Fidelity": "-19.1",
         "Bitwise": "-12.8",
         "21 Shares": "0.0",
@@ -9588,7 +9697,7 @@
       },
       {
         "Date": "10 Oct 2025",
-        "Blackrock": "-80.2",
+        "Blackrock": "-",
         "Fidelity": "-30.1",
         "Bitwise": "-21.6",
         "21 Shares": "0.0",
@@ -9600,7 +9709,7 @@
       },
       {
         "Date": "09 Oct 2025",
-        "Blackrock": "39.3",
+        "Blackrock": "-",
         "Fidelity": "-30.3",
         "Bitwise": "-8.1",
         "21 Shares": "-2.6",
@@ -9612,7 +9721,7 @@
       },
       {
         "Date": "08 Oct 2025",
-        "Blackrock": "148.9",
+        "Blackrock": "-",
         "Fidelity": "-63.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9624,7 +9733,7 @@
       },
       {
         "Date": "07 Oct 2025",
-        "Blackrock": "437.5",
+        "Blackrock": "-",
         "Fidelity": "-25.7",
         "Bitwise": "0.0",
         "21 Shares": "3.6",
@@ -9636,7 +9745,7 @@
       },
       {
         "Date": "06 Oct 2025",
-        "Blackrock": "92.6",
+        "Blackrock": "-",
         "Fidelity": "23.5",
         "Bitwise": "27.0",
         "21 Shares": "0.0",
@@ -9648,7 +9757,7 @@
       },
       {
         "Date": "03 Oct 2025",
-        "Blackrock": "206.7",
+        "Blackrock": "-",
         "Fidelity": "5.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9660,7 +9769,7 @@
       },
       {
         "Date": "02 Oct 2025",
-        "Blackrock": "177.1",
+        "Blackrock": "-",
         "Fidelity": "60.7",
         "Bitwise": "46.5",
         "21 Shares": "2.7",
@@ -9672,7 +9781,7 @@
       },
       {
         "Date": "01 Oct 2025",
-        "Blackrock": "26.2",
+        "Blackrock": "-",
         "Fidelity": "36.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9684,7 +9793,7 @@
       },
       {
         "Date": "30 Sep 2025",
-        "Blackrock": "127.5",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9696,7 +9805,7 @@
       },
       {
         "Date": "29 Sep 2025",
-        "Blackrock": "154.2",
+        "Blackrock": "-",
         "Fidelity": "202.2",
         "Bitwise": "36.5",
         "21 Shares": "3.1",
@@ -9708,7 +9817,7 @@
       },
       {
         "Date": "26 Sep 2025",
-        "Blackrock": "-199.9",
+        "Blackrock": "-",
         "Fidelity": "-74.4",
         "Bitwise": "0.0",
         "21 Shares": "8.0",
@@ -9720,7 +9829,7 @@
       },
       {
         "Date": "25 Sep 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-158.1",
         "Bitwise": "-27.6",
         "21 Shares": "-2.4",
@@ -9732,7 +9841,7 @@
       },
       {
         "Date": "24 Sep 2025",
-        "Blackrock": "-26.5",
+        "Blackrock": "-",
         "Fidelity": "-33.3",
         "Bitwise": "-4.5",
         "21 Shares": "-6.2",
@@ -9744,7 +9853,7 @@
       },
       {
         "Date": "23 Sep 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-63.4",
         "Bitwise": "-23.9",
         "21 Shares": "0.0",
@@ -9756,7 +9865,7 @@
       },
       {
         "Date": "22 Sep 2025",
-        "Blackrock": "-15.1",
+        "Blackrock": "-",
         "Fidelity": "-33.1",
         "Bitwise": "-22.3",
         "21 Shares": "0.0",
@@ -9768,7 +9877,7 @@
       },
       {
         "Date": "19 Sep 2025",
-        "Blackrock": "144.3",
+        "Blackrock": "-",
         "Fidelity": "-53.4",
         "Bitwise": "-7.0",
         "21 Shares": "-6.0",
@@ -9780,7 +9889,7 @@
       },
       {
         "Date": "18 Sep 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "159.4",
         "Bitwise": "17.5",
         "21 Shares": "0.0",
@@ -9792,7 +9901,7 @@
       },
       {
         "Date": "17 Sep 2025",
-        "Blackrock": "25.9",
+        "Blackrock": "-",
         "Fidelity": "-29.2",
         "Bitwise": "-9.7",
         "21 Shares": "2.0",
@@ -9804,7 +9913,7 @@
       },
       {
         "Date": "16 Sep 2025",
-        "Blackrock": "-20.3",
+        "Blackrock": "-",
         "Fidelity": "-48.1",
         "Bitwise": "6.7",
         "21 Shares": "0.0",
@@ -9816,7 +9925,7 @@
       },
       {
         "Date": "15 Sep 2025",
-        "Blackrock": "363.2",
+        "Blackrock": "-",
         "Fidelity": "-13.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9828,7 +9937,7 @@
       },
       {
         "Date": "12 Sep 2025",
-        "Blackrock": "165.6",
+        "Blackrock": "-",
         "Fidelity": "168.2",
         "Bitwise": "16.6",
         "21 Shares": "6.9",
@@ -9840,7 +9949,7 @@
       },
       {
         "Date": "11 Sep 2025",
-        "Blackrock": "-17.4",
+        "Blackrock": "-",
         "Fidelity": "88.3",
         "Bitwise": "19.6",
         "21 Shares": "0.0",
@@ -9852,7 +9961,7 @@
       },
       {
         "Date": "10 Sep 2025",
-        "Blackrock": "74.5",
+        "Blackrock": "-",
         "Fidelity": "49.5",
         "Bitwise": "8.4",
         "21 Shares": "7.1",
@@ -9864,7 +9973,7 @@
       },
       {
         "Date": "09 Sep 2025",
-        "Blackrock": "44.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9876,7 +9985,7 @@
       },
       {
         "Date": "08 Sep 2025",
-        "Blackrock": "-192.7",
+        "Blackrock": "-",
         "Fidelity": "75.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9888,7 +9997,7 @@
       },
       {
         "Date": "05 Sep 2025",
-        "Blackrock": "-309.9",
+        "Blackrock": "-",
         "Fidelity": "-37.8",
         "Bitwise": "0.0",
         "21 Shares": "-14.7",
@@ -9900,7 +10009,7 @@
       },
       {
         "Date": "04 Sep 2025",
-        "Blackrock": "148.8",
+        "Blackrock": "-",
         "Fidelity": "-216.7",
         "Bitwise": "-45.7",
         "21 Shares": "0.0",
@@ -9912,7 +10021,7 @@
       },
       {
         "Date": "03 Sep 2025",
-        "Blackrock": "-151.4",
+        "Blackrock": "-",
         "Fidelity": "65.8",
         "Bitwise": "20.8",
         "21 Shares": "0.0",
@@ -9924,7 +10033,7 @@
       },
       {
         "Date": "02 Sep 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-99.2",
         "Bitwise": "-24.2",
         "21 Shares": "-6.6",
@@ -9936,7 +10045,7 @@
       },
       {
         "Date": "29 Aug 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-51.0",
         "Bitwise": "-23.7",
         "21 Shares": "0.0",
@@ -9948,7 +10057,7 @@
       },
       {
         "Date": "28 Aug 2025",
-        "Blackrock": "67.6",
+        "Blackrock": "-",
         "Fidelity": "-33.5",
         "Bitwise": "-1.3",
         "21 Shares": "0.0",
@@ -9960,7 +10069,7 @@
       },
       {
         "Date": "27 Aug 2025",
-        "Blackrock": "262.6",
+        "Blackrock": "-",
         "Fidelity": "20.5",
         "Bitwise": "0.0",
         "21 Shares": "2.3",
@@ -9972,7 +10081,7 @@
       },
       {
         "Date": "26 Aug 2025",
-        "Blackrock": "323.1",
+        "Blackrock": "-",
         "Fidelity": "85.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -9984,7 +10093,7 @@
       },
       {
         "Date": "25 Aug 2025",
-        "Blackrock": "314.9",
+        "Blackrock": "-",
         "Fidelity": "87.4",
         "Bitwise": "9.7",
         "21 Shares": "5.6",
@@ -9996,7 +10105,7 @@
       },
       {
         "Date": "22 Aug 2025",
-        "Blackrock": "109.4",
+        "Blackrock": "-",
         "Fidelity": "117.9",
         "Bitwise": "36.3",
         "21 Shares": "0.0",
@@ -10008,7 +10117,7 @@
       },
       {
         "Date": "21 Aug 2025",
-        "Blackrock": "233.6",
+        "Blackrock": "-",
         "Fidelity": "28.5",
         "Bitwise": "7.0",
         "21 Shares": "0.0",
@@ -10020,7 +10129,7 @@
       },
       {
         "Date": "20 Aug 2025",
-        "Blackrock": "-257.8",
+        "Blackrock": "-",
         "Fidelity": "8.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10032,7 +10141,7 @@
       },
       {
         "Date": "19 Aug 2025",
-        "Blackrock": "-6.3",
+        "Blackrock": "-",
         "Fidelity": "-156.3",
         "Bitwise": "-39.8",
         "21 Shares": "0.0",
@@ -10044,7 +10153,7 @@
       },
       {
         "Date": "18 Aug 2025",
-        "Blackrock": "-87.2",
+        "Blackrock": "-",
         "Fidelity": "-78.4",
         "Bitwise": "-0.9",
         "21 Shares": "0.0",
@@ -10056,7 +10165,7 @@
       },
       {
         "Date": "15 Aug 2025",
-        "Blackrock": "338.1",
+        "Blackrock": "-",
         "Fidelity": "-272.2",
         "Bitwise": "-15.8",
         "21 Shares": "-4.4",
@@ -10068,7 +10177,7 @@
       },
       {
         "Date": "14 Aug 2025",
-        "Blackrock": "519.7",
+        "Blackrock": "-",
         "Fidelity": "56.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10080,7 +10189,7 @@
       },
       {
         "Date": "13 Aug 2025",
-        "Blackrock": "500.9",
+        "Blackrock": "-",
         "Fidelity": "154.7",
         "Bitwise": "10.8",
         "21 Shares": "0.0",
@@ -10092,7 +10201,7 @@
       },
       {
         "Date": "12 Aug 2025",
-        "Blackrock": "318.7",
+        "Blackrock": "-",
         "Fidelity": "144.9",
         "Bitwise": "0.0",
         "21 Shares": "1.8",
@@ -10104,7 +10213,7 @@
       },
       {
         "Date": "11 Aug 2025",
-        "Blackrock": "639.8",
+        "Blackrock": "-",
         "Fidelity": "276.9",
         "Bitwise": "4.3",
         "21 Shares": "3.9",
@@ -10116,7 +10225,7 @@
       },
       {
         "Date": "08 Aug 2025",
-        "Blackrock": "254.7",
+        "Blackrock": "-",
         "Fidelity": "132.3",
         "Bitwise": "7.8",
         "21 Shares": "0.0",
@@ -10128,7 +10237,7 @@
       },
       {
         "Date": "07 Aug 2025",
-        "Blackrock": "103.5",
+        "Blackrock": "-",
         "Fidelity": "31.8",
         "Bitwise": "24.8",
         "21 Shares": "0.0",
@@ -10140,7 +10249,7 @@
       },
       {
         "Date": "06 Aug 2025",
-        "Blackrock": "33.4",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.4",
@@ -10152,7 +10261,7 @@
       },
       {
         "Date": "05 Aug 2025",
-        "Blackrock": "88.8",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "3.6",
@@ -10164,7 +10273,7 @@
       },
       {
         "Date": "04 Aug 2025",
-        "Blackrock": "-375.0",
+        "Blackrock": "-",
         "Fidelity": "-55.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10176,7 +10285,7 @@
       },
       {
         "Date": "01 Aug 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-6.2",
         "Bitwise": "-40.3",
         "21 Shares": "-1.9",
@@ -10188,7 +10297,7 @@
       },
       {
         "Date": "31 Jul 2025",
-        "Blackrock": "18.2",
+        "Blackrock": "-",
         "Fidelity": "5.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10200,7 +10309,7 @@
       },
       {
         "Date": "30 Jul 2025",
-        "Blackrock": "20.3",
+        "Blackrock": "-",
         "Fidelity": "-22.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10212,7 +10321,7 @@
       },
       {
         "Date": "29 Jul 2025",
-        "Blackrock": "223.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "-5.1",
@@ -10224,7 +10333,7 @@
       },
       {
         "Date": "28 Jul 2025",
-        "Blackrock": "132.0",
+        "Blackrock": "-",
         "Fidelity": "-49.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10236,7 +10345,7 @@
       },
       {
         "Date": "25 Jul 2025",
-        "Blackrock": "440.1",
+        "Blackrock": "-",
         "Fidelity": "7.3",
         "Bitwise": "10.0",
         "21 Shares": "0.0",
@@ -10248,7 +10357,7 @@
       },
       {
         "Date": "24 Jul 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "210.1",
         "Bitwise": "11.5",
         "21 Shares": "0.0",
@@ -10260,7 +10369,7 @@
       },
       {
         "Date": "23 Jul 2025",
-        "Blackrock": "324.6",
+        "Blackrock": "-",
         "Fidelity": "3.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10272,7 +10381,7 @@
       },
       {
         "Date": "22 Jul 2025",
-        "Blackrock": "426.2",
+        "Blackrock": "-",
         "Fidelity": "35.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10284,7 +10393,7 @@
       },
       {
         "Date": "21 Jul 2025",
-        "Blackrock": "102.0",
+        "Blackrock": "-",
         "Fidelity": "126.9",
         "Bitwise": "13.1",
         "21 Shares": "-0.4",
@@ -10296,7 +10405,7 @@
       },
       {
         "Date": "18 Jul 2025",
-        "Blackrock": "394.9",
+        "Blackrock": "-",
         "Fidelity": "-45.4",
         "Bitwise": "13.0",
         "21 Shares": "0.0",
@@ -10308,7 +10417,7 @@
       },
       {
         "Date": "17 Jul 2025",
-        "Blackrock": "546.7",
+        "Blackrock": "-",
         "Fidelity": "17.2",
         "Bitwise": "4.4",
         "21 Shares": "3.8",
@@ -10320,7 +10429,7 @@
       },
       {
         "Date": "16 Jul 2025",
-        "Blackrock": "499.2",
+        "Blackrock": "-",
         "Fidelity": "113.3",
         "Bitwise": "14.4",
         "21 Shares": "0.0",
@@ -10332,7 +10441,7 @@
       },
       {
         "Date": "15 Jul 2025",
-        "Blackrock": "171.5",
+        "Blackrock": "-",
         "Fidelity": "12.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10344,7 +10453,7 @@
       },
       {
         "Date": "14 Jul 2025",
-        "Blackrock": "151.4",
+        "Blackrock": "-",
         "Fidelity": "31.4",
         "Bitwise": "11.2",
         "21 Shares": "0.0",
@@ -10356,7 +10465,7 @@
       },
       {
         "Date": "11 Jul 2025",
-        "Blackrock": "137.1",
+        "Blackrock": "-",
         "Fidelity": "12.0",
         "Bitwise": "8.6",
         "21 Shares": "5.1",
@@ -10368,7 +10477,7 @@
       },
       {
         "Date": "10 Jul 2025",
-        "Blackrock": "300.9",
+        "Blackrock": "-",
         "Fidelity": "37.3",
         "Bitwise": "3.2",
         "21 Shares": "0.0",
@@ -10380,7 +10489,7 @@
       },
       {
         "Date": "09 Jul 2025",
-        "Blackrock": "158.6",
+        "Blackrock": "-",
         "Fidelity": "29.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10392,7 +10501,7 @@
       },
       {
         "Date": "08 Jul 2025",
-        "Blackrock": "25.3",
+        "Blackrock": "-",
         "Fidelity": "-0.7",
         "Bitwise": "4.9",
         "21 Shares": "0.0",
@@ -10404,7 +10513,7 @@
       },
       {
         "Date": "07 Jul 2025",
-        "Blackrock": "53.2",
+        "Blackrock": "-",
         "Fidelity": "8.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10416,7 +10525,7 @@
       },
       {
         "Date": "03 Jul 2025",
-        "Blackrock": "85.4",
+        "Blackrock": "-",
         "Fidelity": "64.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10428,7 +10537,7 @@
       },
       {
         "Date": "02 Jul 2025",
-        "Blackrock": "-46.9",
+        "Blackrock": "-",
         "Fidelity": "25.8",
         "Bitwise": "8.3",
         "21 Shares": "0.0",
@@ -10440,7 +10549,7 @@
       },
       {
         "Date": "01 Jul 2025",
-        "Blackrock": "54.8",
+        "Blackrock": "-",
         "Fidelity": "-24.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10452,7 +10561,7 @@
       },
       {
         "Date": "30 Jun 2025",
-        "Blackrock": "6.1",
+        "Blackrock": "-",
         "Fidelity": "25.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10464,7 +10573,7 @@
       },
       {
         "Date": "27 Jun 2025",
-        "Blackrock": "48.1",
+        "Blackrock": "-",
         "Fidelity": "28.9",
         "Bitwise": "0.0",
         "21 Shares": "0.5",
@@ -10476,7 +10585,7 @@
       },
       {
         "Date": "26 Jun 2025",
-        "Blackrock": "5.9",
+        "Blackrock": "-",
         "Fidelity": "4.9",
         "Bitwise": "2.6",
         "21 Shares": "0.0",
@@ -10488,7 +10597,7 @@
       },
       {
         "Date": "25 Jun 2025",
-        "Blackrock": "55.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "5.2",
         "21 Shares": "0.0",
@@ -10500,7 +10609,7 @@
       },
       {
         "Date": "24 Jun 2025",
-        "Blackrock": "98.0",
+        "Blackrock": "-",
         "Fidelity": "-26.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10512,7 +10621,7 @@
       },
       {
         "Date": "23 Jun 2025",
-        "Blackrock": "25.8",
+        "Blackrock": "-",
         "Fidelity": "60.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10524,7 +10633,7 @@
       },
       {
         "Date": "20 Jun 2025",
-        "Blackrock": "-19.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10548,7 +10657,7 @@
       },
       {
         "Date": "18 Jun 2025",
-        "Blackrock": "15.1",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10560,7 +10669,7 @@
       },
       {
         "Date": "17 Jun 2025",
-        "Blackrock": "36.7",
+        "Blackrock": "-",
         "Fidelity": "-20.2",
         "Bitwise": "3.6",
         "21 Shares": "0.0",
@@ -10572,7 +10681,7 @@
       },
       {
         "Date": "16 Jun 2025",
-        "Blackrock": "16.1",
+        "Blackrock": "-",
         "Fidelity": "5.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10584,7 +10693,7 @@
       },
       {
         "Date": "13 Jun 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-8.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10596,7 +10705,7 @@
       },
       {
         "Date": "12 Jun 2025",
-        "Blackrock": "101.5",
+        "Blackrock": "-",
         "Fidelity": "10.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10608,7 +10717,7 @@
       },
       {
         "Date": "11 Jun 2025",
-        "Blackrock": "163.6",
+        "Blackrock": "-",
         "Fidelity": "37.3",
         "Bitwise": "6.5",
         "21 Shares": "0.0",
@@ -10620,7 +10729,7 @@
       },
       {
         "Date": "10 Jun 2025",
-        "Blackrock": "80.6",
+        "Blackrock": "-",
         "Fidelity": "26.3",
         "Bitwise": "8.4",
         "21 Shares": "0.0",
@@ -10632,7 +10741,7 @@
       },
       {
         "Date": "09 Jun 2025",
-        "Blackrock": "35.2",
+        "Blackrock": "-",
         "Fidelity": "12.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10644,7 +10753,7 @@
       },
       {
         "Date": "06 Jun 2025",
-        "Blackrock": "15.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10656,7 +10765,7 @@
       },
       {
         "Date": "05 Jun 2025",
-        "Blackrock": "34.7",
+        "Blackrock": "-",
         "Fidelity": "-23.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10668,7 +10777,7 @@
       },
       {
         "Date": "04 Jun 2025",
-        "Blackrock": "73.2",
+        "Blackrock": "-",
         "Fidelity": "-23.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10680,7 +10789,7 @@
       },
       {
         "Date": "03 Jun 2025",
-        "Blackrock": "77.1",
+        "Blackrock": "-",
         "Fidelity": "21.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10692,7 +10801,7 @@
       },
       {
         "Date": "02 Jun 2025",
-        "Blackrock": "48.4",
+        "Blackrock": "-",
         "Fidelity": "29.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10704,7 +10813,7 @@
       },
       {
         "Date": "30 May 2025",
-        "Blackrock": "70.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10716,7 +10825,7 @@
       },
       {
         "Date": "29 May 2025",
-        "Blackrock": "50.4",
+        "Blackrock": "-",
         "Fidelity": "38.3",
         "Bitwise": "4.6",
         "21 Shares": "0.0",
@@ -10728,7 +10837,7 @@
       },
       {
         "Date": "28 May 2025",
-        "Blackrock": "52.7",
+        "Blackrock": "-",
         "Fidelity": "25.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10740,7 +10849,7 @@
       },
       {
         "Date": "27 May 2025",
-        "Blackrock": "32.5",
+        "Blackrock": "-",
         "Fidelity": "3.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10764,7 +10873,7 @@
       },
       {
         "Date": "23 May 2025",
-        "Blackrock": "52.8",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10776,7 +10885,7 @@
       },
       {
         "Date": "22 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "42.2",
         "Bitwise": "5.7",
         "21 Shares": "0.0",
@@ -10788,7 +10897,7 @@
       },
       {
         "Date": "21 May 2025",
-        "Blackrock": "24.9",
+        "Blackrock": "-",
         "Fidelity": "-24.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10800,7 +10909,7 @@
       },
       {
         "Date": "20 May 2025",
-        "Blackrock": "45.0",
+        "Blackrock": "-",
         "Fidelity": "19.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10812,7 +10921,7 @@
       },
       {
         "Date": "19 May 2025",
-        "Blackrock": "13.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10824,7 +10933,7 @@
       },
       {
         "Date": "16 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "13.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10836,7 +10945,7 @@
       },
       {
         "Date": "15 May 2025",
-        "Blackrock": "8.4",
+        "Blackrock": "-",
         "Fidelity": "-31.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10848,7 +10957,7 @@
       },
       {
         "Date": "14 May 2025",
-        "Blackrock": "57.6",
+        "Blackrock": "-",
         "Fidelity": "5.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10860,7 +10969,7 @@
       },
       {
         "Date": "13 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10872,7 +10981,7 @@
       },
       {
         "Date": "12 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-8.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10884,7 +10993,7 @@
       },
       {
         "Date": "09 May 2025",
-        "Blackrock": "17.6",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10896,7 +11005,7 @@
       },
       {
         "Date": "08 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-19.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10908,7 +11017,7 @@
       },
       {
         "Date": "07 May 2025",
-        "Blackrock": "-21.8",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10920,7 +11029,7 @@
       },
       {
         "Date": "06 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-17.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10932,7 +11041,7 @@
       },
       {
         "Date": "05 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10944,7 +11053,7 @@
       },
       {
         "Date": "02 May 2025",
-        "Blackrock": "20.1",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10956,7 +11065,7 @@
       },
       {
         "Date": "01 May 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "6.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10968,7 +11077,7 @@
       },
       {
         "Date": "30 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "5.8",
         "Bitwise": "-1.0",
         "21 Shares": "0.0",
@@ -10980,7 +11089,7 @@
       },
       {
         "Date": "29 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "25.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -10992,7 +11101,7 @@
       },
       {
         "Date": "28 Apr 2025",
-        "Blackrock": "67.5",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-3.4",
         "21 Shares": "0.0",
@@ -11004,7 +11113,7 @@
       },
       {
         "Date": "25 Apr 2025",
-        "Blackrock": "54.4",
+        "Blackrock": "-",
         "Fidelity": "35.9",
         "Bitwise": "1.8",
         "21 Shares": "0.0",
@@ -11016,7 +11125,7 @@
       },
       {
         "Date": "24 Apr 2025",
-        "Blackrock": "40.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "5.1",
         "21 Shares": "4.1",
@@ -11028,7 +11137,7 @@
       },
       {
         "Date": "23 Apr 2025",
-        "Blackrock": "-30.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11040,7 +11149,7 @@
       },
       {
         "Date": "22 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "32.7",
         "Bitwise": "6.1",
         "21 Shares": "0.0",
@@ -11052,7 +11161,7 @@
       },
       {
         "Date": "21 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11076,7 +11185,7 @@
       },
       {
         "Date": "17 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11088,7 +11197,7 @@
       },
       {
         "Date": "16 Apr 2025",
-        "Blackrock": "-4.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11100,7 +11209,7 @@
       },
       {
         "Date": "15 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-3.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11112,7 +11221,7 @@
       },
       {
         "Date": "14 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-7.8",
         "Bitwise": "0.0",
         "21 Shares": "1.8",
@@ -11124,7 +11233,7 @@
       },
       {
         "Date": "11 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-3.1",
         "21 Shares": "0.0",
@@ -11136,7 +11245,7 @@
       },
       {
         "Date": "10 Apr 2025",
-        "Blackrock": "6.4",
+        "Blackrock": "-",
         "Fidelity": "-36.0",
         "Bitwise": "-2.5",
         "21 Shares": "0.0",
@@ -11148,7 +11257,7 @@
       },
       {
         "Date": "09 Apr 2025",
-        "Blackrock": "-5.5",
+        "Blackrock": "-",
         "Fidelity": "-5.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11160,7 +11269,7 @@
       },
       {
         "Date": "08 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-3.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11172,7 +11281,7 @@
       },
       {
         "Date": "07 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11184,7 +11293,7 @@
       },
       {
         "Date": "04 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11196,7 +11305,7 @@
       },
       {
         "Date": "03 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-3.6",
         "21 Shares": "0.0",
@@ -11208,7 +11317,7 @@
       },
       {
         "Date": "02 Apr 2025",
-        "Blackrock": "-20.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11220,7 +11329,7 @@
       },
       {
         "Date": "01 Apr 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-2.6",
         "21 Shares": "1.7",
@@ -11232,7 +11341,7 @@
       },
       {
         "Date": "31 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "6.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11244,7 +11353,7 @@
       },
       {
         "Date": "28 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11256,7 +11365,7 @@
       },
       {
         "Date": "27 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-2.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11268,7 +11377,7 @@
       },
       {
         "Date": "26 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-1.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11280,7 +11389,7 @@
       },
       {
         "Date": "25 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11292,7 +11401,7 @@
       },
       {
         "Date": "24 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11304,7 +11413,7 @@
       },
       {
         "Date": "21 Mar 2025",
-        "Blackrock": "-11.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11316,7 +11425,7 @@
       },
       {
         "Date": "20 Mar 2025",
-        "Blackrock": "-9.0",
+        "Blackrock": "-",
         "Fidelity": "-3.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11328,7 +11437,7 @@
       },
       {
         "Date": "19 Mar 2025",
-        "Blackrock": "-12.9",
+        "Blackrock": "-",
         "Fidelity": "-2.0",
         "Bitwise": "0.0",
         "21 Shares": "0.7",
@@ -11340,7 +11449,7 @@
       },
       {
         "Date": "18 Mar 2025",
-        "Blackrock": "-40.2",
+        "Blackrock": "-",
         "Fidelity": "-3.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11352,7 +11461,7 @@
       },
       {
         "Date": "17 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11364,7 +11473,7 @@
       },
       {
         "Date": "14 Mar 2025",
-        "Blackrock": "-36.4",
+        "Blackrock": "-",
         "Fidelity": "-11.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11376,7 +11485,7 @@
       },
       {
         "Date": "13 Mar 2025",
-        "Blackrock": "-15.1",
+        "Blackrock": "-",
         "Fidelity": "-12.5",
         "Bitwise": "0.0",
         "21 Shares": "-0.5",
@@ -11388,7 +11497,7 @@
       },
       {
         "Date": "12 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-3.7",
         "Bitwise": "0.0",
         "21 Shares": "-1.7",
@@ -11400,7 +11509,7 @@
       },
       {
         "Date": "11 Mar 2025",
-        "Blackrock": "-11.8",
+        "Blackrock": "-",
         "Fidelity": "-9.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11412,7 +11521,7 @@
       },
       {
         "Date": "10 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-23.7",
         "Bitwise": "-1.6",
         "21 Shares": "-3.5",
@@ -11424,7 +11533,7 @@
       },
       {
         "Date": "07 Mar 2025",
-        "Blackrock": "-11.2",
+        "Blackrock": "-",
         "Fidelity": "-11.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11436,7 +11545,7 @@
       },
       {
         "Date": "06 Mar 2025",
-        "Blackrock": "-10.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11448,7 +11557,7 @@
       },
       {
         "Date": "05 Mar 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11460,7 +11569,7 @@
       },
       {
         "Date": "04 Mar 2025",
-        "Blackrock": "-26.3",
+        "Blackrock": "-",
         "Fidelity": "21.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11472,7 +11581,7 @@
       },
       {
         "Date": "03 Mar 2025",
-        "Blackrock": "-16.1",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "4.0",
         "21 Shares": "0.0",
@@ -11484,7 +11593,7 @@
       },
       {
         "Date": "28 Feb 2025",
-        "Blackrock": "-30.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11496,7 +11605,7 @@
       },
       {
         "Date": "27 Feb 2025",
-        "Blackrock": "-26.1",
+        "Blackrock": "-",
         "Fidelity": "-25.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11508,7 +11617,7 @@
       },
       {
         "Date": "26 Feb 2025",
-        "Blackrock": "-69.8",
+        "Blackrock": "-",
         "Fidelity": "-18.4",
         "Bitwise": "-2.8",
         "21 Shares": "0.0",
@@ -11520,7 +11629,7 @@
       },
       {
         "Date": "25 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-12.5",
         "Bitwise": "-8.2",
         "21 Shares": "0.0",
@@ -11532,7 +11641,7 @@
       },
       {
         "Date": "24 Feb 2025",
-        "Blackrock": "-48.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-9.7",
         "21 Shares": "0.0",
@@ -11544,7 +11653,7 @@
       },
       {
         "Date": "21 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-8.9",
         "21 Shares": "0.0",
@@ -11556,7 +11665,7 @@
       },
       {
         "Date": "20 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-2.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11568,7 +11677,7 @@
       },
       {
         "Date": "19 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "24.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11580,7 +11689,7 @@
       },
       {
         "Date": "18 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "4.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11604,7 +11713,7 @@
       },
       {
         "Date": "14 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "11.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11616,7 +11725,7 @@
       },
       {
         "Date": "13 Feb 2025",
-        "Blackrock": "12.0",
+        "Blackrock": "-",
         "Fidelity": "4.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11628,7 +11737,7 @@
       },
       {
         "Date": "12 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-10.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11640,7 +11749,7 @@
       },
       {
         "Date": "11 Feb 2025",
-        "Blackrock": "12.6",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11652,7 +11761,7 @@
       },
       {
         "Date": "10 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11664,7 +11773,7 @@
       },
       {
         "Date": "07 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11676,7 +11785,7 @@
       },
       {
         "Date": "06 Feb 2025",
-        "Blackrock": "10.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11688,7 +11797,7 @@
       },
       {
         "Date": "05 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "20.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11700,7 +11809,7 @@
       },
       {
         "Date": "04 Feb 2025",
-        "Blackrock": "276.2",
+        "Blackrock": "-",
         "Fidelity": "27.5",
         "Bitwise": "4.1",
         "21 Shares": "0.0",
@@ -11712,7 +11821,7 @@
       },
       {
         "Date": "03 Feb 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "49.7",
         "Bitwise": "0.0",
         "21 Shares": "5.2",
@@ -11724,7 +11833,7 @@
       },
       {
         "Date": "31 Jan 2025",
-        "Blackrock": "57.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11736,7 +11845,7 @@
       },
       {
         "Date": "30 Jan 2025",
-        "Blackrock": "79.9",
+        "Blackrock": "-",
         "Fidelity": "15.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11748,7 +11857,7 @@
       },
       {
         "Date": "29 Jan 2025",
-        "Blackrock": "9.5",
+        "Blackrock": "-",
         "Fidelity": "5.5",
         "Bitwise": "-4.0",
         "21 Shares": "0.0",
@@ -11760,7 +11869,7 @@
       },
       {
         "Date": "28 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11772,7 +11881,7 @@
       },
       {
         "Date": "27 Jan 2025",
-        "Blackrock": "20.7",
+        "Blackrock": "-",
         "Fidelity": "-68.5",
         "Bitwise": "-4.2",
         "21 Shares": "0.0",
@@ -11784,7 +11893,7 @@
       },
       {
         "Date": "24 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "6.0",
         "21 Shares": "1.2",
@@ -11796,7 +11905,7 @@
       },
       {
         "Date": "23 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "7.3",
         "Bitwise": "-3.0",
         "21 Shares": "0.0",
@@ -11808,7 +11917,7 @@
       },
       {
         "Date": "22 Jan 2025",
-        "Blackrock": "79.1",
+        "Blackrock": "-",
         "Fidelity": "9.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11820,7 +11929,7 @@
       },
       {
         "Date": "21 Jan 2025",
-        "Blackrock": "56.3",
+        "Blackrock": "-",
         "Fidelity": "3.3",
         "Bitwise": "3.1",
         "21 Shares": "0.0",
@@ -11844,7 +11953,7 @@
       },
       {
         "Date": "17 Jan 2025",
-        "Blackrock": "7.4",
+        "Blackrock": "-",
         "Fidelity": "14.0",
         "Bitwise": "2.5",
         "21 Shares": "0.0",
@@ -11856,7 +11965,7 @@
       },
       {
         "Date": "16 Jan 2025",
-        "Blackrock": "111.2",
+        "Blackrock": "-",
         "Fidelity": "70.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11868,7 +11977,7 @@
       },
       {
         "Date": "15 Jan 2025",
-        "Blackrock": "19.8",
+        "Blackrock": "-",
         "Fidelity": "29.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11880,7 +11989,7 @@
       },
       {
         "Date": "14 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "1.2",
         "21 Shares": "0.0",
@@ -11892,7 +12001,7 @@
       },
       {
         "Date": "13 Jan 2025",
-        "Blackrock": "12.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11904,7 +12013,7 @@
       },
       {
         "Date": "10 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-65.4",
         "Bitwise": "-3.1",
         "21 Shares": "0.0",
@@ -11928,7 +12037,7 @@
       },
       {
         "Date": "08 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-147.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11940,7 +12049,7 @@
       },
       {
         "Date": "07 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-67.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11952,7 +12061,7 @@
       },
       {
         "Date": "06 Jan 2025",
-        "Blackrock": "124.1",
+        "Blackrock": "-",
         "Fidelity": "4.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11964,7 +12073,7 @@
       },
       {
         "Date": "03 Jan 2025",
-        "Blackrock": "33.9",
+        "Blackrock": "-",
         "Fidelity": "27.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -11976,7 +12085,7 @@
       },
       {
         "Date": "02 Jan 2025",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-56.1",
         "21 Shares": "0.0",
@@ -12000,7 +12109,7 @@
       },
       {
         "Date": "31 Dec 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "31.8",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12012,7 +12121,7 @@
       },
       {
         "Date": "30 Dec 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-20.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12024,7 +12133,7 @@
       },
       {
         "Date": "27 Dec 2024",
-        "Blackrock": "20.2",
+        "Blackrock": "-",
         "Fidelity": "27.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12036,7 +12145,7 @@
       },
       {
         "Date": "26 Dec 2024",
-        "Blackrock": "28.2",
+        "Blackrock": "-",
         "Fidelity": "83.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12060,7 +12169,7 @@
       },
       {
         "Date": "24 Dec 2024",
-        "Blackrock": "43.9",
+        "Blackrock": "-",
         "Fidelity": "3.5",
         "Bitwise": "6.2",
         "21 Shares": "0.0",
@@ -12072,7 +12181,7 @@
       },
       {
         "Date": "23 Dec 2024",
-        "Blackrock": "89.5",
+        "Blackrock": "-",
         "Fidelity": "46.4",
         "Bitwise": "1.0",
         "21 Shares": "0.0",
@@ -12084,7 +12193,7 @@
       },
       {
         "Date": "20 Dec 2024",
-        "Blackrock": "-103.7",
+        "Blackrock": "-",
         "Fidelity": "13.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12096,7 +12205,7 @@
       },
       {
         "Date": "19 Dec 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "5.1",
         "Bitwise": "-6.8",
         "21 Shares": "0.0",
@@ -12108,7 +12217,7 @@
       },
       {
         "Date": "18 Dec 2024",
-        "Blackrock": "81.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-14.6",
         "21 Shares": "0.0",
@@ -12120,7 +12229,7 @@
       },
       {
         "Date": "17 Dec 2024",
-        "Blackrock": "134.8",
+        "Blackrock": "-",
         "Fidelity": "3.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12132,7 +12241,7 @@
       },
       {
         "Date": "16 Dec 2024",
-        "Blackrock": "30.7",
+        "Blackrock": "-",
         "Fidelity": "4.1",
         "Bitwise": "8.7",
         "21 Shares": "0.0",
@@ -12144,7 +12253,7 @@
       },
       {
         "Date": "13 Dec 2024",
-        "Blackrock": "9.5",
+        "Blackrock": "-",
         "Fidelity": "6.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12156,7 +12265,7 @@
       },
       {
         "Date": "12 Dec 2024",
-        "Blackrock": "202.3",
+        "Blackrock": "-",
         "Fidelity": "19.4",
         "Bitwise": "0.0",
         "21 Shares": "1.6",
@@ -12168,7 +12277,7 @@
       },
       {
         "Date": "11 Dec 2024",
-        "Blackrock": "74.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "8.2",
         "21 Shares": "0.0",
@@ -12180,7 +12289,7 @@
       },
       {
         "Date": "10 Dec 2024",
-        "Blackrock": "81.7",
+        "Blackrock": "-",
         "Fidelity": "202.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12192,7 +12301,7 @@
       },
       {
         "Date": "09 Dec 2024",
-        "Blackrock": "155.4",
+        "Blackrock": "-",
         "Fidelity": "30.1",
         "Bitwise": "-13.0",
         "21 Shares": "-4.1",
@@ -12204,7 +12313,7 @@
       },
       {
         "Date": "06 Dec 2024",
-        "Blackrock": "34.6",
+        "Blackrock": "-",
         "Fidelity": "47.9",
         "Bitwise": "13.4",
         "21 Shares": "-6.9",
@@ -12216,7 +12325,7 @@
       },
       {
         "Date": "05 Dec 2024",
-        "Blackrock": "292.7",
+        "Blackrock": "-",
         "Fidelity": "113.6",
         "Bitwise": "6.6",
         "21 Shares": "0.0",
@@ -12228,7 +12337,7 @@
       },
       {
         "Date": "04 Dec 2024",
-        "Blackrock": "124.4",
+        "Blackrock": "-",
         "Fidelity": "40.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12240,7 +12349,7 @@
       },
       {
         "Date": "03 Dec 2024",
-        "Blackrock": "65.3",
+        "Blackrock": "-",
         "Fidelity": "73.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12252,7 +12361,7 @@
       },
       {
         "Date": "02 Dec 2024",
-        "Blackrock": "55.9",
+        "Blackrock": "-",
         "Fidelity": "19.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12264,7 +12373,7 @@
       },
       {
         "Date": "29 Nov 2024",
-        "Blackrock": "250.4",
+        "Blackrock": "-",
         "Fidelity": "79.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12288,7 +12397,7 @@
       },
       {
         "Date": "27 Nov 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "38.0",
         "Bitwise": "1.6",
         "21 Shares": "0.0",
@@ -12300,7 +12409,7 @@
       },
       {
         "Date": "26 Nov 2024",
-        "Blackrock": "50.1",
+        "Blackrock": "-",
         "Fidelity": "-1.7",
         "Bitwise": "0.0",
         "21 Shares": "-2.8",
@@ -12312,7 +12421,7 @@
       },
       {
         "Date": "25 Nov 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "4.4",
         "Bitwise": "8.7",
         "21 Shares": "-1.2",
@@ -12324,7 +12433,7 @@
       },
       {
         "Date": "22 Nov 2024",
-        "Blackrock": "99.7",
+        "Blackrock": "-",
         "Fidelity": "5.8",
         "Bitwise": "5.0",
         "21 Shares": "0.0",
@@ -12336,7 +12445,7 @@
       },
       {
         "Date": "21 Nov 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "16.8",
         "Bitwise": "2.9",
         "21 Shares": "0.0",
@@ -12348,7 +12457,7 @@
       },
       {
         "Date": "20 Nov 2024",
-        "Blackrock": "16.7",
+        "Blackrock": "-",
         "Fidelity": "-30.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12360,7 +12469,7 @@
       },
       {
         "Date": "19 Nov 2024",
-        "Blackrock": "-14.2",
+        "Blackrock": "-",
         "Fidelity": "-46.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12372,7 +12481,7 @@
       },
       {
         "Date": "18 Nov 2024",
-        "Blackrock": "-23.9",
+        "Blackrock": "-",
         "Fidelity": "3.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12384,7 +12493,7 @@
       },
       {
         "Date": "15 Nov 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-18.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12396,7 +12505,7 @@
       },
       {
         "Date": "14 Nov 2024",
-        "Blackrock": "18.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12408,7 +12517,7 @@
       },
       {
         "Date": "13 Nov 2024",
-        "Blackrock": "35.6",
+        "Blackrock": "-",
         "Fidelity": "101.7",
         "Bitwise": "13.0",
         "21 Shares": "0.0",
@@ -12420,7 +12529,7 @@
       },
       {
         "Date": "12 Nov 2024",
-        "Blackrock": "131.4",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "17.0",
         "21 Shares": "2.0",
@@ -12432,7 +12541,7 @@
       },
       {
         "Date": "11 Nov 2024",
-        "Blackrock": "101.1",
+        "Blackrock": "-",
         "Fidelity": "115.5",
         "Bitwise": "15.6",
         "21 Shares": "0.0",
@@ -12444,7 +12553,7 @@
       },
       {
         "Date": "08 Nov 2024",
-        "Blackrock": "59.8",
+        "Blackrock": "-",
         "Fidelity": "18.4",
         "Bitwise": "3.4",
         "21 Shares": "0.0",
@@ -12456,7 +12565,7 @@
       },
       {
         "Date": "07 Nov 2024",
-        "Blackrock": "23.7",
+        "Blackrock": "-",
         "Fidelity": "28.9",
         "Bitwise": "6.6",
         "21 Shares": "0.0",
@@ -12468,7 +12577,7 @@
       },
       {
         "Date": "06 Nov 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "26.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12480,7 +12589,7 @@
       },
       {
         "Date": "05 Nov 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12492,7 +12601,7 @@
       },
       {
         "Date": "04 Nov 2024",
-        "Blackrock": "11.0",
+        "Blackrock": "-",
         "Fidelity": "-31.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12504,7 +12613,7 @@
       },
       {
         "Date": "01 Nov 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12516,7 +12625,7 @@
       },
       {
         "Date": "31 Oct 2024",
-        "Blackrock": "49.6",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12528,7 +12637,7 @@
       },
       {
         "Date": "30 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "5.3",
         "Bitwise": "-3.6",
         "21 Shares": "2.7",
@@ -12540,7 +12649,7 @@
       },
       {
         "Date": "29 Oct 2024",
-        "Blackrock": "13.6",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12552,7 +12661,7 @@
       },
       {
         "Date": "28 Oct 2024",
-        "Blackrock": "2.3",
+        "Blackrock": "-",
         "Fidelity": "5.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12564,7 +12673,7 @@
       },
       {
         "Date": "25 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12576,7 +12685,7 @@
       },
       {
         "Date": "24 Oct 2024",
-        "Blackrock": "2.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12588,7 +12697,7 @@
       },
       {
         "Date": "23 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "6.2",
         "Bitwise": "0.0",
         "21 Shares": "1.6",
@@ -12600,7 +12709,7 @@
       },
       {
         "Date": "22 Oct 2024",
-        "Blackrock": "11.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12612,7 +12721,7 @@
       },
       {
         "Date": "21 Oct 2024",
-        "Blackrock": "4.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12624,7 +12733,7 @@
       },
       {
         "Date": "18 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "1.9",
         "21 Shares": "0.0",
@@ -12636,7 +12745,7 @@
       },
       {
         "Date": "17 Oct 2024",
-        "Blackrock": "23.6",
+        "Blackrock": "-",
         "Fidelity": "31.1",
         "Bitwise": "1.5",
         "21 Shares": "2.3",
@@ -12648,7 +12757,7 @@
       },
       {
         "Date": "16 Oct 2024",
-        "Blackrock": "11.9",
+        "Blackrock": "-",
         "Fidelity": "8.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12660,7 +12769,7 @@
       },
       {
         "Date": "15 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "2.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12672,7 +12781,7 @@
       },
       {
         "Date": "14 Oct 2024",
-        "Blackrock": "14.3",
+        "Blackrock": "-",
         "Fidelity": "1.3",
         "Bitwise": "0.0",
         "21 Shares": "0.4",
@@ -12684,7 +12793,7 @@
       },
       {
         "Date": "11 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "8.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12696,7 +12805,7 @@
       },
       {
         "Date": "10 Oct 2024",
-        "Blackrock": "17.8",
+        "Blackrock": "-",
         "Fidelity": "-3.5",
         "Bitwise": "-4.2",
         "21 Shares": "0.0",
@@ -12708,7 +12817,7 @@
       },
       {
         "Date": "09 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12720,7 +12829,7 @@
       },
       {
         "Date": "08 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-3.6",
         "Bitwise": "-4.5",
         "21 Shares": "0.0",
@@ -12732,7 +12841,7 @@
       },
       {
         "Date": "07 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12744,7 +12853,7 @@
       },
       {
         "Date": "04 Oct 2024",
-        "Blackrock": "14.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.9",
         "21 Shares": "0.0",
@@ -12756,7 +12865,7 @@
       },
       {
         "Date": "03 Oct 2024",
-        "Blackrock": "12.1",
+        "Blackrock": "-",
         "Fidelity": "-0.6",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12768,7 +12877,7 @@
       },
       {
         "Date": "02 Oct 2024",
-        "Blackrock": "18.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12780,7 +12889,7 @@
       },
       {
         "Date": "01 Oct 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-25.0",
         "Bitwise": "-0.9",
         "21 Shares": "1.2",
@@ -12792,7 +12901,7 @@
       },
       {
         "Date": "30 Sep 2024",
-        "Blackrock": "11.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12804,7 +12913,7 @@
       },
       {
         "Date": "27 Sep 2024",
-        "Blackrock": "11.5",
+        "Blackrock": "-",
         "Fidelity": "42.5",
         "Bitwise": "5.4",
         "21 Shares": "1.4",
@@ -12816,7 +12925,7 @@
       },
       {
         "Date": "26 Sep 2024",
-        "Blackrock": "15.3",
+        "Blackrock": "-",
         "Fidelity": "15.9",
         "Bitwise": "1.0",
         "21 Shares": "0.7",
@@ -12828,7 +12937,7 @@
       },
       {
         "Date": "25 Sep 2024",
-        "Blackrock": "9.4",
+        "Blackrock": "-",
         "Fidelity": "6.4",
         "Bitwise": "0.0",
         "21 Shares": "0.8",
@@ -12840,7 +12949,7 @@
       },
       {
         "Date": "24 Sep 2024",
-        "Blackrock": "59.3",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12852,7 +12961,7 @@
       },
       {
         "Date": "23 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "1.3",
         "21 Shares": "0.0",
@@ -12864,7 +12973,7 @@
       },
       {
         "Date": "20 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12876,7 +12985,7 @@
       },
       {
         "Date": "19 Sep 2024",
-        "Blackrock": "5.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12888,7 +12997,7 @@
       },
       {
         "Date": "18 Sep 2024",
-        "Blackrock": "4.9",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12900,7 +13009,7 @@
       },
       {
         "Date": "17 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12912,7 +13021,7 @@
       },
       {
         "Date": "16 Sep 2024",
-        "Blackrock": "4.2",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "-2.1",
         "21 Shares": "0.0",
@@ -12924,7 +13033,7 @@
       },
       {
         "Date": "13 Sep 2024",
-        "Blackrock": "3.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "5.2",
         "21 Shares": "0.0",
@@ -12936,7 +13045,7 @@
       },
       {
         "Date": "12 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12948,7 +13057,7 @@
       },
       {
         "Date": "11 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "1.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12960,7 +13069,7 @@
       },
       {
         "Date": "10 Sep 2024",
-        "Blackrock": "4.3",
+        "Blackrock": "-",
         "Fidelity": "7.1",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12972,7 +13081,7 @@
       },
       {
         "Date": "09 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "7.6",
         "Bitwise": "1.8",
         "21 Shares": "0.0",
@@ -12984,7 +13093,7 @@
       },
       {
         "Date": "06 Sep 2024",
-        "Blackrock": "4.7",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -12996,7 +13105,7 @@
       },
       {
         "Date": "05 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13008,7 +13117,7 @@
       },
       {
         "Date": "04 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13020,7 +13129,7 @@
       },
       {
         "Date": "03 Sep 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "4.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13044,7 +13153,7 @@
       },
       {
         "Date": "30 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13056,7 +13165,7 @@
       },
       {
         "Date": "29 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13068,7 +13177,7 @@
       },
       {
         "Date": "28 Aug 2024",
-        "Blackrock": "8.4",
+        "Blackrock": "-",
         "Fidelity": "1.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13080,7 +13189,7 @@
       },
       {
         "Date": "27 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "3.9",
         "Bitwise": "1.9",
         "21 Shares": "0.0",
@@ -13092,7 +13201,7 @@
       },
       {
         "Date": "26 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "-2.7",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13104,7 +13213,7 @@
       },
       {
         "Date": "23 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.7",
         "Bitwise": "1.4",
         "21 Shares": "0.0",
@@ -13116,7 +13225,7 @@
       },
       {
         "Date": "22 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "14.3",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13128,7 +13237,7 @@
       },
       {
         "Date": "21 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "7.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13140,7 +13249,7 @@
       },
       {
         "Date": "20 Aug 2024",
-        "Blackrock": "26.8",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "3.7",
         "21 Shares": "0.0",
@@ -13152,7 +13261,7 @@
       },
       {
         "Date": "19 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "0.0",
         "Bitwise": "1.9",
         "21 Shares": "0.0",
@@ -13164,7 +13273,7 @@
       },
       {
         "Date": "16 Aug 2024",
-        "Blackrock": "10.3",
+        "Blackrock": "-",
         "Fidelity": "7.2",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13176,7 +13285,7 @@
       },
       {
         "Date": "15 Aug 2024",
-        "Blackrock": "0.8",
+        "Blackrock": "-",
         "Fidelity": "2.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13188,7 +13297,7 @@
       },
       {
         "Date": "14 Aug 2024",
-        "Blackrock": "16.1",
+        "Blackrock": "-",
         "Fidelity": "6.6",
         "Bitwise": "2.7",
         "21 Shares": "0.0",
@@ -13200,7 +13309,7 @@
       },
       {
         "Date": "13 Aug 2024",
-        "Blackrock": "49.1",
+        "Blackrock": "-",
         "Fidelity": "5.4",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13212,7 +13321,7 @@
       },
       {
         "Date": "12 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "4.0",
         "Bitwise": "2.9",
         "21 Shares": "0.0",
@@ -13224,7 +13333,7 @@
       },
       {
         "Date": "09 Aug 2024",
-        "Blackrock": "19.6",
+        "Blackrock": "-",
         "Fidelity": "3.9",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13236,7 +13345,7 @@
       },
       {
         "Date": "08 Aug 2024",
-        "Blackrock": "11.7",
+        "Blackrock": "-",
         "Fidelity": "-2.6",
         "Bitwise": "2.8",
         "21 Shares": "0.0",
@@ -13248,7 +13357,7 @@
       },
       {
         "Date": "07 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "4.7",
         "Bitwise": "1.7",
         "21 Shares": "0.0",
@@ -13260,7 +13369,7 @@
       },
       {
         "Date": "06 Aug 2024",
-        "Blackrock": "109.9",
+        "Blackrock": "-",
         "Fidelity": "22.5",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13272,7 +13381,7 @@
       },
       {
         "Date": "05 Aug 2024",
-        "Blackrock": "47.1",
+        "Blackrock": "-",
         "Fidelity": "16.2",
         "Bitwise": "7.2",
         "21 Shares": "0.0",
@@ -13284,7 +13393,7 @@
       },
       {
         "Date": "02 Aug 2024",
-        "Blackrock": "0.0",
+        "Blackrock": "-",
         "Fidelity": "6.0",
         "Bitwise": "0.0",
         "21 Shares": "0.0",
@@ -13296,7 +13405,7 @@
       },
       {
         "Date": "01 Aug 2024",
-        "Blackrock": "89.6",
+        "Blackrock": "-",
         "Fidelity": "11.7",
         "Bitwise": "3.4",
         "21 Shares": "0.0",
@@ -13308,7 +13417,7 @@
       },
       {
         "Date": "31 Jul 2024",
-        "Blackrock": "5.0",
+        "Blackrock": "-",
         "Fidelity": "18.8",
         "Bitwise": "4.7",
         "21 Shares": "3.3",
@@ -13320,7 +13429,7 @@
       },
       {
         "Date": "30 Jul 2024",
-        "Blackrock": "118.0",
+        "Blackrock": "-",
         "Fidelity": "16.4",
         "Bitwise": "3.5",
         "21 Shares": "0.0",
@@ -13332,7 +13441,7 @@
       },
       {
         "Date": "29 Jul 2024",
-        "Blackrock": "58.2",
+        "Blackrock": "-",
         "Fidelity": "24.8",
         "Bitwise": "10.4",
         "21 Shares": "0.0",
@@ -13344,7 +13453,7 @@
       },
       {
         "Date": "26 Jul 2024",
-        "Blackrock": "87.2",
+        "Blackrock": "-",
         "Fidelity": "39.3",
         "Bitwise": "16.0",
         "21 Shares": "0.0",
@@ -13356,7 +13465,7 @@
       },
       {
         "Date": "25 Jul 2024",
-        "Blackrock": "70.9",
+        "Blackrock": "-",
         "Fidelity": "34.3",
         "Bitwise": "16.3",
         "21 Shares": "0.0",
@@ -13368,7 +13477,7 @@
       },
       {
         "Date": "24 Jul 2024",
-        "Blackrock": "17.4",
+        "Blackrock": "-",
         "Fidelity": "74.5",
         "Bitwise": "29.6",
         "21 Shares": "0.0",
@@ -13380,7 +13489,7 @@
       },
       {
         "Date": "23 Jul 2024",
-        "Blackrock": "266.5",
+        "Blackrock": "-",
         "Fidelity": "71.3",
         "Bitwise": "204.0",
         "21 Shares": "7.5",
@@ -13404,6 +13513,46 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "13 Mar 2026",
+        "ETF_1": "7.6",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "7.6"
+      },
+      {
+        "Date": "12 Mar 2026",
+        "ETF_1": "3.9",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "3.9"
+      },
+      {
+        "Date": "11 Mar 2026",
+        "ETF_1": "3.2",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "-1.5",
+        "Total": "1.7"
+      },
+      {
+        "Date": "10 Mar 2026",
+        "ETF_1": "0.0",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "0.0"
+      },
       {
         "Date": "09 Mar 2026",
         "ETF_1": "0.0",
@@ -13513,45 +13662,25 @@
         "ETF_5": "0.0",
         "ETF_6": "0.8",
         "Total": "8.0"
-      },
-      {
-        "Date": "20 Feb 2026",
-        "ETF_1": "3.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.7",
-        "ETF_6": "0.0",
-        "Total": "3.7"
-      },
-      {
-        "Date": "19 Feb 2026",
-        "ETF_1": "5.5",
-        "ETF_2": "0.0",
-        "ETF_3": "0.5",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "6.0"
       }
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "09 Mar 2026",
-    "latestFlow": "167.1",
-    "weeklyFlow": "708.1",
-    "totalRecords": 556
+    "latestDate": "13 Mar 2026",
+    "latestFlow": "180.4",
+    "weeklyFlow": "186.6",
+    "totalRecords": 560
   },
   "ethereumSummary": {
-    "latestDate": "09 Mar 2026",
-    "latestFlow": "-51.3",
-    "weeklyFlow": "-70.8",
-    "totalRecords": 418
+    "latestDate": "13 Mar 2026",
+    "latestFlow": "26.7",
+    "weeklyFlow": "-12.9",
+    "totalRecords": 422
   },
   "solanaSummary": {
-    "latestDate": "09 Mar 2026",
-    "latestFlow": "-2.5",
-    "weeklyFlow": "20.8",
-    "totalRecords": 13
+    "latestDate": "13 Mar 2026",
+    "latestFlow": "7.6",
+    "weeklyFlow": "-3.9",
+    "totalRecords": 15
   }
 }
