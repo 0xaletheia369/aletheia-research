@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-09T07:48:36.372Z",
+  "lastUpdated": "2026-04-10T07:53:52.836Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -18,6 +18,22 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "09 Apr 2026",
+        "IBIT": "269.3",
+        "FBTC": "53.3",
+        "BITB": "11.7",
+        "ARKB": "4.8",
+        "BTCO": "0.0",
+        "EZBC": "2.1",
+        "BRRR": "0.0",
+        "HODL": "2.0",
+        "BTCW": "0.0",
+        "MSBT": "14.9",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "358.1"
+      },
       {
         "Date": "08 Apr 2026",
         "IBIT": "40.4",
@@ -45,7 +61,7 @@
         "BRRR": "2.3",
         "HODL": "-20.4",
         "BTCW": "0.0",
-        "MSBT": "0.0",
+        "MSBT": "-",
         "GBTC": "-41.9",
         "BTC": "0.0",
         "Total": "-159.1"
@@ -9269,6 +9285,18 @@
     ],
     "records": [
       {
+        "Date": "09 Apr 2026",
+        "Blackrock": "13.7",
+        "Fidelity": "-21.0",
+        "Bitwise": "0.0",
+        "21 Shares": "-5.5",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "-1.7",
+        "Grayscale": "9.7",
+        "Total": "85.2"
+      },
+      {
         "Date": "08 Apr 2026",
         "Blackrock": "44.2",
         "Fidelity": "-32.4",
@@ -14551,6 +14579,16 @@
     ],
     "records": [
       {
+        "Date": "09 Apr 2026",
+        "ETF_1": "0.0",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "0.0"
+      },
+      {
         "Date": "08 Apr 2026",
         "ETF_1": "-0.8",
         "ETF_2": "-0.3",
@@ -14673,21 +14711,21 @@
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "08 Apr 2026",
-    "latestFlow": "-93.9",
-    "weeklyFlow": "240.6",
-    "totalRecords": 577
+    "latestDate": "09 Apr 2026",
+    "latestFlow": "358.1",
+    "weeklyFlow": "529.3",
+    "totalRecords": 578
   },
   "ethereumSummary": {
-    "latestDate": "08 Apr 2026",
-    "latestFlow": "-18.6",
-    "weeklyFlow": "-5.2",
-    "totalRecords": 439
+    "latestDate": "09 Apr 2026",
+    "latestFlow": "85.2",
+    "weeklyFlow": "75.0",
+    "totalRecords": 440
   },
   "solanaSummary": {
-    "latestDate": "08 Apr 2026",
-    "latestFlow": "-2.0",
-    "weeklyFlow": "-22.6",
-    "totalRecords": 12
+    "latestDate": "09 Apr 2026",
+    "latestFlow": "0.0",
+    "weeklyFlow": "-16.4",
+    "totalRecords": 13
   }
 }
