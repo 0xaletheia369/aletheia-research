@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-23T08:07:10.726Z",
+  "lastUpdated": "2026-04-24T08:16:05.864Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -18,6 +18,22 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "23 Apr 2026",
+        "IBIT": "167.5",
+        "FBTC": "-16.9",
+        "BITB": "-7.6",
+        "ARKB": "71.2",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "-5.5",
+        "BTCW": "0.0",
+        "MSBT": "9.4",
+        "GBTC": "0.0",
+        "BTC": "5.2",
+        "Total": "223.3"
+      },
       {
         "Date": "22 Apr 2026",
         "IBIT": "246.9",
@@ -9429,6 +9445,18 @@
     ],
     "records": [
       {
+        "Date": "23 Apr 2026",
+        "Blackrock": "0.0",
+        "Fidelity": "-51.3",
+        "Bitwise": "-3.3",
+        "21 Shares": "-9.2",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "19.8",
+        "Total": "-75.9"
+      },
+      {
         "Date": "22 Apr 2026",
         "Blackrock": "0.0",
         "Fidelity": "40.6",
@@ -14831,6 +14859,16 @@
     ],
     "records": [
       {
+        "Date": "23 Apr 2026",
+        "ETF_1": "6.2",
+        "ETF_2": "1.1",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "7.3"
+      },
+      {
         "Date": "22 Apr 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -14963,21 +15001,21 @@
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "22 Apr 2026",
-    "latestFlow": "335.8",
-    "weeklyFlow": "1873.5",
-    "totalRecords": 587
+    "latestDate": "23 Apr 2026",
+    "latestFlow": "223.3",
+    "weeklyFlow": "1685.4",
+    "totalRecords": 588
   },
   "ethereumSummary": {
-    "latestDate": "22 Apr 2026",
-    "latestFlow": "96.4",
-    "weeklyFlow": "474.0",
-    "totalRecords": 449
+    "latestDate": "23 Apr 2026",
+    "latestFlow": "-75.9",
+    "weeklyFlow": "345.0",
+    "totalRecords": 450
   },
   "solanaSummary": {
-    "latestDate": "22 Apr 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "38.2",
-    "totalRecords": 13
+    "latestDate": "23 Apr 2026",
+    "latestFlow": "7.3",
+    "weeklyFlow": "44.2",
+    "totalRecords": 14
   }
 }
