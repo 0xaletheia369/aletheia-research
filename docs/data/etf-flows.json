@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-01T08:23:37.225Z",
+  "lastUpdated": "2026-05-05T08:22:42.001Z",
   "bitcoin": null,
   "ethereum": {
     "headers": [
@@ -17,6 +17,30 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "04 May 2026",
+        "Blackrock": "0.0",
+        "Fidelity": "6.5",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "0.0",
+        "Total": "61.3"
+      },
+      {
+        "Date": "01 May 2026",
+        "Blackrock": "5.9",
+        "Fidelity": "49.4",
+        "Bitwise": "1.3",
+        "21 Shares": "1.4",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "0.0",
+        "Total": "101.2"
+      },
       {
         "Date": "30 Apr 2026",
         "Blackrock": "29.1",
@@ -5492,6 +5516,26 @@
     ],
     "records": [
       {
+        "Date": "04 May 2026",
+        "ETF_1": "2.3",
+        "ETF_2": "0.0",
+        "ETF_3": "1.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "3.3"
+      },
+      {
+        "Date": "01 May 2026",
+        "ETF_1": "0.0",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "0.0"
+      },
+      {
         "Date": "30 Apr 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -5600,49 +5644,19 @@
         "ETF_5": "0.0",
         "ETF_6": "0.0",
         "Total": "15.5"
-      },
-      {
-        "Date": "15 Apr 2026",
-        "ETF_1": "3.2",
-        "ETF_2": "0.0",
-        "ETF_3": "1.5",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.6",
-        "Total": "5.3"
-      },
-      {
-        "Date": "14 Apr 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.3",
-        "ETF_3": "1.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "1.3"
-      },
-      {
-        "Date": "13 Apr 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "0.0"
       }
     ]
   },
   "ethereumSummary": {
-    "latestDate": "30 Apr 2026",
-    "latestFlow": "-23.7",
-    "weeklyFlow": "-139.8",
-    "totalRecords": 455
+    "latestDate": "04 May 2026",
+    "latestFlow": "61.3",
+    "weeklyFlow": "2.2",
+    "totalRecords": 457
   },
   "solanaSummary": {
-    "latestDate": "30 Apr 2026",
-    "latestFlow": "-1.2",
-    "weeklyFlow": "5.0",
-    "totalRecords": 14
+    "latestDate": "04 May 2026",
+    "latestFlow": "3.3",
+    "weeklyFlow": "1.0",
+    "totalRecords": 13
   }
 }
