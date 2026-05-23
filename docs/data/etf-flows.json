@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-21T09:55:04.947Z",
+  "lastUpdated": "2026-05-23T08:29:03.554Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -18,6 +18,38 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "22 May 2026",
+        "IBIT": "-68.9",
+        "FBTC": "-36.3",
+        "BITB": "0.0",
+        "ARKB": "0.0",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "MSBT": "0.0",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "-105.2"
+      },
+      {
+        "Date": "21 May 2026",
+        "IBIT": "-103.7",
+        "FBTC": "0.0",
+        "BITB": "0.0",
+        "ARKB": "2.8",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "MSBT": "0.0",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "-100.9"
+      },
       {
         "Date": "20 May 2026",
         "IBIT": "-61.5",
@@ -9749,6 +9781,30 @@
     ],
     "records": [
       {
+        "Date": "22 May 2026",
+        "Blackrock": "0.0",
+        "Fidelity": "-1.0",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "0.0",
+        "Total": "-6.6"
+      },
+      {
+        "Date": "21 May 2026",
+        "Blackrock": "3.3",
+        "Fidelity": "0.0",
+        "Bitwise": "2.1",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "0.0",
+        "Total": "-32.6"
+      },
+      {
         "Date": "20 May 2026",
         "Blackrock": "4.4",
         "Fidelity": "-1.6",
@@ -15391,6 +15447,26 @@
     ],
     "records": [
       {
+        "Date": "22 May 2026",
+        "ETF_1": "2.3",
+        "ETF_2": "0.0",
+        "ETF_3": "3.5",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "5.8"
+      },
+      {
+        "Date": "21 May 2026",
+        "ETF_1": "0.0",
+        "ETF_2": "0.0",
+        "ETF_3": "3.9",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "3.9"
+      },
+      {
         "Date": "20 May 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -15523,21 +15599,21 @@
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "20 May 2026",
-    "latestFlow": "-70.5",
-    "weeklyFlow": "-2072.9",
-    "totalRecords": 607
+    "latestDate": "22 May 2026",
+    "latestFlow": "-105.2",
+    "weeklyFlow": "-1415.4",
+    "totalRecords": 609
   },
   "ethereumSummary": {
-    "latestDate": "20 May 2026",
-    "latestFlow": "-28.1",
-    "weeklyFlow": "-415.0",
-    "totalRecords": 469
+    "latestDate": "22 May 2026",
+    "latestFlow": "-6.6",
+    "weeklyFlow": "-287.3",
+    "totalRecords": 471
   },
   "solanaSummary": {
-    "latestDate": "20 May 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "37.5",
-    "totalRecords": 13
+    "latestDate": "22 May 2026",
+    "latestFlow": "5.8",
+    "weeklyFlow": "22.1",
+    "totalRecords": 15
   }
 }
