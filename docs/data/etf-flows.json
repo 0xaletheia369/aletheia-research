@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-07-11T08:06:47.452Z",
+  "lastUpdated": "2026-07-13T09:39:15.817Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -16461,26 +16461,6 @@
         "ETF_5": "0.0",
         "ETF_6": "0.0",
         "Total": "0.0"
-      },
-      {
-        "Date": "23 Jun 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "0.0"
-      },
-      {
-        "Date": "22 Jun 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "0.0"
       }
     ]
   },
@@ -16500,6 +16480,6 @@
     "latestDate": "10 Jul 2026",
     "latestFlow": "0.2",
     "weeklyFlow": "4.8",
-    "totalRecords": 14
+    "totalRecords": 12
   }
 }
