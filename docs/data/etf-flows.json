@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-07T07:26:15.726Z",
+  "lastUpdated": "2026-08-08T07:03:46.919Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -18,6 +18,22 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "07 Aug 2026",
+        "IBIT": "86.7",
+        "FBTC": "41.0",
+        "BITB": "2.1",
+        "ARKB": "1.9",
+        "BTCO": "-19.4",
+        "EZBC": "-",
+        "BRRR": "0.0",
+        "HODL": "-10.6",
+        "BTCW": "0.0",
+        "MSBT": "0.0",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "101.7"
+      },
       {
         "Date": "06 Aug 2026",
         "IBIT": "128.3",
@@ -10597,6 +10613,18 @@
     ],
     "records": [
       {
+        "Date": "07 Aug 2026",
+        "Blackrock": "0.0",
+        "Fidelity": "11.5",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "0.0",
+        "Total": "49.6"
+      },
+      {
         "Date": "06 Aug 2026",
         "Blackrock": "2.0",
         "Fidelity": "1.4",
@@ -16875,6 +16903,16 @@
     ],
     "records": [
       {
+        "Date": "07 Aug 2026",
+        "ETF_1": "0.0",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "0.0"
+      },
+      {
         "Date": "06 Aug 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -17017,21 +17055,21 @@
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "06 Aug 2026",
-    "latestFlow": "137.6",
-    "weeklyFlow": "763.4",
-    "totalRecords": 660
+    "latestDate": "07 Aug 2026",
+    "latestFlow": "101.7",
+    "weeklyFlow": "833.0",
+    "totalRecords": 661
   },
   "ethereumSummary": {
-    "latestDate": "06 Aug 2026",
-    "latestFlow": "92.1",
-    "weeklyFlow": "183.0",
-    "totalRecords": 522
+    "latestDate": "07 Aug 2026",
+    "latestFlow": "49.6",
+    "weeklyFlow": "265.5",
+    "totalRecords": 523
   },
   "solanaSummary": {
-    "latestDate": "06 Aug 2026",
-    "latestFlow": "-0.9",
+    "latestDate": "07 Aug 2026",
+    "latestFlow": "0.0",
     "weeklyFlow": "-0.9",
-    "totalRecords": 14
+    "totalRecords": 15
   }
 }
