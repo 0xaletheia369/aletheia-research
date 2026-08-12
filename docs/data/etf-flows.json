@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-08T07:03:46.919Z",
+  "lastUpdated": "2026-08-12T07:42:29.769Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -18,6 +18,38 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "11 Aug 2026",
+        "IBIT": "50.2",
+        "FBTC": "-4.1",
+        "BITB": "0.0",
+        "ARKB": "-11.5",
+        "BTCO": "0.0",
+        "EZBC": "-16.5",
+        "BRRR": "0.0",
+        "HODL": "-10.3",
+        "BTCW": "0.0",
+        "MSBT": "0.0",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "7.8"
+      },
+      {
+        "Date": "10 Aug 2026",
+        "IBIT": "-53.6",
+        "FBTC": "-40.3",
+        "BITB": "-28.4",
+        "ARKB": "0.0",
+        "BTCO": "0.0",
+        "EZBC": "-7.4",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "MSBT": "0.0",
+        "GBTC": "-52.0",
+        "BTC": "37.1",
+        "Total": "-144.6"
+      },
       {
         "Date": "07 Aug 2026",
         "IBIT": "86.7",
@@ -10613,6 +10645,30 @@
     ],
     "records": [
       {
+        "Date": "11 Aug 2026",
+        "Blackrock": "0.0",
+        "Fidelity": "-2.3",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "0.0",
+        "Total": "-1.7"
+      },
+      {
+        "Date": "10 Aug 2026",
+        "Blackrock": "3.9",
+        "Fidelity": "-3.3",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "0.0",
+        "Franklin": "0.0",
+        "Grayscale": "8.6",
+        "Total": "-14.6"
+      },
+      {
         "Date": "07 Aug 2026",
         "Blackrock": "0.0",
         "Fidelity": "11.5",
@@ -16903,6 +16959,26 @@
     ],
     "records": [
       {
+        "Date": "11 Aug 2026",
+        "ETF_1": "0.0",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "0.0"
+      },
+      {
+        "Date": "10 Aug 2026",
+        "ETF_1": "8.8",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "8.8"
+      },
+      {
         "Date": "07 Aug 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -17011,65 +17087,25 @@
         "ETF_5": "0.0",
         "ETF_6": "0.0",
         "Total": "0.0"
-      },
-      {
-        "Date": "23 Jul 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "0.0"
-      },
-      {
-        "Date": "22 Jul 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "-0.7",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "-0.6",
-        "Total": "-1.3"
-      },
-      {
-        "Date": "21 Jul 2026",
-        "ETF_1": "5.8",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "5.8"
-      },
-      {
-        "Date": "20 Jul 2026",
-        "ETF_1": "2.6",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "2.6"
       }
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "07 Aug 2026",
-    "latestFlow": "101.7",
-    "weeklyFlow": "833.0",
-    "totalRecords": 661
+    "latestDate": "11 Aug 2026",
+    "latestFlow": "7.8",
+    "weeklyFlow": "728.5",
+    "totalRecords": 663
   },
   "ethereumSummary": {
-    "latestDate": "07 Aug 2026",
-    "latestFlow": "49.6",
-    "weeklyFlow": "265.5",
-    "totalRecords": 523
+    "latestDate": "11 Aug 2026",
+    "latestFlow": "-1.7",
+    "weeklyFlow": "227.4",
+    "totalRecords": 525
   },
   "solanaSummary": {
-    "latestDate": "07 Aug 2026",
+    "latestDate": "11 Aug 2026",
     "latestFlow": "0.0",
-    "weeklyFlow": "-0.9",
-    "totalRecords": 15
+    "weeklyFlow": "7.9",
+    "totalRecords": 13
   }
 }
