@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-18T06:53:58.814Z",
+  "lastUpdated": "2026-08-20T06:56:43.383Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -19,8 +19,40 @@
     ],
     "records": [
       {
-        "Date": "17 Aug 2026",
+        "Date": "19 Aug 2026",
         "IBIT": "-",
+        "FBTC": "-",
+        "BITB": "35.6",
+        "ARKB": "77.7",
+        "BTCO": "-",
+        "EZBC": "-",
+        "BRRR": "-",
+        "HODL": "-",
+        "BTCW": "-",
+        "MSBT": "10.0",
+        "GBTC": "21.2",
+        "BTC": "19.7",
+        "Total": "164.2"
+      },
+      {
+        "Date": "18 Aug 2026",
+        "IBIT": "143.6",
+        "FBTC": "23.9",
+        "BITB": "16.1",
+        "ARKB": "19.7",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "-16.9",
+        "BTCW": "0.0",
+        "MSBT": "0.0",
+        "GBTC": "0.0",
+        "BTC": "2.9",
+        "Total": "189.3"
+      },
+      {
+        "Date": "17 Aug 2026",
+        "IBIT": "160.2",
         "FBTC": "111.9",
         "BITB": "0.0",
         "ARKB": "14.2",
@@ -32,7 +64,7 @@
         "MSBT": "11.2",
         "GBTC": "0.0",
         "BTC": "0.0",
-        "Total": "137.3"
+        "Total": "297.5"
       },
       {
         "Date": "14 Aug 2026",
@@ -10709,8 +10741,32 @@
     ],
     "records": [
       {
-        "Date": "17 Aug 2026",
+        "Date": "19 Aug 2026",
         "Blackrock": "-",
+        "Fidelity": "-",
+        "Bitwise": "0.0",
+        "21 Shares": "0.0",
+        "VanEck": "-",
+        "Invesco": "-",
+        "Franklin": "-",
+        "Grayscale": "16.0",
+        "Total": "17.7"
+      },
+      {
+        "Date": "18 Aug 2026",
+        "Blackrock": "0.0",
+        "Fidelity": "0.0",
+        "Bitwise": "1.4",
+        "21 Shares": "0.0",
+        "VanEck": "0.0",
+        "Invesco": "1.1",
+        "Franklin": "0.0",
+        "Grayscale": "2.7",
+        "Total": "71.4"
+      },
+      {
+        "Date": "17 Aug 2026",
+        "Blackrock": "0.0",
         "Fidelity": "4.3",
         "Bitwise": "0.7",
         "21 Shares": "0.0",
@@ -10718,7 +10774,7 @@
         "Invesco": "0.0",
         "Franklin": "0.0",
         "Grayscale": "0.0",
-        "Total": "5.0"
+        "Total": "30.9"
       },
       {
         "Date": "14 Aug 2026",
@@ -17071,6 +17127,26 @@
     ],
     "records": [
       {
+        "Date": "19 Aug 2026",
+        "ETF_1": "5.6",
+        "ETF_2": "-",
+        "ETF_3": "-",
+        "ETF_4": "0.0",
+        "ETF_5": "-",
+        "ETF_6": "-3.1",
+        "Total": "2.5"
+      },
+      {
+        "Date": "18 Aug 2026",
+        "ETF_1": "1.6",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "Total": "1.6"
+      },
+      {
         "Date": "17 Aug 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -17179,45 +17255,25 @@
         "ETF_5": "0.0",
         "ETF_6": "0.0",
         "Total": "0.0"
-      },
-      {
-        "Date": "31 Jul 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "0.0"
-      },
-      {
-        "Date": "30 Jul 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "Total": "0.0"
       }
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "17 Aug 2026",
-    "latestFlow": "137.3",
-    "weeklyFlow": "-146.2",
-    "totalRecords": 667
+    "latestDate": "19 Aug 2026",
+    "latestFlow": "164.2",
+    "weeklyFlow": "410.4",
+    "totalRecords": 669
   },
   "ethereumSummary": {
-    "latestDate": "17 Aug 2026",
-    "latestFlow": "5.0",
-    "weeklyFlow": "51.6",
-    "totalRecords": 529
+    "latestDate": "19 Aug 2026",
+    "latestFlow": "17.7",
+    "weeklyFlow": "131.6",
+    "totalRecords": 531
   },
   "solanaSummary": {
-    "latestDate": "17 Aug 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "8.8",
+    "latestDate": "19 Aug 2026",
+    "latestFlow": "2.5",
+    "weeklyFlow": "4.1",
     "totalRecords": 13
   }
 }
