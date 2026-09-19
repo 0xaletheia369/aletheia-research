@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-18T10:56:51.024Z",
+  "lastUpdated": "2026-09-19T10:39:39.477Z",
   "bitcoin": null,
   "ethereum": {
     "headers": [
@@ -18,6 +18,21 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "18 Sep 2026",
+        "ETHA": "114.3",
+        "ETHB": "0.0",
+        "FETH": "26.2",
+        "ETHW": "1.3",
+        "TETH": "0.0",
+        "ETHV": "1.9",
+        "QETH": "0.0",
+        "EZET": "0.0",
+        "MSSE": "0.0",
+        "ETHE": "0.0",
+        "ETH": "0.0",
+        "Total": "143.7"
+      },
       {
         "Date": "17 Sep 2026",
         "ETHA": "-42.9",
@@ -8299,6 +8314,17 @@
     ],
     "records": [
       {
+        "Date": "18 Sep 2026",
+        "ETF_1": "47.6",
+        "ETF_2": "-",
+        "ETF_3": "-",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "ETF_7": "0.0",
+        "Total": "47.6"
+      },
+      {
         "Date": "17 Sep 2026",
         "ETF_1": "0.0",
         "ETF_2": "0.0",
@@ -8444,15 +8470,15 @@
     ]
   },
   "ethereumSummary": {
-    "latestDate": "17 Sep 2026",
-    "latestFlow": "-39.3",
-    "weeklyFlow": "-63.1",
-    "totalRecords": 551
+    "latestDate": "18 Sep 2026",
+    "latestFlow": "143.7",
+    "weeklyFlow": "45.9",
+    "totalRecords": 552
   },
   "solanaSummary": {
-    "latestDate": "17 Sep 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "24.1",
-    "totalRecords": 13
+    "latestDate": "18 Sep 2026",
+    "latestFlow": "47.6",
+    "weeklyFlow": "59.9",
+    "totalRecords": 14
   }
 }
