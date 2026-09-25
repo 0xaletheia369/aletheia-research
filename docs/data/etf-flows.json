@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-24T11:28:22.731Z",
+  "lastUpdated": "2026-09-25T11:34:26.627Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -18,6 +18,22 @@
       "Total"
     ],
     "records": [
+      {
+        "Date": "24 Sep 2026",
+        "IBIT": "162.6",
+        "FBTC": "12.9",
+        "BITB": "4.1",
+        "ARKB": "0.0",
+        "BTCO": "0.0",
+        "EZBC": "4.9",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "-4.0",
+        "MSBT": "10.2",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "190.7"
+      },
       {
         "Date": "23 Sep 2026",
         "IBIT": "166.3",
@@ -11126,6 +11142,21 @@
     ],
     "records": [
       {
+        "Date": "24 Sep 2026",
+        "ETHA": "26.8",
+        "ETHB": "0.0",
+        "FETH": "21.5",
+        "ETHW": "0.0",
+        "TETH": "0.0",
+        "ETHV": "0.0",
+        "QETH": "0.0",
+        "EZET": "0.0",
+        "MSSE": "0.0",
+        "ETHE": "0.0",
+        "ETH": "17.8",
+        "Total": "66.1"
+      },
+      {
         "Date": "23 Sep 2026",
         "ETHA": "50.8",
         "ETHB": "0.0",
@@ -19466,6 +19497,17 @@
     ],
     "records": [
       {
+        "Date": "24 Sep 2026",
+        "ETF_1": "28.0",
+        "ETF_2": "0.0",
+        "ETF_3": "4.8",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "ETF_7": "0.0",
+        "Total": "32.8"
+      },
+      {
         "Date": "23 Sep 2026",
         "ETF_1": "3.9",
         "ETF_2": "1.5",
@@ -19600,21 +19642,21 @@
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "23 Sep 2026",
-    "latestFlow": "346.9",
-    "weeklyFlow": "1906.8",
-    "totalRecords": 693
+    "latestDate": "24 Sep 2026",
+    "latestFlow": "190.7",
+    "weeklyFlow": "2547.9",
+    "totalRecords": 694
   },
   "ethereumSummary": {
-    "latestDate": "23 Sep 2026",
-    "latestFlow": "104.5",
-    "weeklyFlow": "275.0",
-    "totalRecords": 555
+    "latestDate": "24 Sep 2026",
+    "latestFlow": "66.1",
+    "weeklyFlow": "483.1",
+    "totalRecords": 556
   },
   "solanaSummary": {
-    "latestDate": "23 Sep 2026",
-    "latestFlow": "13.7",
-    "weeklyFlow": "118.3",
-    "totalRecords": 12
+    "latestDate": "24 Sep 2026",
+    "latestFlow": "32.8",
+    "weeklyFlow": "149.8",
+    "totalRecords": 13
   }
 }
