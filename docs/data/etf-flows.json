@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-13T13:59:11.614Z",
+  "lastUpdated": "2026-10-15T11:11:55.366Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -19,20 +19,36 @@
     ],
     "records": [
       {
+        "Date": "14 Oct 2026",
+        "IBIT": "-110.9",
+        "FBTC": "-152.7",
+        "BITB": "2.2",
+        "ARKB": "0.0",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "MSBT": "0.0",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "-261.4"
+      },
+      {
         "Date": "13 Oct 2026",
-        "IBIT": "-",
-        "FBTC": "-",
-        "BITB": "-",
-        "ARKB": "-",
-        "BTCO": "-",
-        "EZBC": "-",
-        "BRRR": "-",
-        "HODL": "-",
-        "BTCW": "-",
-        "MSBT": "-",
-        "GBTC": "-",
-        "BTC": "-",
-        "Total": "0.0"
+        "IBIT": "65.9",
+        "FBTC": "103.1",
+        "BITB": "0.0",
+        "ARKB": "0.0",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "MSBT": "6.7",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "175.7"
       },
       {
         "Date": "12 Oct 2026",
@@ -11350,19 +11366,34 @@
     ],
     "records": [
       {
+        "Date": "14 Oct 2026",
+        "ETHA": "-109.8",
+        "ETHB": "0.0",
+        "FETH": "0.0",
+        "ETHW": "0.0",
+        "TETH": "0.0",
+        "ETHV": "0.0",
+        "QETH": "0.0",
+        "EZET": "-0.9",
+        "MSSE": "0.0",
+        "ETHE": "0.0",
+        "ETH": "-18.8",
+        "Total": "-129.5"
+      },
+      {
         "Date": "13 Oct 2026",
-        "ETHA": "-",
-        "ETHB": "-",
-        "FETH": "-",
-        "ETHW": "-",
-        "TETH": "-",
-        "ETHV": "-",
-        "QETH": "-",
-        "EZET": "-",
-        "MSSE": "-",
-        "ETHE": "-",
-        "ETH": "-",
-        "Total": "0.0"
+        "ETHA": "0.0",
+        "ETHB": "0.0",
+        "FETH": "8.1",
+        "ETHW": "0.0",
+        "TETH": "0.0",
+        "ETHV": "0.0",
+        "QETH": "0.0",
+        "EZET": "0.0",
+        "MSSE": "0.0",
+        "ETHE": "0.0",
+        "ETH": "16.7",
+        "Total": "24.8"
       },
       {
         "Date": "12 Oct 2026",
@@ -19900,15 +19931,26 @@
     ],
     "records": [
       {
+        "Date": "14 Oct 2026",
+        "ETF_1": "-1.3",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "ETF_7": "0.0",
+        "Total": "-1.3"
+      },
+      {
         "Date": "13 Oct 2026",
-        "ETF_1": "-",
-        "ETF_2": "-",
-        "ETF_3": "-",
-        "ETF_4": "-",
-        "ETF_5": "-",
-        "ETF_6": "-",
-        "ETF_7": "-",
-        "Total": "0.0"
+        "ETF_1": "-1.0",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "0.0",
+        "ETF_7": "0.0",
+        "Total": "-1.0"
       },
       {
         "Date": "12 Oct 2026",
@@ -20030,47 +20072,25 @@
         "ETF_6": "0.0",
         "ETF_7": "0.0",
         "Total": "7.7"
-      },
-      {
-        "Date": "25 Sep 2026",
-        "ETF_1": "55.7",
-        "ETF_2": "3.3",
-        "ETF_3": "3.2",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "6.0",
-        "ETF_7": "18.5",
-        "Total": "86.7"
-      },
-      {
-        "Date": "24 Sep 2026",
-        "ETF_1": "28.0",
-        "ETF_2": "0.0",
-        "ETF_3": "4.8",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.0",
-        "ETF_7": "0.0",
-        "Total": "32.8"
       }
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "13 Oct 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "-744.3",
-    "totalRecords": 707
+    "latestDate": "14 Oct 2026",
+    "latestFlow": "-261.4",
+    "weeklyFlow": "-740.2",
+    "totalRecords": 708
   },
   "ethereumSummary": {
-    "latestDate": "13 Oct 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "-627.6",
-    "totalRecords": 569
+    "latestDate": "14 Oct 2026",
+    "latestFlow": "-129.5",
+    "weeklyFlow": "-681.5",
+    "totalRecords": 570
   },
   "solanaSummary": {
-    "latestDate": "13 Oct 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "-25.7",
-    "totalRecords": 14
+    "latestDate": "14 Oct 2026",
+    "latestFlow": "-1.3",
+    "weeklyFlow": "-18.8",
+    "totalRecords": 13
   }
 }
