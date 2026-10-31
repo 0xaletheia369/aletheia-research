@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-30T12:30:47.216Z",
+  "lastUpdated": "2026-10-31T12:05:51.956Z",
   "bitcoin": null,
   "ethereum": {
     "headers": [
@@ -20,18 +20,18 @@
     "records": [
       {
         "Date": "30 Oct 2026",
-        "ETHA": "-",
-        "ETHB": "-",
-        "FETH": "-",
-        "ETHW": "-",
-        "TETH": "-",
-        "ETHV": "-",
-        "QETH": "-",
-        "EZET": "-",
-        "MSSE": "-",
-        "ETHE": "-",
-        "ETH": "-",
-        "Total": "0.0"
+        "ETHA": "-76.6",
+        "ETHB": "-19.5",
+        "FETH": "-3.3",
+        "ETHW": "0.0",
+        "TETH": "0.0",
+        "ETHV": "0.0",
+        "QETH": "0.0",
+        "EZET": "0.0",
+        "MSSE": "-0.7",
+        "ETHE": "-21.5",
+        "ETH": "-34.1",
+        "Total": "-155.7"
       },
       {
         "Date": "29 Oct 2026",
@@ -8765,14 +8765,14 @@
     "records": [
       {
         "Date": "30 Oct 2026",
-        "ETF_1": "-",
-        "ETF_2": "-",
-        "ETF_3": "-",
-        "ETF_4": "-",
-        "ETF_5": "-",
-        "ETF_6": "-",
-        "ETF_7": "-",
-        "Total": "0.0"
+        "ETF_1": "-9.3",
+        "ETF_2": "0.0",
+        "ETF_3": "0.0",
+        "ETF_4": "0.0",
+        "ETF_5": "0.0",
+        "ETF_6": "-0.8",
+        "ETF_7": "-0.7",
+        "Total": "-10.8"
       },
       {
         "Date": "29 Oct 2026",
@@ -8932,14 +8932,14 @@
   },
   "ethereumSummary": {
     "latestDate": "30 Oct 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "-381.9",
+    "latestFlow": "-155.7",
+    "weeklyFlow": "-537.6",
     "totalRecords": 582
   },
   "solanaSummary": {
     "latestDate": "30 Oct 2026",
-    "latestFlow": "0.0",
-    "weeklyFlow": "-69.7",
+    "latestFlow": "-10.8",
+    "weeklyFlow": "-80.5",
     "totalRecords": 15
   }
 }
