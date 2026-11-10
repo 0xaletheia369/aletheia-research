@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-09T15:51:16.411Z",
+  "lastUpdated": "2026-11-10T14:45:37.027Z",
   "bitcoin": {
     "headers": [
       "Date",
@@ -19,7 +19,7 @@
     ],
     "records": [
       {
-        "Date": "09 Nov 2026",
+        "Date": "10 Nov 2026",
         "IBIT": "-",
         "FBTC": "-",
         "BITB": "-",
@@ -33,6 +33,22 @@
         "GBTC": "-",
         "BTC": "-",
         "Total": "0.0"
+      },
+      {
+        "Date": "09 Nov 2026",
+        "IBIT": "-213.2",
+        "FBTC": "0.0",
+        "BITB": "0.0",
+        "ARKB": "-9.9",
+        "BTCO": "0.0",
+        "EZBC": "0.0",
+        "BRRR": "0.0",
+        "HODL": "0.0",
+        "BTCW": "0.0",
+        "MSBT": "22.1",
+        "GBTC": "0.0",
+        "BTC": "0.0",
+        "Total": "-201.0"
       },
       {
         "Date": "06 Nov 2026",
@@ -11654,7 +11670,7 @@
     ],
     "records": [
       {
-        "Date": "09 Nov 2026",
+        "Date": "10 Nov 2026",
         "ETHA": "-",
         "ETHB": "-",
         "FETH": "-",
@@ -11667,6 +11683,21 @@
         "ETHE": "-",
         "ETH": "-",
         "Total": "0.0"
+      },
+      {
+        "Date": "09 Nov 2026",
+        "ETHA": "-119.3",
+        "ETHB": "-20.8",
+        "FETH": "-19.1",
+        "ETHW": "0.0",
+        "TETH": "-2.0",
+        "ETHV": "0.0",
+        "QETH": "0.0",
+        "EZET": "0.0",
+        "MSSE": "1.6",
+        "ETHE": "0.0",
+        "ETH": "-25.0",
+        "Total": "-184.6"
       },
       {
         "Date": "06 Nov 2026",
@@ -20489,7 +20520,7 @@
     ],
     "records": [
       {
-        "Date": "09 Nov 2026",
+        "Date": "10 Nov 2026",
         "ETF_1": "-",
         "ETF_2": "-",
         "ETF_3": "-",
@@ -20498,6 +20529,17 @@
         "ETF_6": "-",
         "ETF_7": "-",
         "Total": "0.0"
+      },
+      {
+        "Date": "09 Nov 2026",
+        "ETF_1": "-5.9",
+        "ETF_2": "-0.3",
+        "ETF_3": "-0.8",
+        "ETF_4": "-",
+        "ETF_5": "-0.7",
+        "ETF_6": "0.0",
+        "ETF_7": "0.0",
+        "Total": "-7.7"
       },
       {
         "Date": "06 Nov 2026",
@@ -20630,36 +20672,25 @@
         "ETF_6": "0.0",
         "ETF_7": "-3.2",
         "Total": "-8.9"
-      },
-      {
-        "Date": "21 Oct 2026",
-        "ETF_1": "0.0",
-        "ETF_2": "0.0",
-        "ETF_3": "0.0",
-        "ETF_4": "0.0",
-        "ETF_5": "0.0",
-        "ETF_6": "0.6",
-        "ETF_7": "0.0",
-        "Total": "0.6"
       }
     ]
   },
   "bitcoinSummary": {
-    "latestDate": "09 Nov 2026",
+    "latestDate": "10 Nov 2026",
     "latestFlow": "0.0",
-    "weeklyFlow": "-1924.9",
-    "totalRecords": 726
+    "weeklyFlow": "-1482.7",
+    "totalRecords": 727
   },
   "ethereumSummary": {
-    "latestDate": "09 Nov 2026",
+    "latestDate": "10 Nov 2026",
     "latestFlow": "0.0",
-    "weeklyFlow": "-520.9",
-    "totalRecords": 588
+    "weeklyFlow": "-549.8",
+    "totalRecords": 589
   },
   "solanaSummary": {
-    "latestDate": "09 Nov 2026",
+    "latestDate": "10 Nov 2026",
     "latestFlow": "0.0",
-    "weeklyFlow": "-35.8",
+    "weeklyFlow": "-32.7",
     "totalRecords": 14
   }
 }
